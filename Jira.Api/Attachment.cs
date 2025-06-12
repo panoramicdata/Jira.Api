@@ -1,5 +1,5 @@
-﻿using System;
-using Jira.Api.Remote;
+﻿using Jira.Api.Remote;
+using System;
 
 namespace Jira.Api;
 
@@ -85,7 +85,7 @@ public class Attachment(Jira jira, RemoteAttachment remoteAttachment)
 		}
 
 		return string.Format("{0}secure/attachment/{1}/{2}",
-			_jira.Url.EndsWith("/") ? _jira.Url : _jira.Url + "/",
+			_jira.Url.EndsWith('/') ? _jira.Url : _jira.Url + "/",
 			Id,
 			FileName);
 	}
