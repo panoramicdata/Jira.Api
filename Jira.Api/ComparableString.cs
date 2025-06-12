@@ -115,18 +115,18 @@ public class ComparableString(string value)
 
 	public override string ToString()
 	{
-		return this.Value;
+		return Value;
 	}
 
 	public override bool Equals(object obj)
 	{
 		if (obj is ComparableString comparableString)
 		{
-			return this.Value.Equals(comparableString.Value);
+			return Value.Equals(comparableString.Value);
 		}
 		else if (obj is string obString)
 		{
-			return this.Value.Equals(obString);
+			return Value.Equals(obString);
 		}
 
 		return base.Equals(obj);
@@ -134,11 +134,11 @@ public class ComparableString(string value)
 
 	public override int GetHashCode()
 	{
-		if (this.Value == null)
+		if (Value == null)
 		{
 			return 0;
 		}
 
-		return this.Value.GetHashCode();
+		return Value.GetHashCode();
 	}
 }

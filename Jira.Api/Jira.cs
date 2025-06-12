@@ -304,11 +304,11 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	{
 		get
 		{
-			return this.Issues.MaxIssuesPerRequest;
+			return Issues.MaxIssuesPerRequest;
 		}
 		set
 		{
-			this.Issues.MaxIssuesPerRequest = value;
+			Issues.MaxIssuesPerRequest = value;
 		}
 	}
 

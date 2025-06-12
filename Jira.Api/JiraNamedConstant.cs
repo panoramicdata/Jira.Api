@@ -16,7 +16,7 @@ public class JiraNamedConstant : JiraNamedEntity
 	public JiraNamedConstant(AbstractRemoteConstant remoteConstant) :
 		base(remoteConstant)
 	{
-		this._remoteConstant = remoteConstant;
+		_remoteConstant = remoteConstant;
 	}
 
 	/// <summary>

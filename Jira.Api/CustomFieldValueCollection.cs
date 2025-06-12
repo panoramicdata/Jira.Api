@@ -39,7 +39,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldValue">The value of the field</param>
 	public CustomFieldValueCollection Add(string fieldName, string fieldValue)
 	{
-		return this.Add(fieldName, [fieldValue]);
+		return Add(fieldName, [fieldValue]);
 	}
 
 	/// <summary>
@@ -49,7 +49,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldValues">The values of the field</param>
 	public CustomFieldValueCollection AddArray(string fieldName, params string[] fieldValues)
 	{
-		return this.Add(fieldName, fieldValues, new MultiStringCustomFieldValueSerializer());
+		return Add(fieldName, fieldValues, new MultiStringCustomFieldValueSerializer());
 	}
 
 	/// <summary>
@@ -87,7 +87,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	public CustomFieldValueCollection Add(string fieldName, string[] fieldValues, ICustomFieldValueSerializer serializer = null)
 	{
 		var fieldId = GetCustomFieldId(fieldName);
-		this.Items.Add(new CustomFieldValue(fieldId, fieldName, _issue) { Values = fieldValues, Serializer = serializer });
+		Items.Add(new CustomFieldValue(fieldId, fieldName, _issue) { Values = fieldValues, Serializer = serializer });
 		return this;
 	}
 
@@ -98,7 +98,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldValues">The values of the field.</param>
 	public CustomFieldValueCollection AddById(string fieldId, params string[] fieldValues)
 	{
-		this.Items.Add(new CustomFieldValue(fieldId, _issue) { Values = fieldValues });
+		Items.Add(new CustomFieldValue(fieldId, _issue) { Values = fieldValues });
 		return this;
 	}
 
@@ -151,7 +151,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 		get
 		{
 			var fieldId = GetCustomFieldId(fieldName);
-			return this.Items.FirstOrDefault(f => f.Id == fieldId);
+			return Items.FirstOrDefault(f => f.Id == fieldId);
 		}
 	}
 
@@ -198,7 +198,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)
 	{
-		var fieldValues = this.Items
+		var fieldValues = Items
 			.Where(field => IsCustomFieldNewOrUpdated(field))
 			.Select(field => new RemoteFieldValue()
 			{
@@ -211,13 +211,13 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 
 	private bool IsCustomFieldNewOrUpdated(CustomFieldValue customField)
 	{
-		if (this._issue.OriginalRemoteIssue.customFieldValues == null)
+		if (_issue.OriginalRemoteIssue.customFieldValues == null)
 		{
 			// Original remote issue had no custom fields, this means that a new one has been added by user.
 			return true;
 		}
 
-		var originalField = this._issue.OriginalRemoteIssue.customFieldValues.FirstOrDefault(field => field.customfieldId == customField.Id);
+		var originalField = _issue.OriginalRemoteIssue.customFieldValues.FirstOrDefault(field => field.customfieldId == customField.Id);
 
 		if (originalField == null)
 		{

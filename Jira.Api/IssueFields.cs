@@ -25,19 +25,19 @@ public class IssueFields
 		{
 			var pagedResults = remoteIssue.remotePagedComments;
 			var comments = pagedResults.remoteComments.Select(remoteComment => new Comment(remoteComment));
-			this.Comments = new PagedQueryResult<Comment>(comments, pagedResults.startAt, pagedResults.maxResults, pagedResults.total);
+			Comments = new PagedQueryResult<Comment>(comments, pagedResults.startAt, pagedResults.maxResults, pagedResults.total);
 		}
 
 		if (remoteIssue.remotePagedWorklogs != null)
 		{
 			var pagedResults = remoteIssue.remotePagedWorklogs;
 			var worklogs = pagedResults.remoteWorklogs.Select(remoteWorklog => new Worklog(remoteWorklog));
-			this.Worklogs = new PagedQueryResult<Worklog>(worklogs, pagedResults.startAt, pagedResults.maxResults, pagedResults.total);
+			Worklogs = new PagedQueryResult<Worklog>(worklogs, pagedResults.startAt, pagedResults.maxResults, pagedResults.total);
 		}
 
 		if (remoteIssue.remoteAttachments != null)
 		{
-			this.Attachments = remoteIssue.remoteAttachments.Select(remoteAttachment => new Attachment(jira, remoteAttachment));
+			Attachments = remoteIssue.remoteAttachments.Select(remoteAttachment => new Attachment(jira, remoteAttachment));
 		}
 	}
 

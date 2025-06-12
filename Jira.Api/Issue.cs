@@ -133,14 +133,14 @@ public class Issue : IRemoteIssueFieldProvider
 		}).ToList());
 
 		// additional fields
-		this.AdditionalFields = new IssueFields(_originalIssue, Jira);
+		AdditionalFields = new IssueFields(_originalIssue, Jira);
 	}
 
 	internal RemoteIssue OriginalRemoteIssue
 	{
 		get
 		{
-			return this._originalIssue;
+			return _originalIssue;
 		}
 	}
 
@@ -222,12 +222,12 @@ public class Issue : IRemoteIssueFieldProvider
 	{
 		get
 		{
-			if (string.IsNullOrEmpty(this._originalIssue.key))
+			if (string.IsNullOrEmpty(_originalIssue.key))
 			{
 				throw new InvalidOperationException("Unable to retrieve JIRA id, issue has not been created.");
 			}
 
-			return this._originalIssue.id;
+			return _originalIssue.id;
 		}
 	}
 
@@ -515,7 +515,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to link issue, issue has not been created.");
 		}
 
-		return this.Jira.Links.CreateLinkAsync(this.Key.Value, inwardIssueKey, linkName, comment, token);
+		return Jira.Links.CreateLinkAsync(Key.Value, inwardIssueKey, linkName, comment, token);
 	}
 
 	/// <summary>
@@ -529,7 +529,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to get issue links issues, issue has not been created.");
 		}
 
-		return this.Jira.Links.GetLinksForIssueAsync(this, null, token);
+		return Jira.Links.GetLinksForIssueAsync(this, null, token);
 	}
 
 	/// <summary>
@@ -544,7 +544,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to get issue links issues, issue has not been created.");
 		}
 
-		return this.Jira.Links.GetLinksForIssueAsync(this, linkTypeNames, token);
+		return Jira.Links.GetLinksForIssueAsync(this, linkTypeNames, token);
 	}
 
 	/// <summary>
@@ -560,7 +560,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to add remote link, issue has not been created.");
 		}
 
-		return this.Jira.RemoteLinks.CreateRemoteLinkAsync(this.Key.Value, remoteUrl, title, summary);
+		return Jira.RemoteLinks.CreateRemoteLinkAsync(Key.Value, remoteUrl, title, summary);
 	}
 
 	/// <summary>
@@ -574,7 +574,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to get remote links, issue has not been created.");
 		}
 
-		return this.Jira.RemoteLinks.GetRemoteLinksForIssueAsync(_originalIssue.key, token);
+		return Jira.RemoteLinks.GetRemoteLinksForIssueAsync(_originalIssue.key, token);
 	}
 
 	/// <summary>
@@ -621,7 +621,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to retrieve attachments from server, issue has not been created.");
 		}
 
-		return this.Jira.Issues.GetAttachmentsAsync(this.Key.Value, token);
+		return Jira.Issues.GetAttachmentsAsync(Key.Value, token);
 	}
 
 	/// <summary>
@@ -758,7 +758,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
 
-		return this.Jira.Issues.GetPagedCommentsAsync(this.Key.Value, maxComments, startAt, token);
+		return Jira.Issues.GetPagedCommentsAsync(Key.Value, maxComments, startAt, token);
 	}
 
 	/// <summary>
@@ -768,11 +768,11 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public async Task<Comment> AddCommentAsync(string comment, CancellationToken token = default)
 	{
-		var jiraUser = await this.Jira.Users.GetMyselfAsync(token);
+		var jiraUser = await Jira.Users.GetMyselfAsync(token);
 
-		var author = this.Jira.RestClient.Settings.EnableUserPrivacyMode ? jiraUser.AccountId : jiraUser.Username;
+		var author = Jira.RestClient.Settings.EnableUserPrivacyMode ? jiraUser.AccountId : jiraUser.Username;
 
-		return await this.AddCommentAsync(new Comment() { Author = author, Body = comment }, token);
+		return await AddCommentAsync(new Comment() { Author = author, Body = comment }, token);
 	}
 
 	/// <summary>
@@ -802,7 +802,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to add comment to issue, issue has not been created.");
 		}
 
-		return this.Jira.Issues.AddCommentAsync(this.Key.Value, comment, token);
+		return Jira.Issues.AddCommentAsync(Key.Value, comment, token);
 	}
 
 	/// <summary>
@@ -817,7 +817,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to update comment to issue, issue has not been created.");
 		}
 
-		return this.Jira.Issues.UpdateCommentAsync(this.Key.Value, comment, token);
+		return Jira.Issues.UpdateCommentAsync(Key.Value, comment, token);
 	}
 
 	/// <summary>
@@ -934,7 +934,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// </summary>
 	public void Refresh()
 	{
-		this.RefreshAsync().Wait();
+		RefreshAsync().Wait();
 	}
 
 	/// <summary>
@@ -964,7 +964,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to retrieve actions, issue has not been saved to server.");
 		}
 
-		return this._jira.Issues.GetActionsAsync(_originalIssue.key, token);
+		return _jira.Issues.GetActionsAsync(_originalIssue.key, token);
 	}
 
 	/// <summary>
@@ -978,7 +978,7 @@ public class Issue : IRemoteIssueFieldProvider
 			throw new InvalidOperationException("Unable to retrieve actions, issue has not been saved to server.");
 		}
 
-		return this._jira.Issues.GetActionsAsync(_originalIssue.key, expandTransitionFields, token);
+		return _jira.Issues.GetActionsAsync(_originalIssue.key, expandTransitionFields, token);
 	}
 
 	/// <summary>
@@ -1174,16 +1174,16 @@ public class Issue : IRemoteIssueFieldProvider
 	{
 		var remote = new RemoteIssue
 		{
-			assignee = this.Assignee,
-			description = this.Description,
-			environment = this.Environment,
-			project = this.Project,
-			reporter = this.Reporter,
-			summary = this.Summary,
-			votesData = this.Votes != null ? new RemoteVotes() { hasVoted = this.HasUserVoted == true, votes = this.Votes.Value } : null,
-			duedate = this.DueDate,
-			timeTracking = this.TimeTrackingData,
-			key = this.Key != null ? this.Key.Value : null
+			assignee = Assignee,
+			description = Description,
+			environment = Environment,
+			project = Project,
+			reporter = Reporter,
+			summary = Summary,
+			votesData = Votes != null ? new RemoteVotes() { hasVoted = HasUserVoted == true, votes = Votes.Value } : null,
+			duedate = DueDate,
+			timeTracking = TimeTrackingData,
+			key = Key != null ? Key.Value : null
 		};
 
 		if (Status != null)
@@ -1210,24 +1210,24 @@ public class Issue : IRemoteIssueFieldProvider
 			remote.type = new RemoteIssueType() { id = Type.Id, name = Type.Name };
 		}
 
-		if (this.AffectsVersions.Count > 0)
+		if (AffectsVersions.Count > 0)
 		{
-			remote.affectsVersions = this.AffectsVersions.Select(v => v.RemoteVersion).ToArray();
+			remote.affectsVersions = AffectsVersions.Select(v => v.RemoteVersion).ToArray();
 		}
 
-		if (this.FixVersions.Count > 0)
+		if (FixVersions.Count > 0)
 		{
-			remote.fixVersions = this.FixVersions.Select(v => v.RemoteVersion).ToArray();
+			remote.fixVersions = FixVersions.Select(v => v.RemoteVersion).ToArray();
 		}
 
-		if (this.Components.Count > 0)
+		if (Components.Count > 0)
 		{
-			remote.components = this.Components.Select(c => c.RemoteComponent).ToArray();
+			remote.components = Components.Select(c => c.RemoteComponent).ToArray();
 		}
 
-		if (this.CustomFields.Count > 0)
+		if (CustomFields.Count > 0)
 		{
-			remote.customFieldValues = this.CustomFields.Select(f => new RemoteCustomFieldValue()
+			remote.customFieldValues = CustomFields.Select(f => new RemoteCustomFieldValue()
 			{
 				customfieldId = f.Id,
 				values = f.Values,
@@ -1235,9 +1235,9 @@ public class Issue : IRemoteIssueFieldProvider
 			}).ToArray();
 		}
 
-		if (this.Labels.Count > 0)
+		if (Labels.Count > 0)
 		{
-			remote.labels = this.Labels.ToArray();
+			remote.labels = Labels.ToArray();
 		}
 
 		return remote;

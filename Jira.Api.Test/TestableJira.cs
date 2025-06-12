@@ -58,6 +58,6 @@ public class TestableJira : Jira
 
 	public void SetupIssues(params RemoteIssue[] remoteIssues)
 	{
-		this.IssueService.SetupIssues(this, remoteIssues);
+		IssueService.SetupIssues(this, remoteIssues);
 	}
 }

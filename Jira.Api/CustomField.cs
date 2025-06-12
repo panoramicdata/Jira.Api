@@ -15,9 +15,9 @@ public class CustomField : JiraNamedEntity
 	{
 		_remoteField = remoteField;
 
-		if (string.IsNullOrEmpty(this.Id) && !string.IsNullOrEmpty(CustomIdentifier))
+		if (string.IsNullOrEmpty(Id) && !string.IsNullOrEmpty(CustomIdentifier))
 		{
-			this.Id = $"customfield_{CustomIdentifier}";
+			Id = $"customfield_{CustomIdentifier}";
 		}
 	}
 
@@ -25,7 +25,7 @@ public class CustomField : JiraNamedEntity
 	{
 		get
 		{
-			return this._remoteField;
+			return _remoteField;
 		}
 	}
 

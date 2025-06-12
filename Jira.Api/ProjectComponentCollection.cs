@@ -32,6 +32,6 @@ public class ProjectComponentCollection : JiraNamedEntityCollection<ProjectCompo
 			throw new InvalidOperationException(string.Format("Unable to find component with name '{0}'.", componentName));
 		}
 
-		this.Add(component);
+		Add(component);
 	}
 }

@@ -65,7 +65,7 @@ internal class IssueFilterService(Jira jira) : IIssueFilterService
 
 	private async Task<string> GetFilterJqlByNameAsync(string filterName, CancellationToken token = default)
 	{
-		var filters = await this.GetFavouritesAsync(token).ConfigureAwait(false);
+		var filters = await GetFavouritesAsync(token).ConfigureAwait(false);
 		var filter = filters.FirstOrDefault(f => f.Name.Equals(filterName, StringComparison.OrdinalIgnoreCase));
 
 		if (filter == null)

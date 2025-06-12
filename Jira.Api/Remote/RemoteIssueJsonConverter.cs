@@ -92,7 +92,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 
 	private string GetCustomFieldType(string customFieldId)
 	{
-		var remoteField = this._remoteFields.FirstOrDefault(f => f.id.Equals(customFieldId, StringComparison.InvariantCultureIgnoreCase));
+		var remoteField = _remoteFields.FirstOrDefault(f => f.id.Equals(customFieldId, StringComparison.InvariantCultureIgnoreCase));
 
 		return remoteField != null && remoteField.Schema.Custom != null ? remoteField.Schema.Custom : "SDK-Unknown-Field-Type";
 	}
@@ -108,9 +108,9 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 					var customFieldType = GetCustomFieldType(customField.customfieldId);
 					JToken jToken;
 
-					if (this._customFieldSerializers.ContainsKey(customFieldType))
+					if (_customFieldSerializers.ContainsKey(customFieldType))
 					{
-						jToken = this._customFieldSerializers[customFieldType].ToJson(customField.values);
+						jToken = _customFieldSerializers[customFieldType].ToJson(customField.values);
 					}
 					else if (customField.serializer != null)
 					{
@@ -144,9 +144,9 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 					rawValue = field.Value
 				};
 
-				if (this._customFieldSerializers.ContainsKey(customFieldType))
+				if (_customFieldSerializers.ContainsKey(customFieldType))
 				{
-					remoteCustomFieldValue.values = this._customFieldSerializers[customFieldType].FromJson(field.Value);
+					remoteCustomFieldValue.values = _customFieldSerializers[customFieldType].FromJson(field.Value);
 				}
 				else if (field.Value.Type == JTokenType.Array)
 				{

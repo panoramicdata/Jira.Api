@@ -23,7 +23,7 @@ public class JiraEntityDictionary<T> : ConcurrentDictionary<string, T>
 	{
 		foreach (var entity in entities)
 		{
-			this.TryAdd(entity.Id, entity);
+			TryAdd(entity.Id, entity);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class JiraEntityDictionary<T> : ConcurrentDictionary<string, T>
 	/// <returns>True if entity was added, false otherwise.</returns>
 	public bool TryAdd(T entity)
 	{
-		return this.TryAdd(entity.Id, entity);
+		return TryAdd(entity.Id, entity);
 	}
 
 	/// <summary>
@@ -55,7 +55,7 @@ public class JiraEntityDictionary<T> : ConcurrentDictionary<string, T>
 		var result = false;
 		foreach (var entity in entities)
 		{
-			result = this.TryAdd(entity.Id, entity) || result;
+			result = TryAdd(entity.Id, entity) || result;
 		}
 
 		return result;

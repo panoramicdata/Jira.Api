@@ -15,7 +15,7 @@ public class NestedValueJsonConverter(string innerProperty) : JsonConverter
 
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
-		var outerObject = new JObject(new JProperty(this._innerProperty, value));
+		var outerObject = new JObject(new JProperty(_innerProperty, value));
 		outerObject.WriteTo(writer);
 	}
 

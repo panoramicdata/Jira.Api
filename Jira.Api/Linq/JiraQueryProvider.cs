@@ -23,7 +23,7 @@ public class JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService i
 	{
 		bool isEnumerable = (typeof(T).Name == "IEnumerable`1");
 
-		return (T)this.Execute(expression, isEnumerable);
+		return (T)Execute(expression, isEnumerable);
 	}
 
 	public object Execute(Expression expression)

@@ -20,8 +20,8 @@ public class CommentVisibility
 	/// <param name="role">The role to apply to the visibility object.</param>
 	public CommentVisibility(string role)
 	{
-		this.Type = "role";
-		this.Value = role;
+		Type = "role";
+		Value = role;
 	}
 
 	[JsonProperty("type")]

@@ -13,12 +13,12 @@ public class SingleObjectCustomFieldValueSerializer(string propertyName) : ICust
 
 	public string[] FromJson(JToken json)
 	{
-		return [json[this._propertyName]?.ToString()];
+		return [json[_propertyName]?.ToString()];
 	}
 
 	public JToken ToJson(string[] values)
 	{
-		return new JObject(new JProperty(this._propertyName, values[0]));
+		return new JObject(new JProperty(_propertyName, values[0]));
 	}
 }
 

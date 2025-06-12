@@ -26,7 +26,7 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 	/// <param name="labels">The list of labels to add.</param>
 	public void Add(params string[] labels)
 	{
-		this.AddRange(labels);
+		AddRange(labels);
 	}
 
 	public static bool operator ==(IssueLabelCollection list, string value)
@@ -48,7 +48,7 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 			fieldValues.Add(new RemoteFieldValue()
 			{
 				id = "labels",
-				values = this.ToArray()
+				values = ToArray()
 			});
 		}
 

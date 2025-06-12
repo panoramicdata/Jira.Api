@@ -13,8 +13,8 @@ public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 
 	public JiraQueryable(JiraQueryProvider provider)
 	{
-		this._provider = provider;
-		this._expression = Expression.Constant(this);
+		_provider = provider;
+		_expression = Expression.Constant(this);
 	}
 
 	public JiraQueryable(JiraQueryProvider provider, Expression expression)
@@ -25,12 +25,12 @@ public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 
 	public IEnumerator<T> GetEnumerator()
 	{
-		return ((IEnumerable<T>)_provider.Execute(this.Expression)).GetEnumerator();
+		return ((IEnumerable<T>)_provider.Execute(Expression)).GetEnumerator();
 	}
 
 	IEnumerator IEnumerable.GetEnumerator()
 	{
-		return ((IEnumerable)_provider.Execute(this.Expression)).GetEnumerator();
+		return ((IEnumerable)_provider.Execute(Expression)).GetEnumerator();
 	}
 
 	public Type ElementType

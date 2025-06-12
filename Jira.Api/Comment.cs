@@ -74,11 +74,11 @@ public class Comment(RemoteComment remoteComment)
 	{
 		return new RemoteComment
 		{
-			authorUser = this.Author == null ? null : new JiraUser() { InternalIdentifier = this.Author },
-			body = this.Body,
-			groupLevel = this.GroupLevel,
-			roleLevel = this.RoleLevel,
-			visibility = this.Visibility
+			authorUser = Author == null ? null : new JiraUser() { InternalIdentifier = Author },
+			body = Body,
+			groupLevel = GroupLevel,
+			roleLevel = RoleLevel,
+			visibility = Visibility
 		};
 	}
 }

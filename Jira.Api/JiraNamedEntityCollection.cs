@@ -43,7 +43,7 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 	/// <param name="name">Entity name.</param>
 	public void Remove(string name)
 	{
-		this.Remove(this.Items.First(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)));
+		Remove(Items.First(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)));
 	}
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)

@@ -48,7 +48,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		_numberOfResults = null;
 		_skipResults = null;
 
-		this.Visit(expression);
+		Visit(expression);
 		return new JqlData { Expression = Jql, NumberOfResults = _numberOfResults, SkipResults = _skipResults };
 	}
 

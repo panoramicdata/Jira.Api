@@ -30,20 +30,20 @@ public class Worklog
 	/// <param name="comment">An optional comment to describe the work</param>
 	public Worklog(string timeSpent, DateTime startDate, string comment = null)
 	{
-		this.TimeSpent = timeSpent;
-		this.StartDate = startDate;
-		this.Comment = comment;
+		TimeSpent = timeSpent;
+		StartDate = startDate;
+		Comment = comment;
 	}
 
 	internal Worklog(RemoteWorklog remoteWorklog)
 	{
 		if (remoteWorklog != null)
 		{
-			this.Author = remoteWorklog.authorUser?.InternalIdentifier;
-			this.AuthorUser = remoteWorklog.authorUser;
-			this.Comment = remoteWorklog.comment;
-			this.StartDate = remoteWorklog.startDate;
-			this.TimeSpent = remoteWorklog.timeSpent;
+			Author = remoteWorklog.authorUser?.InternalIdentifier;
+			AuthorUser = remoteWorklog.authorUser;
+			Comment = remoteWorklog.comment;
+			StartDate = remoteWorklog.startDate;
+			TimeSpent = remoteWorklog.timeSpent;
 			Id = remoteWorklog.id;
 			CreateDate = remoteWorklog.created;
 			TimeSpentInSeconds = remoteWorklog.timeSpentInSeconds;
@@ -55,10 +55,10 @@ public class Worklog
 	{
 		return new RemoteWorklog()
 		{
-			authorUser = this.Author == null ? null : new JiraUser() { InternalIdentifier = this.Author },
-			comment = this.Comment,
-			startDate = this.StartDate,
-			timeSpent = this.TimeSpent
+			authorUser = Author == null ? null : new JiraUser() { InternalIdentifier = Author },
+			comment = Comment,
+			startDate = StartDate,
+			timeSpent = TimeSpent
 		};
 	}
 }

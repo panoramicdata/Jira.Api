@@ -53,7 +53,7 @@ internal static class ExpressionEvaluator
 
 		internal Expression Eval(Expression exp)
 		{
-			return this.Visit(exp);
+			return Visit(exp);
 		}
 
 		public override Expression Visit(Expression exp)
@@ -63,9 +63,9 @@ internal static class ExpressionEvaluator
 				return null;
 			}
 
-			if (this.candidates.Contains(exp))
+			if (candidates.Contains(exp))
 			{
-				return this.Evaluate(exp);
+				return Evaluate(exp);
 			}
 
 			return base.Visit(exp);
@@ -101,31 +101,31 @@ internal static class ExpressionEvaluator
 
 		internal HashSet<Expression> Nominate(Expression expression)
 		{
-			this.candidates = new HashSet<Expression>();
-			this.Visit(expression);
-			return this.candidates;
+			candidates = new HashSet<Expression>();
+			Visit(expression);
+			return candidates;
 		}
 
 		public override Expression Visit(Expression expression)
 		{
 			if (expression != null)
 			{
-				bool saveCannotBeEvaluated = this.cannotBeEvaluated;
-				this.cannotBeEvaluated = false;
+				bool saveCannotBeEvaluated = cannotBeEvaluated;
+				cannotBeEvaluated = false;
 				base.Visit(expression);
-				if (!this.cannotBeEvaluated)
+				if (!cannotBeEvaluated)
 				{
-					if (this.fnCanBeEvaluated(expression))
+					if (fnCanBeEvaluated(expression))
 					{
-						this.candidates.Add(expression);
+						candidates.Add(expression);
 					}
 					else
 					{
-						this.cannotBeEvaluated = true;
+						cannotBeEvaluated = true;
 					}
 				}
 
-				this.cannotBeEvaluated |= saveCannotBeEvaluated;
+				cannotBeEvaluated |= saveCannotBeEvaluated;
 			}
 
 			return expression;

@@ -32,6 +32,6 @@ public class ProjectVersionCollection : JiraNamedEntityCollection<ProjectVersion
 			throw new InvalidOperationException(string.Format("Unable to find version with name '{0}'.", versionName));
 		}
 
-		this.Add(version);
+		Add(version);
 	}
 }
