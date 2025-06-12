@@ -16,8 +16,10 @@ public class SetupProgram
 		WaitForJira().Wait();
 
 		var chromeService = ChromeDriverService.CreateDefaultService();
-		var options = new ChromeOptions();
-		options.LeaveBrowserRunning = true;
+		var options = new ChromeOptions
+		{
+			LeaveBrowserRunning = true
+		};
 		options.AddArgument("no-sandbox");
 		using (var webDriver = new ChromeDriver(chromeService, options, TimeSpan.FromMinutes(5)))
 		{

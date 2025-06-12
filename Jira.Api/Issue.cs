@@ -1171,7 +1171,7 @@ public class Issue : IRemoteIssueFieldProvider
 
 	internal async Task<RemoteIssue> ToRemoteAsync(CancellationToken token)
 	{
-		var remote = new RemoteIssue()
+		var remote = new RemoteIssue
 		{
 			assignee = this.Assignee,
 			description = this.Description,
@@ -1181,10 +1181,9 @@ public class Issue : IRemoteIssueFieldProvider
 			summary = this.Summary,
 			votesData = this.Votes != null ? new RemoteVotes() { hasVoted = this.HasUserVoted == true, votes = this.Votes.Value } : null,
 			duedate = this.DueDate,
-			timeTracking = this.TimeTrackingData
+			timeTracking = this.TimeTrackingData,
+			key = this.Key != null ? this.Key.Value : null
 		};
-
-		remote.key = this.Key != null ? this.Key.Value : null;
 
 		if (Status != null)
 		{

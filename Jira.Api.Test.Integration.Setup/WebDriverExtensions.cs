@@ -42,8 +42,10 @@ public static class WebDriverExtensions
 
 	public static IWebElement WaitForElement(this IWebDriver webDriver, TimeSpan timeout, Func<IWebDriver, IWebElement> func)
 	{
-		var wait = new WebDriverWait(webDriver, timeout);
-		wait.PollingInterval = TimeSpan.FromSeconds(1);
+		var wait = new WebDriverWait(webDriver, timeout)
+		{
+			PollingInterval = TimeSpan.FromSeconds(1)
+		};
 		wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
 		wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
 		return wait.Until(func);

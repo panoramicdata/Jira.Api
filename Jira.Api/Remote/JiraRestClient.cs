@@ -101,10 +101,12 @@ public class JiraRestClient : IJiraRestClient
 			throw new InvalidOperationException($"GET requests are not allowed to have a request body. Resource: {resource}. Body: {requestBody}");
 		}
 
-		var request = new RestRequest();
-		request.Method = method;
-		request.Resource = resource;
-		request.RequestFormat = DataFormat.Json;
+		var request = new RestRequest
+		{
+			Method = method,
+			Resource = resource,
+			RequestFormat = DataFormat.Json
+		};
 
 		if (requestBody is string)
 		{

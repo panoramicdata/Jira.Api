@@ -445,9 +445,11 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 	public Task AddAttachmentsAsync(string issueKey, UploadAttachmentInfo[] attachments, CancellationToken token = default)
 	{
 		var resource = String.Format("rest/api/2/issue/{0}/attachments", issueKey);
-		var request = new RestRequest();
-		request.Method = Method.POST;
-		request.Resource = resource;
+		var request = new RestRequest
+		{
+			Method = Method.POST,
+			Resource = resource
+		};
 		request.AddHeader("X-Atlassian-Token", "nocheck");
 		request.AlwaysMultipartFormData = true;
 

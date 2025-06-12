@@ -73,8 +73,10 @@ public class ProjectTest
 	{
 		var versionName = "New Version " + _random.Next(int.MaxValue);
 		var project = jira.Projects.GetProjectsAsync().Result.First();
-		var projectInfo = new ProjectVersionCreationInfo(versionName);
-		projectInfo.StartDate = new DateTime(2000, 11, 1);
+		var projectInfo = new ProjectVersionCreationInfo(versionName)
+		{
+			StartDate = new DateTime(2000, 11, 1)
+		};
 
 		// Add a project version.
 		var version = project.AddVersionAsync(projectInfo).Result;
