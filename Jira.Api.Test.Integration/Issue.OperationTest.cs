@@ -752,7 +752,7 @@ public class IssueOperationsTest
 		Assert.True(propertyKeys.SequenceEqual(new List<string>() { keyString }));
 
 		// Verify the property key returns the exact value
-		var issueProperties = await issue.GetPropertiesAsync(new[] { keyString, "non-existent-property" });
+		var issueProperties = await issue.GetPropertiesAsync([keyString, "non-existent-property"]);
 
 		var truth = new Dictionary<string, JToken>()
 			{
@@ -766,7 +766,7 @@ public class IssueOperationsTest
 		await issue.DeletePropertyAsync(keyString);
 
 		// Verify dictionary is empty
-		issueProperties = await issue.GetPropertiesAsync(new[] { keyString });
+		issueProperties = await issue.GetPropertiesAsync([keyString]);
 		Assert.False(issueProperties.Any());
 	}
 
@@ -787,7 +787,7 @@ public class IssueOperationsTest
 		await issue.DeletePropertyAsync(keyString);
 
 		// Verify the property isn't returned by the service
-		var issueProperties = await issue.GetPropertiesAsync(new[] { keyString });
+		var issueProperties = await issue.GetPropertiesAsync([keyString]);
 		Assert.False(issueProperties.Any());
 	}
 
@@ -810,7 +810,7 @@ public class IssueOperationsTest
 		await issue.SetPropertyAsync(keyString, keyValue);
 
 		// Verify the property key returns the exact value
-		var issueProperties = await issue.GetPropertiesAsync(new[] { keyString });
+		var issueProperties = await issue.GetPropertiesAsync([keyString]);
 		var truth = new Dictionary<string, JToken>()
 			{
                 // WARN; JToken of null is effectively returned as null.
@@ -846,7 +846,7 @@ public class IssueOperationsTest
 		await issue.SetPropertyAsync(keyString, keyValue);
 
 		// Verify the property key returns the exact value
-		var issueProperties = await issue.GetPropertiesAsync(new[] { keyString });
+		var issueProperties = await issue.GetPropertiesAsync([keyString]);
 
 		var truth = new Dictionary<string, JToken>()
 			{
@@ -877,7 +877,7 @@ public class IssueOperationsTest
 		await issue.SetPropertyAsync(keyString, keyValue);
 
 		// Verify the property key returns the exact value
-		var issueProperties = await issue.GetPropertiesAsync(new[] { keyString });
+		var issueProperties = await issue.GetPropertiesAsync([keyString]);
 
 		var truth = new Dictionary<string, JToken>()
 			{
@@ -909,7 +909,7 @@ public class IssueOperationsTest
 		await issue.SetPropertyAsync(keyString, keyValue);
 
 		// Verify the property key returns the exact value
-		var issueProperties = await issue.GetPropertiesAsync(new[] { keyString });
+		var issueProperties = await issue.GetPropertiesAsync([keyString]);
 
 		var truth = new Dictionary<string, JToken>()
 			{

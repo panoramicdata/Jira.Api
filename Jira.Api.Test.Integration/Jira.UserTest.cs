@@ -157,15 +157,15 @@ public class JiraUserTest
 		Assert.NotNull(user);
 
 		// test user is assignable because any user can be assigned to SCRUM issues.
-		var users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", new[] { "SCRUM" });
+		var users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["SCRUM"]);
 		Assert.NotNull(users.FirstOrDefault(u => u.Username == user.Username));
 
 		// test user is not assignable because only developers can be assigned to TST issues.
-		users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", new[] { "TST" });
+		users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["TST"]);
 		Assert.Null(users.FirstOrDefault(u => u.Username == user.Username));
 
 		// test user is not assignable because only developers can be assigned to both SCRUM and TST issues.
-		users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", new[] { "SCRUM", "TST" });
+		users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["SCRUM", "TST"]);
 		Assert.Null(users.FirstOrDefault(u => u.Username == user.Username));
 
 		// verify delete a user
