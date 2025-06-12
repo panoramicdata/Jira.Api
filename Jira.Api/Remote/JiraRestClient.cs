@@ -39,7 +39,7 @@ public class JiraRestClient : IJiraRestClient
 	/// <param name="settings">The settings to configure the rest client.</param>
 	protected JiraRestClient(string url, IAuthenticator authenticator, JiraRestClientSettings settings = null)
 	{
-		url = url.EndsWith("/") ? url : url += "/";
+		url = url.EndsWith('/') ? url : url += "/";
 		_clientSettings = settings ?? new JiraRestClientSettings();
 		_restClient = new RestClient(url)
 		{
