@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -57,7 +56,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		if (TryGetPropertyInfoFromBinaryExpression(expression, out PropertyInfo propertyInfo))
 		{
 			var attributes = propertyInfo.GetCustomAttributes(typeof(JqlFieldNameAttribute), true);
-			if (attributes.Count() > 0)
+			if (attributes.Length > 0)
 			{
 				return ((JqlFieldNameAttribute)attributes[0]).Name;
 			}
@@ -202,7 +201,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
 		}
 		else if (TryGetPropertyInfoFromBinaryExpression(expression, out propertyInfo)
-			&& propertyInfo.GetCustomAttributes(typeof(JqlContainsEqualityAttribute), true).Count() > 0)
+			&& propertyInfo.GetCustomAttributes(typeof(JqlContainsEqualityAttribute), true).Length > 0)
 		{
 			// Use the equality comparer depending on the presence of custom attribute.
 			operatorString = equal ? JiraOperators.CONTAINS : JiraOperators.NOTCONTAINS;

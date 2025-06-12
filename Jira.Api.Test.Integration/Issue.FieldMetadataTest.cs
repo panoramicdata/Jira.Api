@@ -32,7 +32,7 @@ public class IssueFieldMetadataTest
 		var issueFields = await iss.GetIssueFieldsEditMetadataAsync();
 
 		//assert: IssueFieldEditMetadata of issue
-		Assert.True(issueFields.Count() >= 34);
+		Assert.True(issueFields.Count >= 34);
 		IssueFieldEditMetadata customRadioField = issueFields["Custom Radio Field"];
 		Assert.True(customRadioField.IsCustom);
 		Assert.Equal("Custom Radio Field", customRadioField.Name);

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Jira.Api.Remote;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -43,7 +43,7 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 	{
 		var fieldValues = new List<RemoteFieldValue>();
 
-		if (_originalLabels.Count() != this.Count() || this.Except(_originalLabels).Any())
+		if (_originalLabels.Count != this.Count || this.Except(_originalLabels).Any())
 		{
 			fieldValues.Add(new RemoteFieldValue()
 			{

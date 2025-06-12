@@ -436,7 +436,7 @@ public class Issue : IRemoteIssueFieldProvider
 		{
 			var customField = _customFields[customFieldName];
 
-			if (customField != null && customField.Values != null && customField.Values.Count() > 0)
+			if (customField != null && customField.Values != null && customField.Values.Length > 0)
 			{
 				return customField.Values[0];
 			}

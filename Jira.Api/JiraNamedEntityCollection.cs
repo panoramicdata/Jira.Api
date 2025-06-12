@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -50,7 +50,7 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 	{
 		var fields = new List<RemoteFieldValue>();
 
-		if (_originalList.Count() != Items.Count() || _originalList.Except(Items).Any())
+		if (_originalList.Count != Items.Count || _originalList.Except(Items).Any())
 		{
 			var field = new RemoteFieldValue()
 			{

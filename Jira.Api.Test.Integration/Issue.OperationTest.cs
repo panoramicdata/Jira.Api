@@ -261,7 +261,7 @@ public class IssueOperationsTest
 		var allowedValues = resolution.AllowedValues.ToString();
 
 		// assert
-		Assert.Equal(3, fields.Count());
+		Assert.Equal(3, fields.Count);
 		Assert.Equal("Resolution", resolution.Name);
 		Assert.True(resolution.IsRequired);
 		Assert.Single(resolution.Operations);
