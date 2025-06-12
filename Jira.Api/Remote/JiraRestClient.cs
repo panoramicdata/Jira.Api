@@ -43,10 +43,9 @@ public class JiraRestClient : IJiraRestClient
 		_clientSettings = settings ?? new JiraRestClientSettings();
 		_restClient = new RestClient(url)
 		{
-			Proxy = _clientSettings.Proxy
+			Proxy = _clientSettings.Proxy,
+			Authenticator = authenticator
 		};
-
-		_restClient.Authenticator = authenticator;
 	}
 
 	/// <summary>
