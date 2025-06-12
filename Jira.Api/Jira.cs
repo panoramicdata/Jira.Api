@@ -1,8 +1,8 @@
-﻿using System;
-using System.Globalization;
-using Jira.Api.Linq;
+﻿using Jira.Api.Linq;
 using Jira.Api.OAuth;
 using Jira.Api.Remote;
+using System;
+using System.Globalization;
 
 namespace Jira.Api;
 
@@ -29,7 +29,11 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <param name="password">Password used to authenticate.</param>
 	/// <param name="settings">Settings to configure the rest client.</param>
 	/// <returns>Jira object configured to use REST API.</returns>
-	public static Jira CreateRestClient(string url, string username = null, string password = null, JiraRestClientSettings settings = null)
+	public static Jira CreateRestClient(
+		string url,
+		string username = null,
+		string password = null,
+		JiraRestClientSettings settings = null)
 	{
 		settings ??= new JiraRestClientSettings();
 		var restClient = new JiraRestClient(url, username, password, settings);
@@ -75,7 +79,9 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// </summary>
 	/// <param name="restClient">Rest client to use.</param>
 	/// <param name="cache">Cache to use.</param>
-	public static Jira CreateRestClient(IJiraRestClient restClient, JiraCache cache = null)
+	public static Jira CreateRestClient(
+		IJiraRestClient restClient,
+		JiraCache cache = null)
 	{
 		var services = new ServiceLocator();
 		var jira = new Jira(services, cache);

@@ -28,7 +28,7 @@ Follow the instructions carefully on the page above and when asked, use the Cons
 
 ## 5. Continue running CLI tool and retrieve tokens.
 
-Once you finished configuring the AppLink, go back to the jira-oauth-cli command and press any key to let it continue. The tool will issue the appropiate requests to get a request and access tokens and will print them.
+Once you finished configuring the AppLink, go back to the jira-oauth-cli command and press any key to let it continue. The tool will issue the appropriate requests to get a request and access tokens and will print them.
 
 ## 6. Use the tokens and secret to create a new Jira rest client.
 
