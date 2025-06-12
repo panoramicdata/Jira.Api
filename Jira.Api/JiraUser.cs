@@ -87,8 +87,7 @@ public class JiraUser
 
 	public override bool Equals(object other)
 	{
-		var otherAsThisType = other as JiraUser;
-		return otherAsThisType != null && InternalIdentifier.Equals(otherAsThisType.InternalIdentifier);
+		return other is JiraUser otherAsThisType && InternalIdentifier.Equals(otherAsThisType.InternalIdentifier);
 	}
 
 	public override int GetHashCode()

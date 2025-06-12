@@ -1129,9 +1129,7 @@ public class Issue : IRemoteIssueFieldProvider
 		{
 			if (typeof(IRemoteIssueFieldProvider).IsAssignableFrom(localProperty.PropertyType))
 			{
-				var fieldsProvider = localProperty.GetValue(this, null) as IRemoteIssueFieldProvider;
-
-				if (fieldsProvider != null)
+				if (localProperty.GetValue(this, null) is IRemoteIssueFieldProvider fieldsProvider)
 				{
 					var remoteFieldValues = await fieldsProvider.GetRemoteFieldValuesAsync(token).ConfigureAwait(false);
 					fields.AddRange(remoteFieldValues);
@@ -1254,8 +1252,7 @@ public class Issue : IRemoteIssueFieldProvider
 		}
 		else if (typeof(JiraNamedEntity).IsAssignableFrom(property.PropertyType))
 		{
-			var jiraNamedEntity = property.GetValue(container, null) as JiraNamedEntity;
-			if (jiraNamedEntity != null)
+			if (property.GetValue(container, null) is JiraNamedEntity jiraNamedEntity)
 			{
 				await jiraNamedEntity.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
 				return jiraNamedEntity.Id;
@@ -1265,8 +1262,7 @@ public class Issue : IRemoteIssueFieldProvider
 		}
 		else if (typeof(AbstractNamedRemoteEntity).IsAssignableFrom(property.PropertyType))
 		{
-			var remoteEntity = property.GetValue(container, null) as AbstractNamedRemoteEntity;
-			if (remoteEntity != null)
+			if (property.GetValue(container, null) is AbstractNamedRemoteEntity remoteEntity)
 			{
 				return remoteEntity.id;
 			}

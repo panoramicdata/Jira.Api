@@ -68,8 +68,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			}
 		}
 
-		var methodCallExpression = expression.Left as MethodCallExpression;
-		if (methodCallExpression != null)
+		if (expression.Left is MethodCallExpression methodCallExpression)
 		{
 			return string.Format("\"{0}\"", ((ConstantExpression)methodCallExpression.Arguments[0]).Value);
 		}
@@ -82,8 +81,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 	private bool TryGetPropertyInfoFromBinaryExpression(BinaryExpression expression, out PropertyInfo propertyInfo)
 	{
 		var memberExpression = expression.Left as MemberExpression;
-		var unaryExpression = expression.Left as UnaryExpression;
-		if (unaryExpression != null)
+		if (expression.Left is UnaryExpression unaryExpression)
 		{
 			memberExpression = unaryExpression.Operand as MemberExpression;
 		}
@@ -305,8 +303,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			orderByDirection = "desc";
 		}
 
-		var member = ((LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand).Body as MemberExpression;
-		if (member != null)
+		if (((LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand).Body is MemberExpression member)
 		{
 			var orderClause = string.Format("{0} {1}", member.Member.Name, orderByDirection);
 

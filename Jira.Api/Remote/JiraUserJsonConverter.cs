@@ -28,9 +28,7 @@ public class JiraUserJsonConverter : JsonConverter
 
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
-		var user = value as JiraUser;
-
-		if (user != null)
+		if (value is JiraUser user)
 		{
 			var outerObject = new JObject(new JProperty(
 				UserPrivacyEnabled ? "accountId" : "name",
