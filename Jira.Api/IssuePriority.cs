@@ -67,7 +67,7 @@ public class IssuePriority : JiraNamedConstant
 	/// </remarks>
 	public static bool operator ==(IssuePriority entity, string name)
 	{
-		if ((object)entity == null)
+		if (entity is null)
 		{
 			return name == null;
 		}
@@ -89,7 +89,7 @@ public class IssuePriority : JiraNamedConstant
 	/// </remarks>
 	public static bool operator !=(IssuePriority entity, string name)
 	{
-		if ((object)entity == null)
+		if (entity is null)
 		{
 			return name != null;
 		}

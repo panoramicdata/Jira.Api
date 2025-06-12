@@ -31,12 +31,12 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 
 	public static bool operator ==(IssueLabelCollection list, string value)
 	{
-		return (object)list == null ? value == null : list.Any(v => v == value);
+		return list is null ? value == null : list.Any(v => v == value);
 	}
 
 	public static bool operator !=(IssueLabelCollection list, string value)
 	{
-		return (object)list == null ? value == null : !list.Any(v => v == value);
+		return list is null ? value == null : !list.Any(v => v == value);
 	}
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)

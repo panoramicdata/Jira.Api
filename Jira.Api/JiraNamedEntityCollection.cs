@@ -29,12 +29,12 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 
 	public static bool operator ==(JiraNamedEntityCollection<T> list, string value)
 	{
-		return (object)list == null ? value == null : list.Any(v => v.Name == value);
+		return list is null ? value == null : list.Any(v => v.Name == value);
 	}
 
 	public static bool operator !=(JiraNamedEntityCollection<T> list, string value)
 	{
-		return (object)list == null ? value == null : !list.Any(v => v.Name == value);
+		return list is null ? value == null : !list.Any(v => v.Name == value);
 	}
 
 	/// <summary>

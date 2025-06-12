@@ -27,7 +27,7 @@ public class ComparableString(string value)
 
 	public static bool operator ==(ComparableString field, string value)
 	{
-		if ((object)field == null)
+		if (field is null)
 		{
 			return value == null;
 		}
@@ -39,7 +39,7 @@ public class ComparableString(string value)
 
 	public static bool operator !=(ComparableString field, string value)
 	{
-		if ((object)field == null)
+		if (field is null)
 		{
 			return value != null;
 		}
@@ -71,7 +71,7 @@ public class ComparableString(string value)
 
 	public static bool operator ==(ComparableString field, DateTime value)
 	{
-		if ((object)field == null)
+		if (field is null)
 		{
 			return value == null;
 		}
@@ -83,7 +83,7 @@ public class ComparableString(string value)
 
 	public static bool operator !=(ComparableString field, DateTime value)
 	{
-		if ((object)field == null)
+		if (field is null)
 		{
 			return value != null;
 		}

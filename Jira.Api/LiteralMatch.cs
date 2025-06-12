@@ -18,7 +18,7 @@ public class LiteralMatch(string value)
 
 	public static bool operator ==(ComparableString comparable, LiteralMatch literal)
 	{
-		if ((object)comparable == null)
+		if (comparable is null)
 		{
 			return literal == null;
 		}
@@ -30,7 +30,7 @@ public class LiteralMatch(string value)
 
 	public static bool operator !=(ComparableString comparable, LiteralMatch literal)
 	{
-		if ((object)comparable == null)
+		if (comparable is null)
 		{
 			return literal != null;
 		}

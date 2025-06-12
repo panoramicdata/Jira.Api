@@ -66,7 +66,7 @@ public class IssueResolution : JiraNamedEntity
 	/// </remarks>
 	public static bool operator ==(IssueResolution entity, string name)
 	{
-		if ((object)entity == null)
+		if (entity is null)
 		{
 			return name == null;
 		}
@@ -88,7 +88,7 @@ public class IssueResolution : JiraNamedEntity
 	/// </remarks>
 	public static bool operator !=(IssueResolution entity, string name)
 	{
-		if ((object)entity == null)
+		if (entity is null)
 		{
 			return name != null;
 		}

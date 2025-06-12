@@ -71,7 +71,7 @@ public class IssueStatus : JiraNamedConstant
 	/// </remarks>
 	public static bool operator ==(IssueStatus entity, string name)
 	{
-		if ((object)entity == null)
+		if (entity is null)
 		{
 			return name == null;
 		}
@@ -93,7 +93,7 @@ public class IssueStatus : JiraNamedConstant
 	/// </remarks>
 	public static bool operator !=(IssueStatus entity, string name)
 	{
-		if ((object)entity == null)
+		if (entity is null)
 		{
 			return name != null;
 		}
