@@ -120,13 +120,13 @@ public class ComparableString(string value)
 
 	public override bool Equals(object obj)
 	{
-		if (obj is ComparableString)
+		if (obj is ComparableString comparableString)
 		{
-			return this.Value.Equals(((ComparableString)obj).Value);
+			return this.Value.Equals(comparableString.Value);
 		}
-		else if (obj is string)
+		else if (obj is string obString)
 		{
-			return this.Value.Equals((string)obj);
+			return this.Value.Equals(obString);
 		}
 
 		return base.Equals(obj);
