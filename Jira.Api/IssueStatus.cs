@@ -47,8 +47,7 @@ public class IssueStatus : JiraNamedConstant
 	{
 		if (name != null)
 		{
-			int id;
-			if (int.TryParse(name, out id))
+			if (int.TryParse(name, out int id))
 			{
 				return new IssueStatus(name /*as id*/);
 			}

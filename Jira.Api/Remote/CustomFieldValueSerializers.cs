@@ -127,9 +127,8 @@ public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : 
 	public JToken ToJson(string[] values)
 	{
 		string val = values?.FirstOrDefault();
-		int id = 0;
 
-		if (int.TryParse(val, out id))
+		if (int.TryParse(val, out int id))
 		{
 			return id;
 		}

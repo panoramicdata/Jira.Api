@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -43,8 +43,7 @@ public class IssuePriority : JiraNamedConstant
 	{
 		if (name != null)
 		{
-			int id;
-			if (int.TryParse(name, out id))
+			if (int.TryParse(name, out int id))
 			{
 				return new IssuePriority(name /*as id*/);
 			}

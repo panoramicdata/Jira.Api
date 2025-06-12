@@ -54,8 +54,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 
 	private string GetFieldNameFromBinaryExpression(BinaryExpression expression)
 	{
-		PropertyInfo propertyInfo = null;
-		if (TryGetPropertyInfoFromBinaryExpression(expression, out propertyInfo))
+		if (TryGetPropertyInfoFromBinaryExpression(expression, out PropertyInfo propertyInfo))
 		{
 			var attributes = propertyInfo.GetCustomAttributes(typeof(JqlFieldNameAttribute), true);
 			if (attributes.Count() > 0)

@@ -27,10 +27,9 @@ public class ServiceLocator
 	public void Register<TService>(Func<TService> factory)
 	{
 		Type serviceType = typeof(TService);
-		object factoryObj = null;
 
 		_factories.AddOrUpdate(serviceType, factory, (s, f) => factory);
-		_services.TryRemove(serviceType, out factoryObj);
+		_services.TryRemove(serviceType, out object factoryObj);
 	}
 
 	/// <summary>
@@ -40,9 +39,8 @@ public class ServiceLocator
 	{
 		Type serviceType = typeof(TService);
 		object factoryObj = null;
-		object serviceObj = null;
 
-		if (_services.TryGetValue(serviceType, out serviceObj))
+		if (_services.TryGetValue(serviceType, out object serviceObj))
 		{
 			return (TService)serviceObj;
 		}
