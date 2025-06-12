@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net90</TargetFrameworks>
-		<PackageId>Atlassian.SDK</PackageId>
+		<PackageId>Jira.Api</PackageId>
 		<Version>$(Version)</Version>
 		<Authors>Panoramic Data Limited</Authors>
 		<Company>Panoramic Data Limited</Company>
