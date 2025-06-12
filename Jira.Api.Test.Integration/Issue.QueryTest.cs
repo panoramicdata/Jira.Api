@@ -17,7 +17,7 @@ public class IssueQueryTest
 		var options = new IssueSearchOptions("key = TST-1")
 		{
 			FetchBasicFields = false,
-			AdditionalFields = new List<string>() { "summary" }
+			AdditionalFields = ["summary"]
 		};
 
 		var issues = await jira.Issues.GetIssuesFromJqlAsync(options);
@@ -32,7 +32,7 @@ public class IssueQueryTest
 		var options = new IssueSearchOptions("key = TST-1")
 		{
 			FetchBasicFields = false,
-			AdditionalFields = new List<string>() { "attachment" }
+			AdditionalFields = ["attachment"]
 		};
 
 		var issues = await jira.Issues.GetIssuesFromJqlAsync(options);
@@ -62,7 +62,7 @@ public class IssueQueryTest
 		var options = new IssueSearchOptions($"key = {issue.Key.Value}")
 		{
 			FetchBasicFields = false,
-			AdditionalFields = new List<string>() { "comment", "watches", "worklog" }
+			AdditionalFields = ["comment", "watches", "worklog"]
 		};
 
 		var issues = await jira.Issues.GetIssuesFromJqlAsync(options);
@@ -138,7 +138,7 @@ public class IssueQueryTest
 	[ClassData(typeof(JiraProvider))]
 	public void GetIssuesFromFilterWithByNameWithFields(Jira jira)
 	{
-		var issues = jira.Filters.GetIssuesFromFavoriteWithFieldsAsync("One Issue Filter", fields: new List<string> { "watches" }).Result;
+		var issues = jira.Filters.GetIssuesFromFavoriteWithFieldsAsync("One Issue Filter", fields: ["watches"]).Result;
 
 		Assert.Single(issues);
 		var issue = issues.First();
@@ -164,7 +164,7 @@ public class IssueQueryTest
 	[ClassData(typeof(JiraProvider))]
 	public void GetIssuesFromFilterByIdWithFields(Jira jira)
 	{
-		var issues = jira.Filters.GetIssuesFromFilterWithFieldsAsync("10000", fields: new List<string> { "watches" }).Result;
+		var issues = jira.Filters.GetIssuesFromFilterWithFieldsAsync("10000", fields: ["watches"]).Result;
 
 		Assert.Single(issues);
 		var issue = issues.First();

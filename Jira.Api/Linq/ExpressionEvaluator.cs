@@ -101,7 +101,7 @@ internal static class ExpressionEvaluator
 
 		internal HashSet<Expression> Nominate(Expression expression)
 		{
-			candidates = new HashSet<Expression>();
+			candidates = [];
 			Visit(expression);
 			return candidates;
 		}

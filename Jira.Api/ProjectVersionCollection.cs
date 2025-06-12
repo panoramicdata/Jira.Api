@@ -10,7 +10,7 @@ namespace Jira.Api;
 public class ProjectVersionCollection : JiraNamedEntityCollection<ProjectVersion>
 {
 	internal ProjectVersionCollection(string fieldName, Jira jira, string projectKey)
-		: this(fieldName, jira, projectKey, new List<ProjectVersion>())
+		: this(fieldName, jira, projectKey, [])
 	{
 	}
 

@@ -33,11 +33,11 @@ internal class JiraProvider : IEnumerable<object[]>
 
 	public JiraProvider()
 	{
-		_data = new List<object[]>
-			{
+		_data =
+			[
 				new object[] { _jiraWithCredentials },
 				new object[] { _jiraWithOAuth }
-			};
+			];
 	}
 
 	public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();

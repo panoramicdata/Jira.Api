@@ -44,7 +44,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		expression = ExpressionEvaluator.PartialEval(expression);
 		_jqlWhere = new StringBuilder();
 		_jqlOrderBy = new StringBuilder();
-		_whereExpressions = new List<Expression>();
+		_whereExpressions = [];
 		_numberOfResults = null;
 		_skipResults = null;
 

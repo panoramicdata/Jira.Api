@@ -10,15 +10,15 @@ public class CustomFieldFetchOptions
 	/// <summary>
 	/// The list of projects with which to filter the results.
 	/// </summary>
-	public IList<string> ProjectKeys { get; } = new List<string>();
+	public IList<string> ProjectKeys { get; } = [];
 
 	/// <summary>
 	/// The list of issue type ids with which to filter the results.
 	/// </summary>
-	public IList<string> IssueTypeIds { get; } = new List<string>();
+	public IList<string> IssueTypeIds { get; } = [];
 
 	/// <summary>
 	/// The list of issue type names with which to filter the results.
 	/// </summary>
-	public IList<string> IssueTypeNames { get; } = new List<string>();
+	public IList<string> IssueTypeNames { get; } = [];
 }

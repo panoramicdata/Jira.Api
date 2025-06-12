@@ -57,7 +57,7 @@ public class Comment(RemoteComment remoteComment)
 			{
 				if (_properties == null)
 				{
-					_propertiesMap = new Dictionary<string, object>();
+					_propertiesMap = [];
 				}
 				else
 				{

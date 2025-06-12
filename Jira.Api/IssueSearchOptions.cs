@@ -40,5 +40,5 @@ public class IssueSearchOptions(string jql)
 	/// <summary>
 	/// Additional fields to include as part of the response.
 	/// </summary>
-	public IList<string> AdditionalFields { get; set; } = new List<string>();
+	public IList<string> AdditionalFields { get; set; } = [];
 }

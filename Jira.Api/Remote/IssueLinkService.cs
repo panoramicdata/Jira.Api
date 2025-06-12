@@ -15,10 +15,12 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 
 	public Task CreateLinkAsync(string outwardIssueKey, string inwardIssueKey, string linkName, string comment, CancellationToken token = default)
 	{
-		var bodyObject = new JObject();
-		bodyObject.Add("type", new JObject(new JProperty("name", linkName)));
-		bodyObject.Add("inwardIssue", new JObject(new JProperty("key", inwardIssueKey)));
-		bodyObject.Add("outwardIssue", new JObject(new JProperty("key", outwardIssueKey)));
+		var bodyObject = new JObject
+		{
+			{ "type", new JObject(new JProperty("name", linkName)) },
+			{ "inwardIssue", new JObject(new JProperty("key", inwardIssueKey)) },
+			{ "outwardIssue", new JObject(new JProperty("key", outwardIssueKey)) }
+		};
 
 		if (!string.IsNullOrEmpty(comment))
 		{

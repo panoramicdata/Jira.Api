@@ -17,7 +17,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	private readonly Issue _issue;
 
 	internal CustomFieldValueCollection(Issue issue)
-		: this(issue, new List<CustomFieldValue>())
+		: this(issue, [])
 	{
 	}
 
