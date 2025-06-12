@@ -132,6 +132,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		{
 			resource += "?notifyUsers=false";
 		}
+
 		var fieldProvider = issue as IRemoteIssueFieldProvider;
 		var remoteFields = await fieldProvider.GetRemoteFieldValuesAsync(token).ConfigureAwait(false);
 		var remoteIssue = await issue.ToRemoteAsync(token).ConfigureAwait(false);
@@ -596,6 +597,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		{
 			body = new { accountId = assignee };
 		}
+
 		return _jira.RestClient.ExecuteRequestAsync(Method.PUT, resource, body, token);
 	}
 

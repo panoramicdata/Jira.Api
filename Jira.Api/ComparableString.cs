@@ -138,6 +138,7 @@ public class ComparableString(string value)
 		{
 			return 0;
 		}
+
 		return this.Value.GetHashCode();
 	}
 }

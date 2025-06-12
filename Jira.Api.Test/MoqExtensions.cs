@@ -38,6 +38,7 @@ public static class MoqExtensions
 			{
 				throw result as Exception;
 			}
+
 			return (TResult)result;
 		});
 	}

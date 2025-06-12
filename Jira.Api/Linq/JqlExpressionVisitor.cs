@@ -170,6 +170,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		{
 			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
 		}
+
 		_jqlWhere.Append(String.Format(" {0} ", operatorString));
 
 		// value
@@ -213,6 +214,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		{
 			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
 		}
+
 		_jqlWhere.Append(String.Format(" {0} ", operatorString));
 
 		// value

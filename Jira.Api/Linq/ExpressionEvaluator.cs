@@ -62,10 +62,12 @@ internal static class ExpressionEvaluator
 			{
 				return null;
 			}
+
 			if (this.candidates.Contains(exp))
 			{
 				return this.Evaluate(exp);
 			}
+
 			return base.Visit(exp);
 		}
 
@@ -75,6 +77,7 @@ internal static class ExpressionEvaluator
 			{
 				return e;
 			}
+
 			LambdaExpression lambda = Expression.Lambda(e);
 			Delegate fn = lambda.Compile();
 			return Expression.Constant(fn.DynamicInvoke(null), e.Type);
@@ -121,8 +124,10 @@ internal static class ExpressionEvaluator
 						this.cannotBeEvaluated = true;
 					}
 				}
+
 				this.cannotBeEvaluated |= saveCannotBeEvaluated;
 			}
+
 			return expression;
 		}
 	}

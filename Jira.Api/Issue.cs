@@ -440,6 +440,7 @@ public class Issue : IRemoteIssueFieldProvider
 			{
 				return customField.Values[0];
 			}
+
 			return null;
 		}
 		set
@@ -1259,6 +1260,7 @@ public class Issue : IRemoteIssueFieldProvider
 				await jiraNamedEntity.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
 				return jiraNamedEntity.Id;
 			}
+
 			return null;
 		}
 		else if (typeof(AbstractNamedRemoteEntity).IsAssignableFrom(property.PropertyType))
@@ -1268,6 +1270,7 @@ public class Issue : IRemoteIssueFieldProvider
 			{
 				return remoteEntity.id;
 			}
+
 			return null;
 		}
 		else
