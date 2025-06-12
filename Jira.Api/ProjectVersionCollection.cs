@@ -25,13 +25,7 @@ public class ProjectVersionCollection : JiraNamedEntityCollection<ProjectVersion
 	/// <param name="versionName">Version name</param>
 	public void Add(string versionName)
 	{
-		var version = _jira.Versions.GetVersionsAsync(_projectKey).Result.FirstOrDefault(v => v.Name.Equals(versionName, StringComparison.OrdinalIgnoreCase));
-
-		if (version == null)
-		{
-			throw new InvalidOperationException(string.Format("Unable to find version with name '{0}'.", versionName));
-		}
-
+		var version = _jira.Versions.GetVersionsAsync(_projectKey).Result.FirstOrDefault(v => v.Name.Equals(versionName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(string.Format("Unable to find version with name '{0}'.", versionName));
 		Add(version);
 	}
 }

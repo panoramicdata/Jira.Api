@@ -70,17 +70,11 @@ public class JiraNamedEntity : IJiraEntity
 			var entities = await GetEntitiesAsync(jira, token).ConfigureAwait(false);
 			var entity = entities.FirstOrDefault(e =>
 				(!string.IsNullOrEmpty(Name) && string.Equals(e.Name, Name, StringComparison.OrdinalIgnoreCase)) ||
-				(!string.IsNullOrEmpty(Id) && string.Equals(e.Id, Id, StringComparison.OrdinalIgnoreCase)));
-
-			if (entity == null)
-			{
-				throw new InvalidOperationException(string.Format("Entity with id '{0}' and name '{1}' was not found for type '{2}'. Available: [{3}]",
+				(!string.IsNullOrEmpty(Id) && string.Equals(e.Id, Id, StringComparison.OrdinalIgnoreCase))) ?? throw new InvalidOperationException(string.Format("Entity with id '{0}' and name '{1}' was not found for type '{2}'. Available: [{3}]",
 					Id,
 					Name,
 					GetType(),
 					string.Join(",", entities.Select(s => s.Id + ":" + s.Name).ToArray())));
-			}
-
 			Id = entity.Id;
 			Name = entity.Name;
 		}

@@ -66,25 +66,13 @@ internal class IssueFilterService(Jira jira) : IIssueFilterService
 	private async Task<string> GetFilterJqlByNameAsync(string filterName, CancellationToken token = default)
 	{
 		var filters = await GetFavouritesAsync(token).ConfigureAwait(false);
-		var filter = filters.FirstOrDefault(f => f.Name.Equals(filterName, StringComparison.OrdinalIgnoreCase));
-
-		if (filter == null)
-		{
-			throw new InvalidOperationException($"Filter with name '{filterName}' was not found.");
-		}
-
+		var filter = filters.FirstOrDefault(f => f.Name.Equals(filterName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"Filter with name '{filterName}' was not found.");
 		return filter.Jql;
 	}
 
 	private async Task<string> GetFilterJqlByIdAsync(string filterId, CancellationToken token = default)
 	{
-		var filter = await GetFilterAsync(filterId, token);
-
-		if (filter == null)
-		{
-			throw new InvalidOperationException($"Filter with ID '{filterId}' was not found.");
-		}
-
+		var filter = await GetFilterAsync(filterId, token) ?? throw new InvalidOperationException($"Filter with ID '{filterId}' was not found.");
 		return filter.Jql;
 	}
 }

@@ -25,13 +25,7 @@ public class ProjectComponentCollection : JiraNamedEntityCollection<ProjectCompo
 	/// <param name="componentName">Component name</param>
 	public void Add(string componentName)
 	{
-		var component = _jira.Components.GetComponentsAsync(_projectKey).Result.FirstOrDefault(v => v.Name.Equals(componentName, StringComparison.OrdinalIgnoreCase));
-
-		if (component == null)
-		{
-			throw new InvalidOperationException(string.Format("Unable to find component with name '{0}'.", componentName));
-		}
-
+		var component = _jira.Components.GetComponentsAsync(_projectKey).Result.FirstOrDefault(v => v.Name.Equals(componentName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(string.Format("Unable to find component with name '{0}'.", componentName));
 		Add(component);
 	}
 }

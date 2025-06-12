@@ -54,12 +54,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
-		var issueWrapper = value as RemoteIssueWrapper;
-		if (issueWrapper == null)
-		{
-			throw new InvalidOperationException(string.Format("value must be of type {0}.", typeof(RemoteIssueWrapper)));
-		}
-
+		var issueWrapper = value as RemoteIssueWrapper ?? throw new InvalidOperationException(string.Format("value must be of type {0}.", typeof(RemoteIssueWrapper)));
 		var issue = issueWrapper.RemoteIssue;
 
 		// prepare the JiraUser identifiers

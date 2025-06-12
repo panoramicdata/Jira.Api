@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
 
 namespace Jira.Api.Remote;
 
@@ -39,13 +39,7 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
 		var resource = string.Format("rest/api/2/issue/{0}?fields=issuelinks,created", issue.Key.Value);
 		var issueLinksResult = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);
-		var issueLinksJson = issueLinksResult["fields"]["issuelinks"];
-
-		if (issueLinksJson == null)
-		{
-			throw new InvalidOperationException("There is no 'issueLinks' field on the issue data, make sure issue linking is turned on in JIRA.");
-		}
-
+		var issueLinksJson = issueLinksResult["fields"]["issuelinks"] ?? throw new InvalidOperationException("There is no 'issueLinks' field on the issue data, make sure issue linking is turned on in JIRA.");
 		var issueLinks = issueLinksJson.Cast<JObject>();
 		var filteredIssueLinks = issueLinks;
 

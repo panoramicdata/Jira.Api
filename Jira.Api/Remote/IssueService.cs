@@ -200,13 +200,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		else
 		{
 			var actions = await GetActionsAsync(issue.Key.Value, token).ConfigureAwait(false);
-			var action = actions.FirstOrDefault(a => a.Name.Equals(actionNameOrId, StringComparison.OrdinalIgnoreCase));
-
-			if (action == null)
-			{
-				throw new InvalidOperationException(string.Format("Workflow action with name '{0}' not found.", actionNameOrId));
-			}
-
+			var action = actions.FirstOrDefault(a => a.Name.Equals(actionNameOrId, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(string.Format("Workflow action with name '{0}' not found.", actionNameOrId));
 			actionId = action.Id;
 		}
 

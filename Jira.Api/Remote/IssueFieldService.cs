@@ -63,13 +63,7 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 			}
 
 			var jObject = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);
-			var jProject = jObject["projects"].FirstOrDefault();
-
-			if (jProject == null)
-			{
-				throw new InvalidOperationException($"Project with key '{projectKey}' was not found on the Jira server.");
-			}
-
+			var jProject = jObject["projects"].FirstOrDefault() ?? throw new InvalidOperationException($"Project with key '{projectKey}' was not found on the Jira server.");
 			var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
 			var customFields = jProject["issuetypes"].SelectMany(issueType => GetCustomFieldsFromIssueType(issueType, serializerSettings));
 			var distinctFields = customFields.GroupBy(c => c.Id).Select(g => g.First());
