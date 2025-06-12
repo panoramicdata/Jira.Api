@@ -109,7 +109,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 			startAt = options.StartAt,
 			maxResults = options.MaxIssuesPerRequest ?? this.MaxIssuesPerRequest,
 			validateQuery = options.ValidateQuery,
-			fields = fields
+			fields
 		};
 
 		var result = await _jira.RestClient.ExecuteRequestAsync(Method.POST, "rest/api/2/search", parameters, token).ConfigureAwait(false);
@@ -137,7 +137,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		var remoteIssue = await issue.ToRemoteAsync(token).ConfigureAwait(false);
 		var fields = await this.BuildFieldsObjectFromIssueAsync(remoteIssue, remoteFields, token).ConfigureAwait(false);
 
-		await _jira.RestClient.ExecuteRequestAsync(Method.PUT, resource, new { fields = fields }, token).ConfigureAwait(false);
+		await _jira.RestClient.ExecuteRequestAsync(Method.PUT, resource, new { fields }, token).ConfigureAwait(false);
 	}
 
 	public Task UpdateIssueAsync(Issue issue, CancellationToken token = default)
@@ -234,7 +234,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 				id = actionId
 			},
 			update = updatesObject,
-			fields = fields
+			fields
 		};
 
 		await _jira.RestClient.ExecuteRequestAsync(Method.POST, resource, requestBody, token).ConfigureAwait(false);
@@ -373,7 +373,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		{
 			fields = new
 			{
-				labels = labels
+				labels
 			}
 
 		}, token);
