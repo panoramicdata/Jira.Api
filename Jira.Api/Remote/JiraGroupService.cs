@@ -12,7 +12,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 {
 	private readonly Jira _jira = jira;
 
-	public Task AddUserAsync(string groupname, string username, CancellationToken token = default(CancellationToken))
+	public Task AddUserAsync(string groupname, string username, CancellationToken token = default)
 	{
 		var resource = String.Format("rest/api/2/group/user?groupname={0}", Uri.EscapeUriString(groupname));
 		object body = new { name = username };
@@ -25,7 +25,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 		return _jira.RestClient.ExecuteRequestAsync(Method.POST, resource, requestBody, token);
 	}
 
-	public Task CreateGroupAsync(string groupName, CancellationToken token = default(CancellationToken))
+	public Task CreateGroupAsync(string groupName, CancellationToken token = default)
 	{
 		var resource = "rest/api/2/group";
 		var requestBody = JToken.FromObject(new { name = groupName });
@@ -33,7 +33,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 		return _jira.RestClient.ExecuteRequestAsync(Method.POST, resource, requestBody, token);
 	}
 
-	public Task DeleteGroupAsync(string groupName, string swapGroupName = null, CancellationToken token = default(CancellationToken))
+	public Task DeleteGroupAsync(string groupName, string swapGroupName = null, CancellationToken token = default)
 	{
 		var resource = String.Format("rest/api/2/group?groupname={0}", Uri.EscapeUriString(groupName));
 
@@ -45,7 +45,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 		return _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token);
 	}
 
-	public async Task<IPagedQueryResult<JiraUser>> GetUsersAsync(string groupname, bool includeInactiveUsers = false, int maxResults = 50, int startAt = 0, CancellationToken token = default(CancellationToken))
+	public async Task<IPagedQueryResult<JiraUser>> GetUsersAsync(string groupname, bool includeInactiveUsers = false, int maxResults = 50, int startAt = 0, CancellationToken token = default)
 	{
 		var resource = String.Format(
 			"rest/api/2/group/member?groupname={0}&includeInactiveUsers={1}&startAt={2}&maxResults={3}",
@@ -63,7 +63,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 		return PagedQueryResult<JiraUser>.FromJson((JObject)response, users);
 	}
 
-	public Task RemoveUserAsync(string groupname, string username, CancellationToken token = default(CancellationToken))
+	public Task RemoveUserAsync(string groupname, string username, CancellationToken token = default)
 	{
 		var resource = String.Format("rest/api/2/group/user?groupname={0}&{1}={2}",
 			Uri.EscapeUriString(groupname),

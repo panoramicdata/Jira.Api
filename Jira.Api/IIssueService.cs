@@ -33,14 +33,14 @@ public interface IIssueService
 	/// </summary>
 	/// <param name="issueKey">The issue key to retrieve</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<Issue> GetIssueAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<Issue> GetIssueAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Retrieves a list of issues by their keys.
 	/// </summary>
 	/// <param name="issueKeys">List of issue keys to retrieve.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IDictionary<string, Issue>> GetIssuesAsync(IEnumerable<string> issueKeys, CancellationToken token = default(CancellationToken));
+	Task<IDictionary<string, Issue>> GetIssuesAsync(IEnumerable<string> issueKeys, CancellationToken token = default);
 
 	/// <summary>
 	/// Retrieves a list of issues by their keys.
@@ -53,7 +53,7 @@ public interface IIssueService
 	/// </summary>
 	/// <param name="issue">Issue to update.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task UpdateIssueAsync(Issue issue, CancellationToken token = default(CancellationToken));
+	Task UpdateIssueAsync(Issue issue, CancellationToken token = default);
 
 	/// <summary>
 	/// Updates all fields of an issue.
@@ -61,7 +61,7 @@ public interface IIssueService
 	/// <param name="issue">Issue to update.</param>
 	/// <param name="options">Options for the update</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task UpdateIssueAsync(Issue issue, IssueUpdateOptions options, CancellationToken token = default(CancellationToken));
+	Task UpdateIssueAsync(Issue issue, IssueUpdateOptions options, CancellationToken token = default);
 
 	/// <summary>
 	/// Creates an issue and returns a new instance populated from server.
@@ -69,14 +69,14 @@ public interface IIssueService
 	/// <param name="issue">Issue to create.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
 	/// <returns>Promise that contains the new issue key when resolved.</returns>
-	Task<string> CreateIssueAsync(Issue issue, CancellationToken token = default(CancellationToken));
+	Task<string> CreateIssueAsync(Issue issue, CancellationToken token = default);
 
 	/// <summary>
 	/// Deletes the specified issue.
 	/// </summary>
 	/// <param name="issueKey">Key of issue to delete.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task DeleteIssueAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task DeleteIssueAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Execute a specific JQL query and return the resulting issues.
@@ -85,14 +85,14 @@ public interface IIssueService
 	/// <param name="maxIssues">Maximum number of issues to return (defaults to 20). The maximum allowable value is dictated by the JIRA property 'jira.search.views.default.max'. If you specify a value that is higher than this number, your search results will be truncated.</param>
 	/// <param name="startAt">Index of the first issue to return (0-based)</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IPagedQueryResult<Issue>> GetIssuesFromJqlAsync(string jql, int? maxIssues = null, int startAt = 0, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetIssuesFromJqlAsync(string jql, int? maxIssues = null, int startAt = 0, CancellationToken token = default);
 
 	/// <summary>
 	/// Execute a specific JQL query and return the resulting issues.
 	/// </summary>
 	/// <param name="options">Options to use when executing the search.</param>
 	/// <param name="token">Cancellatin token for this operation.</param>
-	Task<IPagedQueryResult<Issue>> GetIssuesFromJqlAsync(IssueSearchOptions options, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetIssuesFromJqlAsync(IssueSearchOptions options, CancellationToken token = default);
 
 	/// <summary>
 	/// Transition an issue through a workflow action.
@@ -101,21 +101,21 @@ public interface IIssueService
 	/// <param name="actionNameOrId">The workflow action name or id to transition to.</param>
 	/// <param name="updates">Additional updates to perform when transitioning the issue.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task ExecuteWorkflowActionAsync(Issue issue, string actionNameOrId, WorkflowTransitionUpdates updates, CancellationToken token = default(CancellationToken));
+	Task ExecuteWorkflowActionAsync(Issue issue, string actionNameOrId, WorkflowTransitionUpdates updates, CancellationToken token = default);
 
 	/// <summary>
 	/// Gets time tracking information for an issue.
 	/// </summary>
 	/// <param name="issueKey">The issue key.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IssueTimeTrackingData> GetTimeTrackingDataAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IssueTimeTrackingData> GetTimeTrackingDataAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Gets metadata object containing dictionary with issuefields identifiers as keys and their metadata as values
 	/// </summary>
 	/// <param name="issueKey">The issue key.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IDictionary<String, IssueFieldEditMetadata>> GetFieldsEditMetadataAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IDictionary<String, IssueFieldEditMetadata>> GetFieldsEditMetadataAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Adds a comment to an issue.
@@ -123,14 +123,14 @@ public interface IIssueService
 	/// <param name="issueKey">Issue key to add the comment to.</param>
 	/// <param name="comment">Comment object to add.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<Comment> AddCommentAsync(string issueKey, Comment comment, CancellationToken token = default(CancellationToken));
+	Task<Comment> AddCommentAsync(string issueKey, Comment comment, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns all comments of an issue.
 	/// </summary>
 	/// <param name="issueKey">Issue key to retrieve comments from.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<Comment>> GetCommentsAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<Comment>> GetCommentsAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns all comments of an issue.
@@ -138,7 +138,7 @@ public interface IIssueService
 	/// <param name="issueKey">Issue key to retrieve comments from.</param>
 	/// <param name="options">Options to configure the values of the query.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<Comment>> GetCommentsAsync(string issueKey, CommentQueryOptions options, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<Comment>> GetCommentsAsync(string issueKey, CommentQueryOptions options, CancellationToken token = default);
 
 	/// <summary>
 	/// Removes a comment from an issue.
@@ -146,7 +146,7 @@ public interface IIssueService
 	/// <param name="issueKey">Issue key to remove the comment from.</param>
 	/// <param name="commentId">Identifier of the comment to remove.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task DeleteCommentAsync(string issueKey, string commentId, CancellationToken token = default(CancellationToken));
+	Task DeleteCommentAsync(string issueKey, string commentId, CancellationToken token = default);
 
 	/// <summary>
 	/// Updates a comment in an issue.
@@ -154,7 +154,7 @@ public interface IIssueService
 	/// <param name="issueKey">Issue key to update the comment to.</param>
 	/// <param name="comment">Comment object to update.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<Comment> UpdateCommentAsync(string issueKey, Comment comment, CancellationToken token = default(CancellationToken));
+	Task<Comment> UpdateCommentAsync(string issueKey, Comment comment, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns the comments of an issue with paging.
@@ -163,14 +163,14 @@ public interface IIssueService
 	/// <param name="maxComments">Maximum number of comments to retrieve.</param>
 	/// <param name="startAt">Index of the first comment to return (0-based).</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IPagedQueryResult<Comment>> GetPagedCommentsAsync(string issueKey, int? maxComments = null, int startAt = 0, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Comment>> GetPagedCommentsAsync(string issueKey, int? maxComments = null, int startAt = 0, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns the workflow actions that an issue can be transitioned to.
 	/// </summary>
 	/// <param name="issueKey">The issue key</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueTransition>> GetActionsAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<IssueTransition>> GetActionsAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns the workflow actions that an issue can be transitioned to.
@@ -178,14 +178,14 @@ public interface IIssueService
 	/// <param name="issueKey">The issue key</param>
 	/// <param name="expandTransitionFields">Whether to show the transition fields</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueTransition>> GetActionsAsync(string issueKey, bool expandTransitionFields, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<IssueTransition>> GetActionsAsync(string issueKey, bool expandTransitionFields, CancellationToken token = default);
 
 	/// <summary>
 	/// Retrieve attachment metadata from server for this issue
 	/// </summary>
 	/// <param name="issueKey">The issue key to get attachments from.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<Attachment>> GetAttachmentsAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<Attachment>> GetAttachmentsAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Retrieve the labels from server for the issue specified.
@@ -193,7 +193,7 @@ public interface IIssueService
 	/// <param name="issueKey">The issue key to get labels from.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
 	[Obsolete("Use Issue.Labels instead.")]
-	Task<string[]> GetLabelsAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<string[]> GetLabelsAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Sets the labels for the issue specified.
@@ -202,14 +202,14 @@ public interface IIssueService
 	/// <param name="labels">The list of labels to set on the issue.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
 	[Obsolete("Modify the Issue.Labels collection and call Issue.SaveChanges to update the labels field.")]
-	Task SetLabelsAsync(string issueKey, string[] labels, CancellationToken token = default(CancellationToken));
+	Task SetLabelsAsync(string issueKey, string[] labels, CancellationToken token = default);
 
 	/// <summary>
 	/// Retrieve the watchers from server for the issue specified.
 	/// </summary>
 	/// <param name="issueKey">The issue key to get watchers from.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<JiraUser>> GetWatchersAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<JiraUser>> GetWatchersAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Removes a user from the watcher list of an issue.
@@ -217,7 +217,7 @@ public interface IIssueService
 	/// <param name="issueKey">The issue key to remove the watcher from.</param>
 	/// <param name="usernameOrAccountId">User name or account id of user to remove.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task DeleteWatcherAsync(string issueKey, string usernameOrAccountId, CancellationToken token = default(CancellationToken));
+	Task DeleteWatcherAsync(string issueKey, string usernameOrAccountId, CancellationToken token = default);
 
 	/// <summary>
 	/// Adds a user to the watcher list of an issue.
@@ -225,14 +225,14 @@ public interface IIssueService
 	/// <param name="issueKey">The issue key to add the watcher to.</param>
 	/// <param name="usernameOrAccountId">User name or account id of user to add.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task AddWatcherAsync(string issueKey, string usernameOrAccountId, CancellationToken token = default(CancellationToken));
+	Task AddWatcherAsync(string issueKey, string usernameOrAccountId, CancellationToken token = default);
 
 	/// <summary>
 	/// Retrieve the change logs from server for the issue specified.
 	/// </summary>
 	/// <param name="issueKey">The issue key to get watchers from.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueChangeLog>> GetChangeLogsAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<IssueChangeLog>> GetChangeLogsAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns the issues that are marked as sub tasks of this issue.
@@ -241,7 +241,7 @@ public interface IIssueService
 	/// <param name="maxIssues">Maximum number of issues to retrieve.</param>
 	/// <param name="startAt">Index of the first issue to return (0-based).</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IPagedQueryResult<Issue>> GetSubTasksAsync(string issueKey, int? maxIssues = null, int startAt = 0, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetSubTasksAsync(string issueKey, int? maxIssues = null, int startAt = 0, CancellationToken token = default);
 
 	/// <summary>
 	/// Add one or more attachments to an issue.
@@ -249,7 +249,7 @@ public interface IIssueService
 	/// <param name="issueKey">Issue key to add attachments to.</param>
 	/// <param name="attachments">Attachments to add.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task AddAttachmentsAsync(string issueKey, UploadAttachmentInfo[] attachments, CancellationToken token = default(CancellationToken));
+	Task AddAttachmentsAsync(string issueKey, UploadAttachmentInfo[] attachments, CancellationToken token = default);
 
 	/// <summary>
 	/// Removes an attachment from an issue.
@@ -257,7 +257,7 @@ public interface IIssueService
 	/// <param name="issueKey">Issue key to remove the attachment from.</param>
 	/// <param name="attachmentId">Identifier of the attachment to remove.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task DeleteAttachmentAsync(string issueKey, string attachmentId, CancellationToken token = default(CancellationToken));
+	Task DeleteAttachmentAsync(string issueKey, string attachmentId, CancellationToken token = default);
 
 	/// <summary>
 	/// Gets the worklog with the given identifier from an issue.
@@ -266,14 +266,14 @@ public interface IIssueService
 	/// <param name="worklogId">The worklog identifier.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
 	/// <returns></returns>
-	Task<Worklog> GetWorklogAsync(string issueKey, string worklogId, CancellationToken token = default(CancellationToken));
+	Task<Worklog> GetWorklogAsync(string issueKey, string worklogId, CancellationToken token = default);
 
 	/// <summary>
 	/// Gets the worklogs for an issue.
 	/// </summary>
 	/// <param name="issueKey">Issue key to retrieve the worklogs from.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<Worklog>> GetWorklogsAsync(string issueKey, CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<Worklog>> GetWorklogsAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Adds a work log to an issue.
@@ -283,7 +283,7 @@ public interface IIssueService
 	/// <param name="worklogStrategy">How to handle the remaining estimate, defaults to AutoAdjustRemainingEstimate.</param>
 	/// <param name="newEstimate">New estimate (only used if worklogStrategy set to NewRemainingEstimate)</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<Worklog> AddWorklogAsync(string issueKey, Worklog worklog, WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate, string newEstimate = null, CancellationToken token = default(CancellationToken));
+	Task<Worklog> AddWorklogAsync(string issueKey, Worklog worklog, WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate, string newEstimate = null, CancellationToken token = default);
 
 	/// <summary>
 	/// Removes a work log from an issue.
@@ -293,7 +293,7 @@ public interface IIssueService
 	/// <param name="worklogStrategy">How to handle the remaining estimate, defaults to AutoAdjustRemainingEstimate.</param>
 	/// <param name="newEstimate">New estimate (only used if worklogStrategy set to NewRemainingEstimate)</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task DeleteWorklogAsync(string issueKey, string worklogId, WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate, string newEstimate = null, CancellationToken token = default(CancellationToken));
+	Task DeleteWorklogAsync(string issueKey, string worklogId, WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate, string newEstimate = null, CancellationToken token = default);
 
 	/// <summary>
 	/// Assigns an issue to the specified user.
@@ -301,7 +301,7 @@ public interface IIssueService
 	/// <param name="issueKey">Identifier of the issue to assign.</param>
 	/// <param name="assignee">The username or account id of the user to assign the issue to.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task AssignIssueAsync(string issueKey, string assignee, CancellationToken token = default(CancellationToken));
+	Task AssignIssueAsync(string issueKey, string assignee, CancellationToken token = default);
 
 	/// <summary>
 	/// Fetch all entity properties attached to the issue.

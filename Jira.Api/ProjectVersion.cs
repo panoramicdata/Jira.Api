@@ -143,7 +143,7 @@ public class ProjectVersion : JiraNamedEntity
 	/// Save field changes to the server.
 	/// </summary>
 	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task SaveChangesAsync(CancellationToken token = default(CancellationToken))
+	public async Task SaveChangesAsync(CancellationToken token = default)
 	{
 		var version = await _jira.Versions.UpdateVersionAsync(this, token).ConfigureAwait(false);
 		_remoteVersion = version.RemoteVersion;

@@ -20,7 +20,7 @@ public static class OAuthTokenHelper
 	/// <param name="oAuthRequestTokenSettings"> The request token settings.</param>
 	/// <param name="cancellationToken">Cancellation token for this operation.</param>
 	/// <returns>The <see cref="OAuthRequestToken" /> containing the request token, the consumer token and the authorize url.</returns>
-	public static Task<OAuthRequestToken> GenerateRequestTokenAsync(OAuthRequestTokenSettings oAuthRequestTokenSettings, CancellationToken cancellationToken = default(CancellationToken))
+	public static Task<OAuthRequestToken> GenerateRequestTokenAsync(OAuthRequestTokenSettings oAuthRequestTokenSettings, CancellationToken cancellationToken = default)
 	{
 		var authenticator = OAuth1Authenticator.ForRequestToken(
 			oAuthRequestTokenSettings.ConsumerKey,
@@ -53,7 +53,7 @@ public static class OAuthTokenHelper
 		IRestClient restClient,
 		string requestTokenUrl,
 		string authorizeTokenUrl,
-		CancellationToken cancellationToken = default(CancellationToken))
+		CancellationToken cancellationToken = default)
 	{
 		var requestTokenResponse = await restClient.ExecutePostAsync(
 			new RestRequest(requestTokenUrl),

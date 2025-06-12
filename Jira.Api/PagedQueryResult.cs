@@ -78,7 +78,7 @@ internal class PagedQueryResult<T>(IEnumerable<T> enumerable, int startAt, int i
 
 		if (val == null || val.Type == JTokenType.Null)
 		{
-			return default(TValue);
+			return default;
 		}
 		else
 		{

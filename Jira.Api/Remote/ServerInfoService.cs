@@ -8,7 +8,7 @@ internal class ServerInfoService(Jira jira) : IServerInfoService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<ServerInfo> GetServerInfoAsync(bool doHealthCheck = false, CancellationToken token = default(CancellationToken))
+	public async Task<ServerInfo> GetServerInfoAsync(bool doHealthCheck = false, CancellationToken token = default)
 	{
 		var resource = "rest/api/2/serverInfo";
 		if (doHealthCheck)

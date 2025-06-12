@@ -85,7 +85,7 @@ public class JiraRestClient : IJiraRestClient
 	/// <summary>
 	/// Executes an async request and serializes the response to an object.
 	/// </summary>
-	public async Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default(CancellationToken))
+	public async Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default)
 	{
 		var result = await ExecuteRequestAsync(method, resource, requestBody, token).ConfigureAwait(false);
 		return JsonConvert.DeserializeObject<T>(result.ToString(), Settings.JsonSerializerSettings);
@@ -94,7 +94,7 @@ public class JiraRestClient : IJiraRestClient
 	/// <summary>
 	/// Executes an async request and returns the response as JSON.
 	/// </summary>
-	public async Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default(CancellationToken))
+	public async Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default)
 	{
 		if (method == Method.GET && requestBody != null)
 		{
@@ -124,7 +124,7 @@ public class JiraRestClient : IJiraRestClient
 	/// <summary>
 	/// Executes a request with logging and validation.
 	/// </summary>
-	public async Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default(CancellationToken))
+	public async Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default)
 	{
 		LogRequest(request);
 		var response = await ExecuteRawResquestAsync(request, token).ConfigureAwait(false);

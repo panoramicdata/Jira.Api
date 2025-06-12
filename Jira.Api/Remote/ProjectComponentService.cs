@@ -13,7 +13,7 @@ internal class ProjectComponentService(Jira jira) : IProjectComponentService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<ProjectComponent> CreateComponentAsync(ProjectComponentCreationInfo projectComponent, CancellationToken token = default(CancellationToken))
+	public async Task<ProjectComponent> CreateComponentAsync(ProjectComponentCreationInfo projectComponent, CancellationToken token = default)
 	{
 		var serializer = JsonSerializer.Create(_jira.RestClient.Settings.JsonSerializerSettings);
 		var resource = "/rest/api/2/component";
@@ -27,7 +27,7 @@ internal class ProjectComponentService(Jira jira) : IProjectComponentService
 		return component;
 	}
 
-	public async Task DeleteComponentAsync(string componentId, string moveIssuesTo = null, CancellationToken token = default(CancellationToken))
+	public async Task DeleteComponentAsync(string componentId, string moveIssuesTo = null, CancellationToken token = default)
 	{
 		var resource = String.Format("/rest/api/2/component/{0}?{1}",
 			componentId,
@@ -38,7 +38,7 @@ internal class ProjectComponentService(Jira jira) : IProjectComponentService
 		_jira.Cache.Components.TryRemove(componentId);
 	}
 
-	public async Task<IEnumerable<ProjectComponent>> GetComponentsAsync(string projectKey, CancellationToken token = default(CancellationToken))
+	public async Task<IEnumerable<ProjectComponent>> GetComponentsAsync(string projectKey, CancellationToken token = default)
 	{
 		var cache = _jira.Cache;
 

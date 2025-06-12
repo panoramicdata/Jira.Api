@@ -30,7 +30,7 @@ public interface IJiraRestClient
 	/// </summary>
 	/// <param name="request">Request object.</param>
 	/// <param name="token">Cancellation token for the operation.</param>
-	Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default(CancellationToken));
+	Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default);
 
 	/// <summary>
 	/// Executes an async request and returns the response as JSON.
@@ -39,7 +39,7 @@ public interface IJiraRestClient
 	/// <param name="resource">Request resource url.</param>
 	/// <param name="requestBody">Request body to be serialized.</param>
 	/// <param name="token">Cancellation token for the operation.</param>
-	Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default(CancellationToken));
+	Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default);
 
 	/// <summary>
 	/// Executes an async request and serializes the response to an object.
@@ -49,7 +49,7 @@ public interface IJiraRestClient
 	/// <param name="resource">Request resource url.</param>
 	/// <param name="requestBody">Request body to be serialized.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default(CancellationToken));
+	Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default);
 
 	/// <summary>
 	/// Downloads file as a byte array.

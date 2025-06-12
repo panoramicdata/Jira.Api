@@ -45,19 +45,19 @@ class TraceReplayer : IJiraRestClient
 		}
 	}
 
-	public Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default(CancellationToken))
+	public Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default)
 	{
 		throw new NotImplementedException();
 	}
 
-	public Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default(CancellationToken))
+	public Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default)
 	{
 		Console.WriteLine($"Method: {method}. Url: {resource}");
 		var response = JsonConvert.DeserializeObject(_responses.Dequeue());
 		return Task.FromResult(JToken.FromObject(response));
 	}
 
-	public Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default(CancellationToken))
+	public Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default)
 	{
 		Console.WriteLine($"Method: {method}. Url: {resource}");
 		var result = JsonConvert.DeserializeObject<T>(_responses.Dequeue());

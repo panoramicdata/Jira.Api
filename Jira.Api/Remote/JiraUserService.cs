@@ -12,7 +12,7 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<JiraUser> CreateUserAsync(JiraUserCreationInfo user, CancellationToken token = default(CancellationToken))
+	public async Task<JiraUser> CreateUserAsync(JiraUserCreationInfo user, CancellationToken token = default)
 	{
 		var resource = "rest/api/2/user";
 		var requestBody = JToken.FromObject(user);
@@ -20,21 +20,21 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 		return await _jira.RestClient.ExecuteRequestAsync<JiraUser>(Method.POST, resource, requestBody, token).ConfigureAwait(false);
 	}
 
-	public Task DeleteUserAsync(string usernameOrAccountId, CancellationToken token = default(CancellationToken))
+	public Task DeleteUserAsync(string usernameOrAccountId, CancellationToken token = default)
 	{
 		var queryString = _jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username";
 		var resource = String.Format($"rest/api/2/user?{queryString}={Uri.EscapeUriString(usernameOrAccountId)}");
 		return _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token);
 	}
 
-	public Task<JiraUser> GetUserAsync(string usernameOrAccountId, CancellationToken token = default(CancellationToken))
+	public Task<JiraUser> GetUserAsync(string usernameOrAccountId, CancellationToken token = default)
 	{
 		var queryString = _jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username";
 		var resource = String.Format($"rest/api/2/user?{queryString}={Uri.EscapeUriString(usernameOrAccountId)}");
 		return _jira.RestClient.ExecuteRequestAsync<JiraUser>(Method.GET, resource, null, token);
 	}
 
-	public Task<IEnumerable<JiraUser>> SearchUsersAsync(string query, JiraUserStatus userStatus = JiraUserStatus.Active, int maxResults = 50, int startAt = 0, CancellationToken token = default(CancellationToken))
+	public Task<IEnumerable<JiraUser>> SearchUsersAsync(string query, JiraUserStatus userStatus = JiraUserStatus.Active, int maxResults = 50, int startAt = 0, CancellationToken token = default)
 	{
 		var resource = String.Format(
 			"rest/api/2/user/search?{0}={1}&includeActive={2}&includeInactive={3}&startAt={4}&maxResults={5}",
@@ -53,7 +53,7 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 		string issueKey,
 		int startAt = 0,
 		int maxResults = 50,
-		CancellationToken token = default(CancellationToken))
+		CancellationToken token = default)
 	{
 		var resourceSb = new StringBuilder($"rest/api/2/user/assignable/search", 200);
 		resourceSb.Append($"?username={Uri.EscapeDataString(username)}&issueKey={Uri.EscapeDataString(issueKey)}");
@@ -67,7 +67,7 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 		string projectKey,
 		int startAt = 0,
 		int maxResults = 50,
-		CancellationToken token = default(CancellationToken))
+		CancellationToken token = default)
 	{
 		var resourceSb = new StringBuilder($"rest/api/2/user/assignable/search", 200);
 		resourceSb.Append($"?username={Uri.EscapeDataString(username)}&project={Uri.EscapeDataString(projectKey)}");
@@ -81,7 +81,7 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 		IEnumerable<string> projectKeys,
 		int startAt = 0,
 		int maxResults = 50,
-		CancellationToken token = default(CancellationToken))
+		CancellationToken token = default)
 	{
 		var resourceSb = new StringBuilder("rest/api/2/user/assignable/multiProjectSearch", 200);
 		resourceSb.Append($"?username={username}&projectKeys={string.Join(",", projectKeys)}&startAt={startAt}&maxResults={maxResults}");
@@ -89,7 +89,7 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 		return _jira.RestClient.ExecuteRequestAsync<IEnumerable<JiraUser>>(Method.GET, resourceSb.ToString(), null, token);
 	}
 
-	public async Task<JiraUser> GetMyselfAsync(CancellationToken token = default(CancellationToken))
+	public async Task<JiraUser> GetMyselfAsync(CancellationToken token = default)
 	{
 		var cache = _jira.Cache;
 

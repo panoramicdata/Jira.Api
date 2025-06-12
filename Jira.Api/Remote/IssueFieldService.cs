@@ -13,7 +13,7 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CancellationToken token = default(CancellationToken))
+	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CancellationToken token = default)
 	{
 		var cache = _jira.Cache;
 
@@ -27,7 +27,7 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 		return cache.CustomFields.Values;
 	}
 
-	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CustomFieldFetchOptions options, CancellationToken token = default(CancellationToken))
+	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CustomFieldFetchOptions options, CancellationToken token = default)
 	{
 		var cache = _jira.Cache;
 		var projectKey = options.ProjectKeys.FirstOrDefault();
@@ -80,7 +80,7 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 		return cache.ProjectCustomFields[projectKey].Values;
 	}
 
-	public Task<IEnumerable<CustomField>> GetCustomFieldsForProjectAsync(string projectKey, CancellationToken token = default(CancellationToken))
+	public Task<IEnumerable<CustomField>> GetCustomFieldsForProjectAsync(string projectKey, CancellationToken token = default)
 	{
 		var options = new CustomFieldFetchOptions();
 		options.ProjectKeys.Add(projectKey);

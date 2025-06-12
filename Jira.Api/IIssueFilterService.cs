@@ -14,13 +14,13 @@ public interface IIssueFilterService
 	/// </summary>
 	/// <param name="filterId">Identifier of the filter to fetch.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<JiraFilter> GetFilterAsync(string filterId, CancellationToken token = default(CancellationToken));
+	Task<JiraFilter> GetFilterAsync(string filterId, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns the favourite filters for the user.
 	/// </summary>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<JiraFilter>> GetFavouritesAsync(CancellationToken token = default(CancellationToken));
+	Task<IEnumerable<JiraFilter>> GetFavouritesAsync(CancellationToken token = default);
 
 	/// <summary>
 	/// Returns issues that match the specified favorite filter.
@@ -30,7 +30,7 @@ public interface IIssueFilterService
 	/// <param name="startAt">Index of the first issue to return (0-based)</param>
 	/// <param name="token">Cancellation token for this operation.</param>
 	/// <remarks>Includes basic fields.</remarks>
-	Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteAsync(string filterName, int? maxIssues = null, int startAt = 0, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteAsync(string filterName, int? maxIssues = null, int startAt = 0, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns issues that match the specified favorite filter.
@@ -40,7 +40,7 @@ public interface IIssueFilterService
 	/// <param name="startAt">Index of the first issue to return (0-based)</param>
 	/// <param name="fields">A list of specific fields to fetch. Empty or <see langword="null"/> will fetch all fields.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteWithFieldsAsync(string filterName, int? maxIssues = null, int startAt = 0, IList<string> fields = default, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteWithFieldsAsync(string filterName, int? maxIssues = null, int startAt = 0, IList<string> fields = default, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns issues that match the filter with the specified id.
@@ -50,7 +50,7 @@ public interface IIssueFilterService
 	/// <param name="startAt">Index of the first issue to return (0-based)</param>
 	/// <param name="token">Cancellation token for this operation.</param>
 	/// <remarks>Includes basic fields.</remarks>
-	Task<IPagedQueryResult<Issue>> GetIssuesFromFilterAsync(string filterId, int? maxIssues = null, int startAt = 0, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetIssuesFromFilterAsync(string filterId, int? maxIssues = null, int startAt = 0, CancellationToken token = default);
 
 	/// <summary>
 	/// Returns issues that match the filter with the specified id.
@@ -60,5 +60,5 @@ public interface IIssueFilterService
 	/// <param name="startAt">Index of the first issue to return (0-based)</param>
 	/// <param name="fields">A list of specific fields to fetch. Empty or <see langword="null"/> will fetch all fields.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IPagedQueryResult<Issue>> GetIssuesFromFilterWithFieldsAsync(string filterId, int? maxIssues = null, int startAt = 0, IList<string> fields = default, CancellationToken token = default(CancellationToken));
+	Task<IPagedQueryResult<Issue>> GetIssuesFromFilterWithFieldsAsync(string filterId, int? maxIssues = null, int startAt = 0, IList<string> fields = default, CancellationToken token = default);
 }

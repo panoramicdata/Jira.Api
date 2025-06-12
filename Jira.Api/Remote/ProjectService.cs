@@ -11,7 +11,7 @@ internal class ProjectService(Jira jira) : IProjectService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<IEnumerable<Project>> GetProjectsAsync(CancellationToken token = default(CancellationToken))
+	public async Task<IEnumerable<Project>> GetProjectsAsync(CancellationToken token = default)
 	{
 		var cache = _jira.Cache;
 		if (!cache.Projects.Any())
