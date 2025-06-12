@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Jira.Api.Remote;
 
@@ -44,7 +44,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 
 		// load the custom fields
 		var customFields = GetCustomFieldValuesFromObject(fields);
-		remoteIssue.customFieldValues = customFields.Any() ? customFields.ToArray() : null;
+		remoteIssue.customFieldValues = customFields.Any() ? [.. customFields] : null;
 
 		// save fields dictionary
 		remoteIssue.fieldsReadOnly = fields;

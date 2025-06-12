@@ -106,31 +106,31 @@ public class Issue : IRemoteIssueFieldProvider
 
 		// collections
 		_customFields = _originalIssue.customFieldValues == null ? new CustomFieldValueCollection(this)
-			: new CustomFieldValueCollection(this, _originalIssue.customFieldValues.Select(f => new CustomFieldValue(f.customfieldId, this) { Values = f.values, RawValue = f.rawValue }).ToList());
+			: new CustomFieldValueCollection(this, [.. _originalIssue.customFieldValues.Select(f => new CustomFieldValue(f.customfieldId, this) { Values = f.values, RawValue = f.rawValue })]);
 
 		var affectsVersions = _originalIssue.affectsVersions ?? Enumerable.Empty<RemoteVersion>();
-		_affectsVersions = new ProjectVersionCollection("versions", _jira, Project, affectsVersions.Select(v =>
+		_affectsVersions = new ProjectVersionCollection("versions", _jira, Project, [.. affectsVersions.Select(v =>
 		{
 			v.ProjectKey = _originalIssue.project;
 			return new ProjectVersion(_jira, v);
-		}).ToList());
+		})]);
 
 		var fixVersions = _originalIssue.fixVersions ?? Enumerable.Empty<RemoteVersion>();
-		_fixVersions = new ProjectVersionCollection("fixVersions", _jira, Project, fixVersions.Select(v =>
+		_fixVersions = new ProjectVersionCollection("fixVersions", _jira, Project, [.. fixVersions.Select(v =>
 		{
 			v.ProjectKey = _originalIssue.project;
 			return new ProjectVersion(_jira, v);
-		}).ToList());
+		})]);
 
 		var labels = _originalIssue.labels ?? [];
-		_labels = new IssueLabelCollection(labels.ToList());
+		_labels = new IssueLabelCollection([.. labels]);
 
 		var components = _originalIssue.components ?? Enumerable.Empty<RemoteComponent>();
-		_components = new ProjectComponentCollection("components", _jira, Project, components.Select(c =>
+		_components = new ProjectComponentCollection("components", _jira, Project, [.. components.Select(c =>
 		{
 			c.ProjectKey = _originalIssue.project;
 			return new ProjectComponent(c);
-		}).ToList());
+		})]);
 
 		// additional fields
 		AdditionalFields = new IssueFields(_originalIssue, Jira);
@@ -1167,7 +1167,7 @@ public class Issue : IRemoteIssueFieldProvider
 			}
 		}
 
-		return fields.ToArray();
+		return [.. fields];
 	}
 
 	internal async Task<RemoteIssue> ToRemoteAsync(CancellationToken token)
@@ -1212,32 +1212,32 @@ public class Issue : IRemoteIssueFieldProvider
 
 		if (AffectsVersions.Count > 0)
 		{
-			remote.affectsVersions = AffectsVersions.Select(v => v.RemoteVersion).ToArray();
+			remote.affectsVersions = [.. AffectsVersions.Select(v => v.RemoteVersion)];
 		}
 
 		if (FixVersions.Count > 0)
 		{
-			remote.fixVersions = FixVersions.Select(v => v.RemoteVersion).ToArray();
+			remote.fixVersions = [.. FixVersions.Select(v => v.RemoteVersion)];
 		}
 
 		if (Components.Count > 0)
 		{
-			remote.components = Components.Select(c => c.RemoteComponent).ToArray();
+			remote.components = [.. Components.Select(c => c.RemoteComponent)];
 		}
 
 		if (CustomFields.Count > 0)
 		{
-			remote.customFieldValues = CustomFields.Select(f => new RemoteCustomFieldValue()
+			remote.customFieldValues = [.. CustomFields.Select(f => new RemoteCustomFieldValue()
 			{
 				customfieldId = f.Id,
 				values = f.Values,
 				serializer = f.Serializer
-			}).ToArray();
+			})];
 		}
 
 		if (Labels.Count > 0)
 		{
-			remote.labels = Labels.ToArray();
+			remote.labels = [.. Labels];
 		}
 
 		return remote;

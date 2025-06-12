@@ -28,7 +28,7 @@ public class MultiObjectCustomFieldValueSerializer(string propertyName) : ICusto
 
 	public string[] FromJson(JToken json)
 	{
-		return ((JArray)json).Select(j => j[_propertyName].ToString()).ToArray();
+		return [.. ((JArray)json).Select(j => j[_propertyName].ToString())];
 	}
 
 	public JToken ToJson(string[] values)
@@ -118,11 +118,10 @@ public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : 
 	// See https://ecosystem.atlassian.net/browse/ACJIRA-918 for more information
 	public string[] FromJson(JToken json)
 	{
-		return json.ToString()
+		return [.. json.ToString()
 			.Split(['{', '}', '[', ']', ','])
 			.Where(x => x.StartsWith(_propertyName))
-			.Select(x => x.Split(['='])[1])
-			.ToArray();
+			.Select(x => x.Split(['='])[1])];
 	}
 
 	public JToken ToJson(string[] values)
@@ -143,11 +142,10 @@ public class GreenhopperSprintJsonCustomFieldValueSerialiser : ICustomFieldValue
 {
 	public string[] FromJson(JToken json)
 	{
-		return JsonConvert
+		return [.. JsonConvert
 			.DeserializeObject<List<Sprint>>(json.ToString())
 			.OrderByDescending(x => x.endDate)
-			.Select(x => x.name)
-			.ToArray();
+			.Select(x => x.name)];
 	}
 
 	public JToken ToJson(string[] values)

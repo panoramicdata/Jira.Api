@@ -55,7 +55,7 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 			var field = new RemoteFieldValue()
 			{
 				id = _fieldName,
-				values = Items.Select(e => e.Id).ToArray()
+				values = [.. Items.Select(e => e.Id)]
 			};
 			fields.Add(field);
 		}

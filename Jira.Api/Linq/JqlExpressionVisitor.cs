@@ -117,7 +117,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 				args.Add(e.Value);
 			}
 
-			return newExpression.Constructor.Invoke(args.ToArray());
+			return newExpression.Constructor.Invoke([.. args]);
 		}
 
 		throw new NotSupportedException(string.Format(

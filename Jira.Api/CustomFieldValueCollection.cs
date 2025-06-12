@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
-using Newtonsoft.Json;
 
 namespace Jira.Api;
 
@@ -76,7 +76,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 			options.Add(childOption);
 		}
 
-		return AddArray(fieldName, options.ToArray());
+		return AddArray(fieldName, [.. options]);
 	}
 
 	/// <summary>
