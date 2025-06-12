@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -21,10 +21,7 @@ public class ProjectVersion : JiraNamedEntity
 	public ProjectVersion(Jira jira, RemoteVersion remoteVersion)
 		: base(remoteVersion)
 	{
-		if (jira == null)
-		{
-			throw new ArgumentNullException("jira");
-		}
+		ArgumentNullException.ThrowIfNull(jira);
 
 		_jira = jira;
 		_remoteVersion = remoteVersion;
