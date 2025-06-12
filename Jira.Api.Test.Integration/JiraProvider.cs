@@ -35,8 +35,8 @@ internal class JiraProvider : IEnumerable<object[]>
 	{
 		_data =
 			[
-				new object[] { _jiraWithCredentials },
-				new object[] { _jiraWithOAuth }
+				[_jiraWithCredentials],
+				[_jiraWithOAuth]
 			];
 	}
 
