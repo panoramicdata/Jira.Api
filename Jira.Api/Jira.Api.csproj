@@ -1,29 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net90</TargetFrameworks>
-    <PackageId>Atlassian.SDK</PackageId>
-    <Version>$(Version)</Version>
-    <Authors>Federico Silva Armas</Authors>
-    <Company>Federico Silva Armas</Company>
-    <Product>Atlassian.SDK</Product>
-    <Copyright>https://bitbucket.org/farmas/atlassian.net-sdk</Copyright>
-    <PackageTags>Atlassian JIRA LINQ</PackageTags>
-    <PackageReleaseNotes>For change history, visit: https://bitbucket.org/farmas/atlassian.net-sdk/src/master/docs/change-history.md</PackageReleaseNotes>
-    <Description>Utilities to interact with Atlassian products. Contains LinqToJira provider for querying JIRA Issue tracker (http://www.atlassian.com/software/jira).</Description>
-    <PackageIconUrl>https://res.cloudinary.com/farmas/image/upload/v1581984204/atlassian/AtlassianIcon.png</PackageIconUrl>
-    <PackageProjectUrl>https://bitbucket.org/farmas/atlassian.net-sdk</PackageProjectUrl>
-    <PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>$(Version)</AssemblyVersion>
-    <FileVersion>$(Version)</FileVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Properties\**" />
-    <EmbeddedResource Remove="Properties\**" />
-    <None Remove="Properties\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="RestSharp" Version="106.12.0" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net90</TargetFrameworks>
+		<PackageId>Atlassian.SDK</PackageId>
+		<Version>$(Version)</Version>
+		<Authors>Panoramic Data Limited</Authors>
+		<Company>Panoramic Data Limited</Company>
+		<Product>Jira.Api</Product>
+		<Copyright>Federico Silva Armas, Panoramic Data Limited 2025</Copyright>
+		<PackageTags>Atlassian JIRA LINQ</PackageTags>
+		<PackageReleaseNotes>See https://github.com/panoramicdata/Jira.Api</PackageReleaseNotes>
+		<Description>Utilities to interact with Atlassian Jira. Contains LinqToJira provider for querying JIRA Issue tracker (http://www.atlassian.com/software/jira).</Description>
+		<PackageProjectUrl>https://github.com/panoramicdata/Jira.Api</PackageProjectUrl>
+		<PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<RepositoryUrl>https://github.com/panoramicdata/Jira.Api</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Nullable>enable</Nullable>
+		<PackageReadmeFile>../README.md</PackageReadmeFile>
+	</PropertyGroup>
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<IncludeSymbols>true</IncludeSymbols>
+		<IncludeSource>true</IncludeSource>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PackageIcon>Icon.png</PackageIcon>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Properties\**" />
+		<EmbeddedResource Remove="Properties\**" />
+		<None Remove="Properties\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+		 <None Include="Icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="RestSharp" Version="106.12.0" />
+	</ItemGroup>
 </Project>
