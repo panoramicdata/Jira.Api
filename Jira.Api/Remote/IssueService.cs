@@ -210,7 +210,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 			actionId = action.Id;
 		}
 
-		updates = updates ?? new WorkflowTransitionUpdates();
+		updates ??= new WorkflowTransitionUpdates();
 
 		var resource = String.Format("rest/api/2/issue/{0}/transitions", issue.Key.Value);
 		var fieldProvider = issue as IRemoteIssueFieldProvider;

@@ -31,7 +31,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <returns>Jira object configured to use REST API.</returns>
 	public static Jira CreateRestClient(string url, string username = null, string password = null, JiraRestClientSettings settings = null)
 	{
-		settings = settings ?? new JiraRestClientSettings();
+		settings ??= new JiraRestClientSettings();
 		var restClient = new JiraRestClient(url, username, password, settings);
 
 		return CreateRestClient(restClient, settings.Cache);
@@ -57,7 +57,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 		JiraOAuthSignatureMethod oAuthSignatureMethod = JiraOAuthSignatureMethod.RsaSha1,
 		JiraRestClientSettings settings = null)
 	{
-		settings = settings ?? new JiraRestClientSettings();
+		settings ??= new JiraRestClientSettings();
 		var restClient = new JiraOAuthRestClient(
 			url,
 			consumerKey,
