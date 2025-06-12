@@ -1,6 +1,6 @@
-﻿using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RestSharp.Serializers;
+using System.IO;
 
 namespace Jira.Api.Remote;
 
@@ -41,19 +41,15 @@ public class RestSharpJsonSerializer : ISerializer
 	/// <returns>JSON as String</returns>
 	public string Serialize(object obj)
 	{
-		using (var stringWriter = new StringWriter())
-		{
-			using (var jsonTextWriter = new JsonTextWriter(stringWriter))
-			{
-				jsonTextWriter.Formatting = Formatting.Indented;
-				jsonTextWriter.QuoteChar = '"';
+		using var stringWriter = new StringWriter();
+		using var jsonTextWriter = new JsonTextWriter(stringWriter);
+		jsonTextWriter.Formatting = Formatting.Indented;
+		jsonTextWriter.QuoteChar = '"';
 
-				_serializer.Serialize(jsonTextWriter, obj);
+		_serializer.Serialize(jsonTextWriter, obj);
 
-				var result = stringWriter.ToString();
-				return result;
-			}
-		}
+		var result = stringWriter.ToString();
+		return result;
 	}
 
 	/// <summary>

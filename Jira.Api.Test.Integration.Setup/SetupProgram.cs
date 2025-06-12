@@ -48,30 +48,28 @@ public class SetupProgram
 
 	private static async Task WaitForJira()
 	{
-		using (var client = new HttpClient())
+		using var client = new HttpClient();
+		HttpResponseMessage response = null;
+		var retryCount = 0;
+
+		do
 		{
-			HttpResponseMessage response = null;
-			var retryCount = 0;
-
-			do
+			try
 			{
-				try
-				{
-					Console.Write($"Pinging server {URL}.");
+				Console.Write($"Pinging server {URL}.");
 
-					retryCount++;
-					await Task.Delay(2000);
-					response = await client.GetAsync(URL);
-					response.EnsureSuccessStatusCode();
-				}
-				catch (HttpRequestException)
-				{
-					Console.WriteLine($" Failed, retry count: {retryCount}");
-				}
-			} while (retryCount < 60 && (response == null || response.StatusCode != HttpStatusCode.OK));
+				retryCount++;
+				await Task.Delay(2000);
+				response = await client.GetAsync(URL);
+				response.EnsureSuccessStatusCode();
+			}
+			catch (HttpRequestException)
+			{
+				Console.WriteLine($" Failed, retry count: {retryCount}");
+			}
+		} while (retryCount < 60 && (response == null || response.StatusCode != HttpStatusCode.OK));
 
-			Console.WriteLine($" Success!");
-		}
+		Console.WriteLine($" Success!");
 	}
 
 	private static int GetStep(ChromeDriver webDriver)
