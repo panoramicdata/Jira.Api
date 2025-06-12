@@ -91,7 +91,7 @@ public class Issue : IRemoteIssueFieldProvider
 		ReporterUser = remoteIssue.reporterJiraUser;
 		Summary = remoteIssue.summary;
 		Votes = remoteIssue.votesData?.votes;
-		HasUserVoted = remoteIssue.votesData != null ? remoteIssue.votesData.hasVoted : false;
+		HasUserVoted = remoteIssue.votesData != null && remoteIssue.votesData.hasVoted;
 
 		if (!string.IsNullOrEmpty(remoteIssue.parentKey))
 		{
