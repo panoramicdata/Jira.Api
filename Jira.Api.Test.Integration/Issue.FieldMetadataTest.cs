@@ -56,7 +56,7 @@ public class IssueFieldMetadataTest
 		AssertCustomFieldOption(option3, 10105, "option3", @".*/rest/api/2/customFieldOption/10105");
 	}
 
-	private void AssertCustomFieldOption(IssueCustomFieldTest.IssueFieldMetadataCustomFieldOption option, int id, string value, string selfRegex)
+	private static void AssertCustomFieldOption(IssueCustomFieldTest.IssueFieldMetadataCustomFieldOption option, int id, string value, string selfRegex)
 	{
 		Assert.NotNull(option);
 		Assert.Equal(id, option.Id);

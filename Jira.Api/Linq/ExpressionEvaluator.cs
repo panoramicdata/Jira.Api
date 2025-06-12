@@ -71,7 +71,7 @@ internal static class ExpressionEvaluator
 			return base.Visit(exp);
 		}
 
-		private Expression Evaluate(Expression e)
+		private static Expression Evaluate(Expression e)
 		{
 			if (e.NodeType == ExpressionType.Constant)
 			{

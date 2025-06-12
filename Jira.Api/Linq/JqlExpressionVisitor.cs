@@ -77,7 +77,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			   expression.NodeType));
 	}
 
-	private bool TryGetPropertyInfoFromBinaryExpression(BinaryExpression expression, out PropertyInfo propertyInfo)
+	private static bool TryGetPropertyInfoFromBinaryExpression(BinaryExpression expression, out PropertyInfo propertyInfo)
 	{
 		var memberExpression = expression.Left as MemberExpression;
 		if (expression.Left is UnaryExpression unaryExpression)
@@ -98,7 +98,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		return false;
 	}
 
-	private object GetFieldValueFromBinaryExpression(BinaryExpression expression)
+	private static object GetFieldValueFromBinaryExpression(BinaryExpression expression)
 	{
 		if (expression.Right.NodeType == ExpressionType.Constant)
 		{
