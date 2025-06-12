@@ -1,19 +1,16 @@
-﻿using System;
-using Jira.Api.Remote;
+﻿using Jira.Api.Remote;
 
 namespace Jira.Api;
 
 public class CustomField : JiraNamedEntity
 {
-	private readonly RemoteField _remoteField;
-
 	/// <summary>
 	/// Creates an instance of a CustomField from a remote field definition.
 	/// </summary>
 	public CustomField(RemoteField remoteField)
 		: base(remoteField)
 	{
-		_remoteField = remoteField;
+		RemoteField = remoteField;
 
 		if (string.IsNullOrEmpty(Id) && !string.IsNullOrEmpty(CustomIdentifier))
 		{
@@ -21,27 +18,9 @@ public class CustomField : JiraNamedEntity
 		}
 	}
 
-	internal RemoteField RemoteField
-	{
-		get
-		{
-			return _remoteField;
-		}
-	}
+	internal RemoteField RemoteField { get; init; }
 
-	public string CustomType
-	{
-		get
-		{
-			return _remoteField.Schema?.Custom;
-		}
-	}
+	public string CustomType => RemoteField.Schema?.Custom;
 
-	public string CustomIdentifier
-	{
-		get
-		{
-			return _remoteField.Schema?.CustomId;
-		}
-	}
+	public string CustomIdentifier => RemoteField.Schema?.CustomId;
 }

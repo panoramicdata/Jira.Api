@@ -11,16 +11,12 @@
 /// <param name="childOption">The value of the child option.</param>
 public class CascadingSelectCustomField(string name, string parentOption, string childOption)
 {
-	private readonly string _name = name;
-	private readonly string _parentOption = parentOption;
-	private readonly string _childOption = childOption;
-
 	/// <summary>
 	/// The name of this custom field.
 	/// </summary>
 	public string Name
 	{
-		get { return _name; }
+		get { return name; }
 	}
 
 	/// <summary>
@@ -28,7 +24,7 @@ public class CascadingSelectCustomField(string name, string parentOption, string
 	/// </summary>
 	public string ParentOption
 	{
-		get { return _parentOption; }
+		get { return parentOption; }
 	}
 
 	/// <summary>
@@ -36,6 +32,6 @@ public class CascadingSelectCustomField(string name, string parentOption, string
 	/// </summary>
 	public string ChildOption
 	{
-		get { return _childOption; }
+		get { return childOption; }
 	}
 }
