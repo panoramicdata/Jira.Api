@@ -1183,7 +1183,7 @@ public class Issue : IRemoteIssueFieldProvider
 			votesData = Votes != null ? new RemoteVotes() { hasVoted = HasUserVoted == true, votes = Votes.Value } : null,
 			duedate = DueDate,
 			timeTracking = TimeTrackingData,
-			key = Key != null ? Key.Value : null
+			key = Key?.Value
 		};
 
 		if (Status != null)
@@ -1275,7 +1275,7 @@ public class Issue : IRemoteIssueFieldProvider
 		}
 		else
 		{
-			return value != null ? value.ToString() : null;
+			return value?.ToString();
 		}
 	}
 }

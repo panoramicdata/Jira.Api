@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Jira.Api.Remote;
 
@@ -126,7 +126,7 @@ public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : 
 
 	public JToken ToJson(string[] values)
 	{
-		string val = values != null ? values.FirstOrDefault() : null;
+		string val = values?.FirstOrDefault();
 		int id = 0;
 
 		if (int.TryParse(val, out id))
