@@ -15,7 +15,7 @@ public class JiraTypesTest
 	{
 		var filters = await jira.Filters.GetFavouritesAsync();
 
-		Assert.True(filters.Count() >= 1);
+		Assert.True(filters.Any());
 		Assert.Contains(filters, f => f.Name == "One Issue Filter");
 
 		var filter = await jira.Filters.GetFilterAsync(filters.First().Id);
@@ -121,7 +121,7 @@ public class JiraTypesTest
 	public void GetProjects(Jira jira)
 	{
 		var projects = jira.Projects.GetProjectsAsync().Result;
-		Assert.True(projects.Count() > 0);
+		Assert.True(projects.Any());
 
 		var project = projects.First();
 		Assert.Equal("admin", project.Lead);

@@ -178,7 +178,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 			customFields = _issue.Jira.Fields.GetCustomFieldsAsync(options).Result.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
 		}
 
-		if (customFields.Count() == 0)
+		if (!customFields.Any())
 		{
 			var errorMessage = $"Could not find custom field with name '{fieldName}' on the JIRA server.";
 
