@@ -184,9 +184,9 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		// special cases for empty/null string
 		if (value == null || value.Equals(""))
 		{
-			_jqlWhere.Append(" ");
+			_jqlWhere.Append(' ');
 			_jqlWhere.Append(equal ? JiraOperators.IS : JiraOperators.ISNOT);
-			_jqlWhere.Append(" ");
+			_jqlWhere.Append(' ');
 			_jqlWhere.Append(value == null ? "null" : "empty");
 			return;
 		}
@@ -239,11 +239,11 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 
 	private void ProcessUnionOperator(BinaryExpression expression, string operatorString)
 	{
-		_jqlWhere.Append("(");
+		_jqlWhere.Append('(');
 		Visit(expression.Left);
 		_jqlWhere.Append(" " + operatorString + " ");
 		Visit(expression.Right);
-		_jqlWhere.Append(")");
+		_jqlWhere.Append(')');
 	}
 
 	protected override Expression VisitMethodCall(MethodCallExpression node)
