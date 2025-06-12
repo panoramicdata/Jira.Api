@@ -51,7 +51,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		return new JqlData { Expression = Jql, NumberOfResults = _numberOfResults, SkipResults = _skipResults };
 	}
 
-	private string GetFieldNameFromBinaryExpression(BinaryExpression expression)
+	private static string GetFieldNameFromBinaryExpression(BinaryExpression expression)
 	{
 		if (TryGetPropertyInfoFromBinaryExpression(expression, out PropertyInfo propertyInfo))
 		{
