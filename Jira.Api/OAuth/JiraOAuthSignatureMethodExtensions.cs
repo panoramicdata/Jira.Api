@@ -12,20 +12,12 @@ public static class JiraOAuthSignatureMethodExtensions
 	/// </summary>
 	/// <param name="signatureMethod">The signature method.</param>
 	/// <returns>The RestSharp signature method.</returns>
-	public static OAuthSignatureMethod ToOAuthSignatureMethod(this JiraOAuthSignatureMethod signatureMethod)
+	public static OAuthSignatureMethod ToOAuthSignatureMethod(this JiraOAuthSignatureMethod signatureMethod) => signatureMethod switch
 	{
-		switch (signatureMethod)
-		{
-			case JiraOAuthSignatureMethod.HmacSha1:
-				return OAuthSignatureMethod.HmacSha1;
-			case JiraOAuthSignatureMethod.HmacSha256:
-				return OAuthSignatureMethod.HmacSha256;
-			case JiraOAuthSignatureMethod.PlainText:
-				return OAuthSignatureMethod.PlainText;
-			case JiraOAuthSignatureMethod.RsaSha1:
-				return OAuthSignatureMethod.RsaSha1;
-			default:
-				return OAuthSignatureMethod.RsaSha1;
-		}
-	}
+		JiraOAuthSignatureMethod.HmacSha1 => OAuthSignatureMethod.HmacSha1,
+		JiraOAuthSignatureMethod.HmacSha256 => OAuthSignatureMethod.HmacSha256,
+		JiraOAuthSignatureMethod.PlainText => OAuthSignatureMethod.PlainText,
+		JiraOAuthSignatureMethod.RsaSha1 => OAuthSignatureMethod.RsaSha1,
+		_ => OAuthSignatureMethod.RsaSha1,
+	};
 }
