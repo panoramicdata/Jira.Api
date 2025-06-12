@@ -4,9 +4,7 @@ Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.c
 
 ## Support Notice
 
-All features tested on JIRA v8.5.2
-
-Due to time constraints, this project is no longer mantained. Thank you for all the support during these past years.
+All features tested on JIRA v9.12.2
 
 ## Download
 
@@ -22,7 +20,7 @@ This project is licensed under  [BSD](/LICENSE.md).
 
 - [RestSharp](https://www.nuget.org/packages/RestSharp)
 - [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json)
-- Tested with JIRA v8.5.2
+- Tested with JIRA v9.12.2
 
 ## History
 

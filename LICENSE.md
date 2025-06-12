@@ -3,7 +3,7 @@ This project is licensed under [BSD-2-Clause](https://opensource.org/licenses/BS
 
 ```
 #!c#
-Copyright (c) 2013, Federico Silva Armas
+Copyright (c) 2025, Federico Silva Armas, Panoramic Data Limited
 All rights reserved.
 ```
 
