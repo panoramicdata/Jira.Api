@@ -13,7 +13,7 @@ public class SingleObjectCustomFieldValueSerializer(string propertyName) : ICust
 
 	public string[] FromJson(JToken json)
 	{
-		return new string[1] { json[this._propertyName]?.ToString() };
+		return [json[this._propertyName]?.ToString()];
 	}
 
 	public JToken ToJson(string[] values)
@@ -41,7 +41,7 @@ public class FloatCustomFieldValueSerializer : ICustomFieldValueSerializer
 {
 	public string[] FromJson(JToken json)
 	{
-		return new string[1] { json.ToObject<string>() };
+		return [json.ToObject<string>()];
 	}
 
 	public JToken ToJson(string[] values)
@@ -78,11 +78,11 @@ public class CascadingSelectCustomFieldValueSerializer : ICustomFieldValueSerial
 		}
 		else if (childOption == null || childOption["value"] == null)
 		{
-			return new string[] { parentOption.ToString() };
+			return [parentOption.ToString()];
 		}
 		else
 		{
-			return new string[2] { parentOption.ToString(), childOption["value"].ToString() };
+			return [parentOption.ToString(), childOption["value"].ToString()];
 		}
 	}
 
@@ -119,9 +119,9 @@ public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : 
 	public string[] FromJson(JToken json)
 	{
 		return json.ToString()
-			.Split(new char[] { '{', '}', '[', ']', ',' })
+			.Split(['{', '}', '[', ']', ','])
 			.Where(x => x.StartsWith(_propertyName))
-			.Select(x => x.Split(new char[] { '=' })[1])
+			.Select(x => x.Split(['='])[1])
 			.ToArray();
 	}
 

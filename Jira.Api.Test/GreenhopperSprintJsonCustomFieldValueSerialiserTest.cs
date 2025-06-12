@@ -40,11 +40,11 @@ public class GreenhopperSprintJsonCustomFieldValueSerialiserTest
 	{
 		var serialiser = new GreenhopperSprintJsonCustomFieldValueSerialiser();
 
-		var actual = serialiser.ToJson(new[]
-		{
+		var actual = serialiser.ToJson(
+		[
 				"Sprint1",
 				"Sprint2",
-			});
+			]);
 
 		var expected = (JToken)"Sprint1";
 		Assert.Equal(expected.ToString(), actual.ToString());

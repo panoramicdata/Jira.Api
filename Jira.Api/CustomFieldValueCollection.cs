@@ -39,7 +39,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldValue">The value of the field</param>
 	public CustomFieldValueCollection Add(string fieldName, string fieldValue)
 	{
-		return this.Add(fieldName, new string[] { fieldValue });
+		return this.Add(fieldName, [fieldValue]);
 	}
 
 	/// <summary>

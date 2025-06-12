@@ -41,15 +41,15 @@ public class IssueTest
 		{
 			var remoteIssue = new RemoteIssue()
 			{
-				affectsVersions = new RemoteVersion[] { new() { id = "remoteVersion" } },
+				affectsVersions = [new() { id = "remoteVersion" }],
 				assignee = "assignee",
-				components = new RemoteComponent[] { new() { id = "remoteComponent" } },
+				components = [new() { id = "remoteComponent" }],
 				created = new DateTime(2011, 1, 1),
-				customFieldValues = new RemoteCustomFieldValue[] { new() { customfieldId = "customField" } },
+				customFieldValues = [new() { customfieldId = "customField" }],
 				description = "description",
 				duedate = new DateTime(2011, 3, 3),
 				environment = "environment",
-				fixVersions = new RemoteVersion[] { new() { id = "remoteFixVersion" } },
+				fixVersions = [new() { id = "remoteFixVersion" }],
 				key = "key",
 				priority = new RemotePriority() { id = "priority" },
 				project = "project",
@@ -213,14 +213,14 @@ public class IssueTest
 			var remoteCustomFieldValue = new RemoteCustomFieldValue()
 			{
 				customfieldId = "CustomField1",
-				values = new string[1] { "My Value" }
+				values = ["My Value"]
 			};
 			var remoteIssue = new RemoteIssue()
 			{
 				key = "TST-1",
 				project = "TST",
 				type = new RemoteIssueType() { id = "1" },
-				customFieldValues = new RemoteCustomFieldValue[1] { remoteCustomFieldValue }
+				customFieldValues = [remoteCustomFieldValue]
 			};
 
 			jira.IssueService.Setup(s => s.GetIssueAsync("TST-1", CancellationToken.None))
@@ -244,14 +244,14 @@ public class IssueTest
 			var remoteCustomFieldValue = new RemoteCustomFieldValue()
 			{
 				customfieldId = "CustomField1",
-				values = new string[1] { "My Value" }
+				values = ["My Value"]
 			};
 			var remoteIssue = new RemoteIssue()
 			{
 				key = "TST-1",
 				project = "TST",
 				type = new RemoteIssueType() { id = "1" },
-				customFieldValues = new RemoteCustomFieldValue[1] { remoteCustomFieldValue }
+				customFieldValues = [remoteCustomFieldValue]
 			};
 
 			jira.IssueService.Setup(s => s.GetIssueAsync("TST-1", CancellationToken.None))
@@ -505,7 +505,7 @@ public class IssueTest
 		{
 			var issue = CreateIssue();
 
-			Assert.Throws<InvalidOperationException>(() => issue.AddAttachment("foo", new byte[] { 1 }));
+			Assert.Throws<InvalidOperationException>(() => issue.AddAttachment("foo", [1]));
 		}
 	}
 

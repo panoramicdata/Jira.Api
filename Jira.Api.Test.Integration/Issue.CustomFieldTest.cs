@@ -330,7 +330,7 @@ public class IssueCustomFieldTest
 		updatedIssue["Custom Text Field"] = "My newest value";
 		updatedIssue["Custom Date Field"] = "2019-10-03";
 		updatedIssue["Custom Number Field"] = "9999";
-		updatedIssue.CustomFields["Custom Labels Field"].Values = new string[] { "label3" };
+		updatedIssue.CustomFields["Custom Labels Field"].Values = ["label3"];
 		updatedIssue.SaveChanges();
 
 		// Retrieve the issue one last time and verify custom fields.

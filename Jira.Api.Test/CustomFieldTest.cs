@@ -24,12 +24,12 @@ public class CustomFieldTest
 		{
 			project = "projectKey",
 			key = "issueKey",
-			customFieldValues = new RemoteCustomFieldValue[]{
+			customFieldValues = [
 								new(){
 									customfieldId = "123",
-									values = new string[] {"abc"}
+									values = ["abc"]
 								}
-							}
+							]
 		}.ToLocal(jira);
 
 		//assert

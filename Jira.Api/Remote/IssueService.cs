@@ -20,7 +20,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 
 	private readonly Jira _jira = jira;
 	private readonly JiraRestClientSettings _restSettings = restSettings;
-	private readonly string[] _excludedFields = new string[] { "comment", "attachment", "issuelinks", "subtasks", "watches", "worklog" };
+	private readonly string[] _excludedFields = ["comment", "attachment", "issuelinks", "subtasks", "watches", "worklog"];
 
 	private JsonSerializerSettings _serializerSettings;
 
@@ -364,7 +364,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		var serializerSettings = await this.GetIssueSerializerSettingsAsync(token).ConfigureAwait(false);
 		var response = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource).ConfigureAwait(false);
 		var issue = JsonConvert.DeserializeObject<RemoteIssueWrapper>(response.ToString(), serializerSettings);
-		return issue.RemoteIssue.labels ?? new string[0];
+		return issue.RemoteIssue.labels ?? [];
 	}
 
 	public Task SetLabelsAsync(string issueKey, string[] labels, CancellationToken token = default)

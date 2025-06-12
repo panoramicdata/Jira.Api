@@ -122,7 +122,7 @@ public class Issue : IRemoteIssueFieldProvider
 			return new ProjectVersion(_jira, v);
 		}).ToList());
 
-		var labels = _originalIssue.labels ?? new string[0];
+		var labels = _originalIssue.labels ?? [];
 		_labels = new IssueLabelCollection(labels.ToList());
 
 		var components = _originalIssue.components ?? Enumerable.Empty<RemoteComponent>();
@@ -446,7 +446,7 @@ public class Issue : IRemoteIssueFieldProvider
 		set
 		{
 			var customField = _customFields[customFieldName];
-			string[] customFieldValue = value == null ? null : new string[] { value.Value };
+			string[] customFieldValue = value == null ? null : [value.Value];
 
 			if (customField != null)
 			{
@@ -1161,7 +1161,7 @@ public class Issue : IRemoteIssueFieldProvider
 					fields.Add(new RemoteFieldValue()
 					{
 						id = remoteFieldName,
-						values = new string[1] { localStringValue }
+						values = [localStringValue]
 					});
 				}
 			}

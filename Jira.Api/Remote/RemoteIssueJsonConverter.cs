@@ -159,12 +159,12 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 					{
 						// If deserialization failed, then it is not an array of strings, it is not known how to
 						//    deserialize this field and treat is a black box and dump the json into the property.
-						remoteCustomFieldValue.values = new string[1] { field.Value.ToString() };
+						remoteCustomFieldValue.values = [field.Value.ToString()];
 					}
 				}
 				else
 				{
-					remoteCustomFieldValue.values = new string[1] { field.Value.ToString() };
+					remoteCustomFieldValue.values = [field.Value.ToString()];
 				}
 
 				return remoteCustomFieldValue;

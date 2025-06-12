@@ -19,12 +19,12 @@ public class CustomFieldCollectionTest
 		{
 			project = "bar",
 			key = "foo",
-			customFieldValues = new RemoteCustomFieldValue[]{
+			customFieldValues = [
 								new(){
 									customfieldId = "123",
-									values = new string[] {"abc"}
+									values = ["abc"]
 								}
-							}
+							]
 		}.ToLocal(jira);
 
 		Assert.Throws<InvalidOperationException>(() => issue["CustomField"]);
@@ -43,12 +43,12 @@ public class CustomFieldCollectionTest
 		{
 			project = "projectKey",
 			key = "issueKey",
-			customFieldValues = new RemoteCustomFieldValue[]{
+			customFieldValues = [
 								new(){
 									customfieldId = "123",
-									values = new string[] {"abc"}
+									values = ["abc"]
 								}
-							}
+							]
 		}.ToLocal(jira);
 
 		//assert

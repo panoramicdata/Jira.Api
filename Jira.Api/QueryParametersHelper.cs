@@ -26,10 +26,10 @@ public class QueryParametersHelper
 	public static IEnumerable<Parameter> GetParametersFromPath(string query)
 	{
 		var parameters = query.TrimStart('?')
-			.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
+			.Split(['&'], StringSplitOptions.RemoveEmptyEntries)
 			.Select(s =>
 			{
-				var p = s.Split(new[] { '=' }, 2);
+				var p = s.Split(['='], 2);
 				return new Parameter(name: p[0], value: p.Length > 1 ? p[1] : "", type: ParameterType.QueryString);
 			});
 
