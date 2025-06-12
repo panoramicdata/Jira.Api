@@ -6,14 +6,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class IssuePriorityService : IIssuePriorityService
+internal class IssuePriorityService(Jira jira) : IIssuePriorityService
 {
-	private readonly Jira _jira;
-
-	public IssuePriorityService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<IEnumerable<IssuePriority>> GetPrioritiesAsync(CancellationToken token = default(CancellationToken))
 	{

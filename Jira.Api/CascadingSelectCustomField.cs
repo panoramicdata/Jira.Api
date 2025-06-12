@@ -3,24 +3,17 @@
 /// <summary>
 /// Represents the values of a cascading select list custom field.
 /// </summary>
-public class CascadingSelectCustomField
+/// <remarks>
+/// Creates a new instance of a CascadingSelectCustomField.
+/// </remarks>
+/// <param name="name">The name of the custom field.</param>
+/// <param name="parentOption">The value of the parent option.</param>
+/// <param name="childOption">The value of the child option.</param>
+public class CascadingSelectCustomField(string name, string parentOption, string childOption)
 {
-	private readonly string _name;
-	private readonly string _parentOption;
-	private readonly string _childOption;
-
-	/// <summary>
-	/// Creates a new instance of a CascadingSelectCustomField.
-	/// </summary>
-	/// <param name="name">The name of the custom field.</param>
-	/// <param name="parentOption">The value of the parent option.</param>
-	/// <param name="childOption">The value of the child option.</param>
-	public CascadingSelectCustomField(string name, string parentOption, string childOption)
-	{
-		this._name = name;
-		this._parentOption = parentOption;
-		this._childOption = childOption;
-	}
+	private readonly string _name = name;
+	private readonly string _parentOption = parentOption;
+	private readonly string _childOption = childOption;
 
 	/// <summary>
 	/// The name of this custom field.

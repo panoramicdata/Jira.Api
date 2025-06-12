@@ -9,14 +9,9 @@ namespace Jira.Api;
 /// <remarks>
 /// Allows comparisons in the form of issue.Key > "TST-1"
 /// </remarks>
-public class ComparableString
+public class ComparableString(string value)
 {
-	public string Value { get; set; }
-
-	public ComparableString(string value)
-	{
-		this.Value = value;
-	}
+	public string Value { get; set; } = value;
 
 	public static implicit operator ComparableString(string value)
 	{

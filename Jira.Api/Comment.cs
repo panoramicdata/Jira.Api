@@ -8,9 +8,13 @@ namespace Jira.Api;
 /// <summary>
 /// A comment associated with an issue
 /// </summary>
-public class Comment
+/// <remarks>
+/// Create a new Comment from a remote instance object.
+/// </remarks>
+/// <param name="remoteComment">The remote comment.</param>
+public class Comment(RemoteComment remoteComment)
 {
-	private readonly IEnumerable<RemoteCommentProperty> _properties;
+	private readonly IEnumerable<RemoteCommentProperty> _properties = remoteComment.properties;
 	private Dictionary<string, object> _propertiesMap;
 
 	/// <summary>
@@ -21,50 +25,29 @@ public class Comment
 	{
 	}
 
-	/// <summary>
-	/// Create a new Comment from a remote instance object.
-	/// </summary>
-	/// <param name="remoteComment">The remote comment.</param>
-	public Comment(RemoteComment remoteComment)
-	{
-		Id = remoteComment.id;
-		Author = remoteComment.authorUser?.InternalIdentifier;
-		AuthorUser = remoteComment.authorUser;
-		Body = remoteComment.body;
-		CreatedDate = remoteComment.created;
-		GroupLevel = remoteComment.groupLevel;
-		RoleLevel = remoteComment.roleLevel;
-		UpdateAuthor = remoteComment.updateAuthorUser?.InternalIdentifier;
-		UpdateAuthorUser = remoteComment.updateAuthorUser;
-		UpdatedDate = remoteComment.updated;
-		Visibility = remoteComment.visibility;
-		_properties = remoteComment.properties;
-		RenderedBody = remoteComment.renderedBody;
-	}
+	public string Id { get; private set; } = remoteComment.id;
 
-	public string Id { get; private set; }
+	public string Author { get; set; } = remoteComment.authorUser?.InternalIdentifier;
 
-	public string Author { get; set; }
+	public JiraUser AuthorUser { get; private set; } = remoteComment.authorUser;
 
-	public JiraUser AuthorUser { get; private set; }
+	public string Body { get; set; } = remoteComment.body;
 
-	public string Body { get; set; }
+	public string GroupLevel { get; set; } = remoteComment.groupLevel;
 
-	public string GroupLevel { get; set; }
+	public string RoleLevel { get; set; } = remoteComment.roleLevel;
 
-	public string RoleLevel { get; set; }
+	public DateTime? CreatedDate { get; private set; } = remoteComment.created;
 
-	public DateTime? CreatedDate { get; private set; }
+	public string UpdateAuthor { get; private set; } = remoteComment.updateAuthorUser?.InternalIdentifier;
 
-	public string UpdateAuthor { get; private set; }
+	public JiraUser UpdateAuthorUser { get; private set; } = remoteComment.updateAuthorUser;
 
-	public JiraUser UpdateAuthorUser { get; private set; }
+	public DateTime? UpdatedDate { get; private set; } = remoteComment.updated;
 
-	public DateTime? UpdatedDate { get; private set; }
+	public CommentVisibility Visibility { get; set; } = remoteComment.visibility;
 
-	public CommentVisibility Visibility { get; set; }
-
-	public string RenderedBody { get; set; }
+	public string RenderedBody { get; set; } = remoteComment.renderedBody;
 
 	public IReadOnlyDictionary<string, object> Properties
 	{

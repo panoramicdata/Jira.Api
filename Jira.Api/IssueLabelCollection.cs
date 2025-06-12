@@ -10,21 +10,15 @@ namespace Jira.Api;
 /// <summary>
 /// Collection of labels for an issue.
 /// </summary>
+/// <remarks>
+/// Creates a new instance of IssueLabelCollection.
+/// </remarks>
+/// <param name="labels">Labels to seed into this collection</param>
 [SuppressMessage("N/A", "CS0660", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 [SuppressMessage("N/A", "CS0661", Justification = "Operator overloads are used for LINQ to JQL provider.")]
-public class IssueLabelCollection : List<string>, IRemoteIssueFieldProvider
+public class IssueLabelCollection(IList<string> labels) : List<string>(labels), IRemoteIssueFieldProvider
 {
-	private readonly List<string> _originalLabels;
-
-	/// <summary>
-	/// Creates a new instance of IssueLabelCollection.
-	/// </summary>
-	/// <param name="labels">Labels to seed into this collection</param>
-	public IssueLabelCollection(IList<string> labels)
-		: base(labels)
-	{
-		_originalLabels = new List<string>(labels);
-	}
+	private readonly List<string> _originalLabels = new List<string>(labels);
 
 	/// <summary>
 	/// Adds labels to this collection.

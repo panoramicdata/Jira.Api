@@ -5,25 +5,19 @@ namespace Jira.Api;
 /// <summary>
 /// Time tracking information for an issue.
 /// </summary>
-public class IssueTimeTrackingData
+/// <remarks>
+/// Creates a new instance of the IssueTimeTrackingData class.
+/// </remarks>
+public class IssueTimeTrackingData(string originalEstimate, string remainingEstimate = null)
 {
-	/// <summary>
-	/// Creates a new instance of the IssueTimeTrackingData class.
-	/// </summary>
-	public IssueTimeTrackingData(string originalEstimate, string remainingEstimate = null)
-	{
-		this.OriginalEstimate = originalEstimate;
-		this.RemainingEstimate = remainingEstimate;
-	}
-
 	[JsonProperty("originalEstimate")]
-	public string OriginalEstimate { get; private set; }
+	public string OriginalEstimate { get; private set; } = originalEstimate;
 
 	[JsonProperty("originalEstimateSeconds")]
 	public long? OriginalEstimateInSeconds { get; private set; }
 
 	[JsonProperty("remainingEstimate")]
-	public string RemainingEstimate { get; private set; }
+	public string RemainingEstimate { get; private set; } = remainingEstimate;
 
 	[JsonProperty("remainingEstimateSeconds")]
 	public long? RemainingEstimateInSeconds { get; private set; }

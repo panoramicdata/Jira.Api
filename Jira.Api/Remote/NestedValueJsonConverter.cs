@@ -4,14 +4,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Jira.Api.Remote;
 
-public class NestedValueJsonConverter : JsonConverter
+public class NestedValueJsonConverter(string innerProperty) : JsonConverter
 {
-	private readonly string _innerProperty;
-
-	public NestedValueJsonConverter(string innerProperty)
-	{
-		this._innerProperty = innerProperty;
-	}
+	private readonly string _innerProperty = innerProperty;
 
 	public override bool CanConvert(Type objectType)
 	{

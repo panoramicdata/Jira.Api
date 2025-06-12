@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class ScreenService : IScreenService
+internal class ScreenService(Jira jira) : IScreenService
 {
-	private readonly Jira _jira;
-
-	public ScreenService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<IEnumerable<ScreenField>> GetScreenAvailableFieldsAsync(string screenId, CancellationToken token = default(CancellationToken))
 	{

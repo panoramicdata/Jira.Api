@@ -6,31 +6,19 @@ namespace Jira.Api;
 /// <summary>
 /// An attachment associated with an issue
 /// </summary>
-public class Attachment
+/// <remarks>
+/// Creates a new instance of an Attachment from a remote entity.
+/// </remarks>
+/// <param name="jira">Object used to interact with JIRA.</param>
+/// <param name="remoteAttachment">Remote attachment entity.</param>
+public class Attachment(Jira jira, RemoteAttachment remoteAttachment)
 {
-	private readonly Jira _jira;
-
-	/// <summary>
-	/// Creates a new instance of an Attachment from a remote entity.
-	/// </summary>
-	/// <param name="jira">Object used to interact with JIRA.</param>
-	/// <param name="remoteAttachment">Remote attachment entity.</param>
-	public Attachment(Jira jira, RemoteAttachment remoteAttachment)
-	{
-		_jira = jira;
-
-		AuthorUser = remoteAttachment.authorUser;
-		CreatedDate = remoteAttachment.created;
-		FileName = remoteAttachment.filename;
-		MimeType = remoteAttachment.mimetype;
-		FileSize = remoteAttachment.filesize;
-		Id = remoteAttachment.id;
-	}
+	private readonly Jira _jira = jira;
 
 	/// <summary>
 	/// Id of attachment
 	/// </summary>
-	public string Id { get; private set; }
+	public string Id { get; private set; } = remoteAttachment.id;
 
 	/// <summary>
 	/// Author of attachment (user that uploaded the file)
@@ -46,27 +34,27 @@ public class Attachment
 	/// <summary>
 	/// User object of the author of attachment.
 	/// </summary>
-	public JiraUser AuthorUser { get; private set; }
+	public JiraUser AuthorUser { get; private set; } = remoteAttachment.authorUser;
 
 	/// <summary>
 	/// Date of creation
 	/// </summary>
-	public DateTime? CreatedDate { get; private set; }
+	public DateTime? CreatedDate { get; private set; } = remoteAttachment.created;
 
 	/// <summary>
 	/// File name of the attachment
 	/// </summary>
-	public string FileName { get; private set; }
+	public string FileName { get; private set; } = remoteAttachment.filename;
 
 	/// <summary>
 	/// Mime type
 	/// </summary>
-	public string MimeType { get; private set; }
+	public string MimeType { get; private set; } = remoteAttachment.mimetype;
 
 	/// <summary>
 	/// File size
 	/// </summary>
-	public long? FileSize { get; private set; }
+	public long? FileSize { get; private set; } = remoteAttachment.filesize;
 
 	/// <summary>
 	/// Downloads attachment as a byte array.

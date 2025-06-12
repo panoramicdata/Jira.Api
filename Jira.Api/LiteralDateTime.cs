@@ -8,14 +8,9 @@ namespace Jira.Api;
 /// </summary>
 [SuppressMessage("N/A", "CS0660", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 [SuppressMessage("N/A", "CS0661", Justification = "Operator overloads are used for LINQ to JQL provider.")]
-public class LiteralDateTime
+public class LiteralDateTime(string dateTimeString)
 {
-	private readonly string _dateTimeString;
-
-	public LiteralDateTime(string dateTimeString)
-	{
-		_dateTimeString = dateTimeString;
-	}
+	private readonly string _dateTimeString = dateTimeString;
 
 	public override string ToString()
 	{

@@ -3,21 +3,14 @@
 /// <summary>
 /// Represents a link between two issues.
 /// </summary>
-public class IssueLink
+/// <remarks>
+/// Creates a new IssueLink instance.
+/// </remarks>
+public class IssueLink(IssueLinkType linkType, Issue outwardIssue, Issue inwardIssue)
 {
-	private readonly IssueLinkType _linkType;
-	private readonly Issue _outwardIssue;
-	private readonly Issue _inwardIssue;
-
-	/// <summary>
-	/// Creates a new IssueLink instance.
-	/// </summary>
-	public IssueLink(IssueLinkType linkType, Issue outwardIssue, Issue inwardIssue)
-	{
-		this._linkType = linkType;
-		this._outwardIssue = outwardIssue;
-		this._inwardIssue = inwardIssue;
-	}
+	private readonly IssueLinkType _linkType = linkType;
+	private readonly Issue _outwardIssue = outwardIssue;
+	private readonly Issue _inwardIssue = inwardIssue;
 
 	/// <summary>
 	/// The inward issue of the link relationship.

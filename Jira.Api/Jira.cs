@@ -9,25 +9,17 @@ namespace Jira.Api;
 /// <summary>
 /// Represents a JIRA server
 /// </summary>
-public class Jira
+/// <remarks>
+/// Create a client that connects with a JIRA server with specified dependencies.
+/// </remarks>
+public class Jira(ServiceLocator services, JiraCache cache = null)
 {
 	internal const string DEFAULT_DATE_FORMAT = "yyyy/MM/dd";
 	internal const string DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " HH:mm";
 	internal static CultureInfo DefaultCultureInfo = CultureInfo.GetCultureInfo("en-us");
 
-	private readonly JiraCache _cache;
-	private readonly ServiceLocator _services;
-
-	/// <summary>
-	/// Create a client that connects with a JIRA server with specified dependencies.
-	/// </summary>
-	public Jira(ServiceLocator services, JiraCache cache = null)
-	{
-		_services = services;
-		_cache = cache ?? new JiraCache();
-
-		this.Debug = false;
-	}
+	private readonly JiraCache _cache = cache ?? new JiraCache();
+	private readonly ServiceLocator _services = services;
 
 	/// <summary>
 	/// Creates a JIRA rest client.
@@ -302,7 +294,7 @@ public class Jira
 	/// <summary>
 	/// Whether to print the translated JQL to console
 	/// </summary>
-	public bool Debug { get; set; }
+	public bool Debug { get; set; } = false;
 
 	/// <summary>
 	/// Maximum number of issues per request

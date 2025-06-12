@@ -5,19 +5,13 @@ namespace Jira.Api;
 /// <summary>
 /// A component associated with a project
 /// </summary>
-public class ProjectComponent : JiraNamedEntity
+/// <remarks>
+/// Creates a new instance of ProjectComponent.
+/// </remarks>
+/// <param name="remoteComponent">The remote component.</param>
+public class ProjectComponent(RemoteComponent remoteComponent) : JiraNamedEntity(remoteComponent)
 {
-	private readonly RemoteComponent _remoteComponent;
-
-	/// <summary>
-	/// Creates a new instance of ProjectComponent.
-	/// </summary>
-	/// <param name="remoteComponent">The remote component.</param>
-	public ProjectComponent(RemoteComponent remoteComponent)
-		: base(remoteComponent)
-	{
-		_remoteComponent = remoteComponent;
-	}
+	private readonly RemoteComponent _remoteComponent = remoteComponent;
 
 	internal RemoteComponent RemoteComponent
 	{

@@ -5,26 +5,21 @@ namespace Jira.Api;
 /// <summary>
 /// Represents a JIRA filter.
 /// </summary>
-public class JiraFilter : JiraNamedResource
+/// <remarks>
+/// Creates an instance of a JiraFilter.
+/// </remarks>
+/// <param name="id">Identifier of the resource.</param>
+/// <param name="name">Name of the resource.</param>
+/// <param name="jql">Jql of the filter.</param>
+/// <param name="self">Url to the resource.</param>
+public class JiraFilter(string id, string name, string jql = null, string self = null) : JiraNamedResource(id, name, self)
 {
-	/// <summary>
-	/// Creates an instance of a JiraFilter.
-	/// </summary>
-	/// <param name="id">Identifier of the resource.</param>
-	/// <param name="name">Name of the resource.</param>
-	/// <param name="jql">Jql of the filter.</param>
-	/// <param name="self">Url to the resource.</param>
-	public JiraFilter(string id, string name, string jql = null, string self = null)
-		: base(id, name, self)
-	{
-		Jql = jql;
-	}
 
 	/// <summary>
 	/// JQL for this filter.
 	/// </summary>
 	[JsonProperty("jql")]
-	public string Jql { get; private set; }
+	public string Jql { get; private set; } = jql;
 
 	/// <summary>
 	/// Description for this filter.

@@ -9,14 +9,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class IssueLinkService : IIssueLinkService
+internal class IssueLinkService(Jira jira) : IIssueLinkService
 {
-	private readonly Jira _jira;
-
-	public IssueLinkService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public Task CreateLinkAsync(string outwardIssueKey, string inwardIssueKey, string linkName, string comment, CancellationToken token = default(CancellationToken))
 	{

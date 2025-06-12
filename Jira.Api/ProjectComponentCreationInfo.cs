@@ -5,22 +5,18 @@ namespace Jira.Api;
 /// <summary>
 /// Class that encapsulates the necessary information to create a new project component.
 /// </summary>
-public class ProjectComponentCreationInfo
+/// <remarks>
+/// Creates a new instance of ProjectComponentCreationInfo.
+/// </remarks>
+/// <param name="name">The name of the project component.</param>
+public class ProjectComponentCreationInfo(string name)
 {
-	/// <summary>
-	/// Creates a new instance of ProjectComponentCreationInfo.
-	/// </summary>
-	/// <param name="name">The name of the project component.</param>
-	public ProjectComponentCreationInfo(string name)
-	{
-		this.Name = name;
-	}
 
 	/// <summary>
 	/// Name of the project component.
 	/// </summary>
 	[JsonProperty("name")]
-	public string Name { get; set; }
+	public string Name { get; set; } = name;
 
 	/// <summary>
 	/// Description of the project component.

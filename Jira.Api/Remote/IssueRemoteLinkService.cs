@@ -8,14 +8,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class IssueRemoteLinkService : IIssueRemoteLinkService
+internal class IssueRemoteLinkService(Jira jira) : IIssueRemoteLinkService
 {
-	private readonly Jira _jira;
-
-	public IssueRemoteLinkService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string summary, CancellationToken token = default(CancellationToken))
 	{

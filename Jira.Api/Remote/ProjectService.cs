@@ -7,14 +7,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class ProjectService : IProjectService
+internal class ProjectService(Jira jira) : IProjectService
 {
-	private readonly Jira _jira;
-
-	public ProjectService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<IEnumerable<Project>> GetProjectsAsync(CancellationToken token = default(CancellationToken))
 	{

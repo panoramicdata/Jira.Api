@@ -4,16 +4,10 @@ using System.Linq.Expressions;
 
 namespace Jira.Api.Linq;
 
-public class JiraQueryProvider : IQueryProvider
+public class JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService issues) : IQueryProvider
 {
-	private readonly IJqlExpressionVisitor _translator;
-	private readonly IIssueService _issues;
-
-	public JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService issues)
-	{
-		_translator = translator;
-		_issues = issues;
-	}
+	private readonly IJqlExpressionVisitor _translator = translator;
+	private readonly IIssueService _issues = issues;
 
 	public IQueryable<T> CreateQuery<T>(Expression expression)
 	{

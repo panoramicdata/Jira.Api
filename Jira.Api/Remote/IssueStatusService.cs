@@ -7,14 +7,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class IssueStatusService : IIssueStatusService
+internal class IssueStatusService(Jira jira) : IIssueStatusService
 {
-	private readonly Jira _jira;
-
-	public IssueStatusService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<IEnumerable<IssueStatus>> GetStatusesAsync(CancellationToken token = default(CancellationToken))
 	{

@@ -8,29 +8,17 @@ using Newtonsoft.Json.Linq;
 
 namespace Jira.Api.Remote;
 
-public class RemoteIssueWrapper
+public class RemoteIssueWrapper(RemoteIssue remoteIssue, string parentIssueKey = null)
 {
-	public RemoteIssueWrapper(RemoteIssue remoteIssue, string parentIssueKey = null)
-	{
-		RemoteIssue = remoteIssue;
-		ParentIssueKey = parentIssueKey;
-	}
+	public RemoteIssue RemoteIssue { get; private set; } = remoteIssue;
 
-	public RemoteIssue RemoteIssue { get; private set; }
-
-	public string ParentIssueKey { get; private set; }
+	public string ParentIssueKey { get; private set; } = parentIssueKey;
 }
 
-public class RemoteIssueJsonConverter : JsonConverter
+public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDictionary<string, ICustomFieldValueSerializer> customFieldSerializers) : JsonConverter
 {
-	private readonly IEnumerable<RemoteField> _remoteFields;
-	private readonly IDictionary<string, ICustomFieldValueSerializer> _customFieldSerializers;
-
-	public RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDictionary<string, ICustomFieldValueSerializer> customFieldSerializers)
-	{
-		this._remoteFields = remoteFields;
-		this._customFieldSerializers = customFieldSerializers;
-	}
+	private readonly IEnumerable<RemoteField> _remoteFields = remoteFields;
+	private readonly IDictionary<string, ICustomFieldValueSerializer> _customFieldSerializers = customFieldSerializers;
 
 	public override bool CanConvert(Type objectType)
 	{

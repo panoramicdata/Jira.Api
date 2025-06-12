@@ -3,21 +3,17 @@
 /// <summary>
 /// Represents special fields to be included on the payload when creating an issue.
 /// </summary>
-public class CreateIssueFields
+/// <remarks>
+/// Creates a new instance of the CreateIssueFields type.
+/// </remarks>
+/// <param name="projectKey">Project key to which the issue belongs to.</param>
+public class CreateIssueFields(string projectKey)
 {
-	/// <summary>
-	/// Creates a new instance of the CreateIssueFields type.
-	/// </summary>
-	/// <param name="projectKey">Project key to which the issue belongs to.</param>
-	public CreateIssueFields(string projectKey)
-	{
-		this.ProjectKey = projectKey;
-	}
 
 	/// <summary>
 	/// Project key to which the issue belongs to (required).
 	/// </summary>
-	public string ProjectKey { get; set; }
+	public string ProjectKey { get; set; } = projectKey;
 
 	/// <summary>
 	/// Parent issue key if this issue is a sub task.

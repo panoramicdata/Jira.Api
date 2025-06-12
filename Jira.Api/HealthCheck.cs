@@ -5,28 +5,22 @@ namespace Jira.Api;
 /// <summary>
 /// The server info health check.
 /// </summary>
-public class HealthCheck
+/// <remarks>
+/// Initializes a new instance of the <see cref="HealthCheck"/> class.
+/// </remarks>
+/// <param name="remoteHealthCheck">The remote health check.</param>
+public class HealthCheck(RemoteHealthCheck remoteHealthCheck)
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="HealthCheck"/> class.
-	/// </summary>
-	/// <param name="remoteHealthCheck">The remote health check.</param>
-	public HealthCheck(RemoteHealthCheck remoteHealthCheck)
-	{
-		Name = remoteHealthCheck.name;
-		Description = remoteHealthCheck.description;
-		Passed = remoteHealthCheck.passed;
-	}
 
 	/// <summary>
 	/// Gets the name.
 	/// </summary>
-	public string Name { get; }
+	public string Name { get; } = remoteHealthCheck.name;
 
 	/// <summary>
 	/// Gets the description.
 	/// </summary>
-	public string Description { get; }
+	public string Description { get; } = remoteHealthCheck.description;
 
 	/// <summary>
 	/// Gets a value indicating whether this <see cref="HealthCheck"/> is passed.
@@ -34,5 +28,5 @@ public class HealthCheck
 	/// <value>
 	///   <c>true</c> if passed; otherwise, <c>false</c>.
 	/// </value>
-	public bool Passed { get; }
+	public bool Passed { get; } = remoteHealthCheck.passed;
 }

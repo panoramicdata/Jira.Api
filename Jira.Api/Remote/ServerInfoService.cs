@@ -4,14 +4,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class ServerInfoService : IServerInfoService
+internal class ServerInfoService(Jira jira) : IServerInfoService
 {
-	private readonly Jira _jira;
-
-	public ServerInfoService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<ServerInfo> GetServerInfoAsync(bool doHealthCheck = false, CancellationToken token = default(CancellationToken))
 	{

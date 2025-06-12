@@ -5,21 +5,17 @@ namespace Jira.Api;
 /// <summary>
 /// Options when performing an issue search.
 /// </summary>
-public class IssueSearchOptions
+/// <remarks>
+/// Creates a new instance of IssueSearchOptions.
+/// </remarks>
+/// <param name="jql">The JQL of the search to execute.</param>
+public class IssueSearchOptions(string jql)
 {
-	/// <summary>
-	/// Creates a new instance of IssueSearchOptions.
-	/// </summary>
-	/// <param name="jql">The JQL of the search to execute.</param>
-	public IssueSearchOptions(string jql)
-	{
-		this.Jql = jql;
-	}
 
 	/// <summary>
 	/// The JQL of the search to execute.
 	/// </summary>
-	public string Jql { get; private set; }
+	public string Jql { get; private set; } = jql;
 
 	/// <summary>
 	/// Maximum number of issues to return (defaults to the value of Jira.Issues.MaxIssuesPerRequest).

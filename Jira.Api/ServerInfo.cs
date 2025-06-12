@@ -8,79 +8,65 @@ namespace Jira.Api;
 /// <summary>
 /// The JIRA server info.
 /// </summary>
-public class ServerInfo
+/// <remarks>
+/// Initializes a new instance of the <see cref="ServerInfo"/> class.
+/// </remarks>
+/// <param name="remoteServerInfo">The remote server information.</param>
+public class ServerInfo(RemoteServerInfo remoteServerInfo)
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ServerInfo"/> class.
-	/// </summary>
-	/// <param name="remoteServerInfo">The remote server information.</param>
-	public ServerInfo(RemoteServerInfo remoteServerInfo)
-	{
-		BaseUrl = remoteServerInfo.baseUrl;
-		Version = remoteServerInfo.version;
-		VersionNumbers = remoteServerInfo.versionNumbers;
-		DeploymentType = remoteServerInfo.deploymentType;
-		BuildNumber = remoteServerInfo.buildNumber;
-		BuildDate = remoteServerInfo.buildDate;
-		ServerTime = remoteServerInfo.serverTime;
-		ScmInfo = remoteServerInfo.scmInfo;
-		BuildPartnerName = remoteServerInfo.buildPartnerName;
-		ServerTitle = remoteServerInfo.serverTitle;
-		HealthChecks = remoteServerInfo.healthChecks?.Select(x => new HealthCheck(x)).ToArray();
-	}
 
 	/// <summary>
 	/// Gets the base URL.
 	/// </summary>
-	public string BaseUrl { get; }
+	public string BaseUrl { get; } = remoteServerInfo.baseUrl;
 
 	/// <summary>
 	/// Gets the version.
 	/// </summary>
-	public string Version { get; }
+	public string Version { get; } = remoteServerInfo.version;
 
 	/// <summary>
 	/// Gets the version numbers.
 	/// </summary>
-	public int[] VersionNumbers { get; }
+	public int[] VersionNumbers { get; } = remoteServerInfo.versionNumbers;
 
 	/// <summary>
 	/// Gets the type of the deployment.
 	/// </summary>
-	public string DeploymentType { get; }
+	public string DeploymentType { get; } = remoteServerInfo.deploymentType;
 
 	/// <summary>
 	/// Gets the build number.
 	/// </summary>
-	public int BuildNumber { get; }
+	public int BuildNumber { get; } = remoteServerInfo.buildNumber;
 
 	/// <summary>
 	/// Gets the build date.
 	/// </summary>
-	public DateTimeOffset? BuildDate { get; }
+	public DateTimeOffset? BuildDate { get; } = remoteServerInfo.buildDate;
 
 	/// <summary>
 	/// Gets the server time.
 	/// </summary>
-	public DateTimeOffset? ServerTime { get; }
+	public DateTimeOffset? ServerTime { get; } = remoteServerInfo.serverTime;
 
 	/// <summary>
 	/// Gets the SCM information.
 	/// </summary>
-	public string ScmInfo { get; }
+	public string ScmInfo { get; } = remoteServerInfo.scmInfo;
 
 	/// <summary>
 	/// Gets the name of the build partner.
 	/// </summary>
-	public string BuildPartnerName { get; }
+	public string BuildPartnerName { get; } = remoteServerInfo.buildPartnerName;
 
 	/// <summary>
 	/// Gets the server title.
 	/// </summary>
-	public string ServerTitle { get; }
+	public string ServerTitle { get; } = remoteServerInfo.serverTitle;
 
 	/// <summary>
 	/// Gets the health checks.
 	/// </summary>
-	public IEnumerable<HealthCheck> HealthChecks { get; }
+	public IEnumerable<HealthCheck> HealthChecks { get; } = remoteServerInfo.healthChecks?.Select(x => new HealthCheck(x)).ToArray();
 }

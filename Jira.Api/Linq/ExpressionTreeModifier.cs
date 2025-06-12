@@ -3,14 +3,9 @@ using System.Linq.Expressions;
 
 namespace Jira.Api.Linq;
 
-internal class ExpressionTreeModifier : ExpressionVisitor
+internal class ExpressionTreeModifier(IQueryable<Issue> queryableIssues) : ExpressionVisitor
 {
-	private readonly IQueryable<Issue> _queryableIssues;
-
-	public ExpressionTreeModifier(IQueryable<Issue> queryableIssues)
-	{
-		_queryableIssues = queryableIssues;
-	}
+	private readonly IQueryable<Issue> _queryableIssues = queryableIssues;
 
 	protected override Expression VisitConstant(ConstantExpression node)
 	{

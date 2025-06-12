@@ -9,14 +9,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class IssueFieldService : IIssueFieldService
+internal class IssueFieldService(Jira jira) : IIssueFieldService
 {
-	private readonly Jira _jira;
-
-	public IssueFieldService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CancellationToken token = default(CancellationToken))
 	{

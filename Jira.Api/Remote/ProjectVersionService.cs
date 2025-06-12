@@ -9,14 +9,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class ProjectVersionService : IProjectVersionService
+internal class ProjectVersionService(Jira jira) : IProjectVersionService
 {
-	private readonly Jira _jira;
-
-	public ProjectVersionService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<IEnumerable<ProjectVersion>> GetVersionsAsync(string projectKey, CancellationToken token = default(CancellationToken))
 	{

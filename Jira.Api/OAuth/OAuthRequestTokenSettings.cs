@@ -3,7 +3,24 @@
 /// <summary>
 /// Request token settings to help generate the request token.
 /// </summary>
-public class OAuthRequestTokenSettings
+/// <remarks>
+/// Creates a Request token settings to generate a request token.
+/// </remarks>
+/// <param name="url">The URL of the Jira instance to request to.</param>
+/// <param name="consumerKey">The consumer key provided by the Jira application link.</param>
+/// <param name="consumerSecret">The consumer private key in XML format.</param>
+/// <param name="callbackUrl">The callback url for the request token.</param>
+/// <param name="signatureMethod">The signature method used to sign the request.</param>
+/// <param name="requestTokenUrl">The relative URL to request the token.</param>
+/// <param name="authorizeUrl">The relative URL to authorize the token.</param>
+public class OAuthRequestTokenSettings(
+	string url,
+	string consumerKey,
+	string consumerSecret,
+	string callbackUrl = null,
+	JiraOAuthSignatureMethod signatureMethod = JiraOAuthSignatureMethod.RsaSha1,
+	string requestTokenUrl = OAuthRequestTokenSettings.DefaultRequestTokenUrl,
+	string authorizeUrl = OAuthRequestTokenSettings.DefaultAuthorizeUrl)
 {
 	/// <summary>
 	/// The default relative URL to request a token.
@@ -16,65 +33,37 @@ public class OAuthRequestTokenSettings
 	public const string DefaultAuthorizeUrl = "plugins/servlet/oauth/authorize";
 
 	/// <summary>
-	/// Creates a Request token settings to generate a request token.
-	/// </summary>
-	/// <param name="url">The URL of the Jira instance to request to.</param>
-	/// <param name="consumerKey">The consumer key provided by the Jira application link.</param>
-	/// <param name="consumerSecret">The consumer private key in XML format.</param>
-	/// <param name="callbackUrl">The callback url for the request token.</param>
-	/// <param name="signatureMethod">The signature method used to sign the request.</param>
-	/// <param name="requestTokenUrl">The relative URL to request the token.</param>
-	/// <param name="authorizeUrl">The relative URL to authorize the token.</param>
-	public OAuthRequestTokenSettings(
-		string url,
-		string consumerKey,
-		string consumerSecret,
-		string callbackUrl = null,
-		JiraOAuthSignatureMethod signatureMethod = JiraOAuthSignatureMethod.RsaSha1,
-		string requestTokenUrl = DefaultRequestTokenUrl,
-		string authorizeUrl = DefaultAuthorizeUrl)
-	{
-		Url = url;
-		ConsumerKey = consumerKey;
-		ConsumerSecret = consumerSecret;
-		CallbackUrl = callbackUrl;
-		SignatureMethod = signatureMethod;
-		RequestTokenUrl = requestTokenUrl;
-		AuthorizeUrl = authorizeUrl;
-	}
-
-	/// <summary>
 	/// Gets the URL of the Jira instance to request to.
 	/// </summary>
-	public string Url { get; }
+	public string Url { get; } = url;
 
 	/// <summary>
 	/// Gets the consumer key provided by the Jira application link.
 	/// </summary>
-	public string ConsumerKey { get; }
+	public string ConsumerKey { get; } = consumerKey;
 
 	/// <summary>
 	/// Gets the consumer private key in XML format.
 	/// </summary>
-	public string ConsumerSecret { get; }
+	public string ConsumerSecret { get; } = consumerSecret;
 
 	/// <summary>
 	/// Gets the callback URL for the request token.
 	/// </summary>
-	public string CallbackUrl { get; }
+	public string CallbackUrl { get; } = callbackUrl;
 
 	/// <summary>
 	/// Gets the signature method used to sign the request.
 	/// </summary>
-	public JiraOAuthSignatureMethod SignatureMethod { get; }
+	public JiraOAuthSignatureMethod SignatureMethod { get; } = signatureMethod;
 
 	/// <summary>
 	/// Gets the relative URL to request the token.
 	/// </summary>
-	public string RequestTokenUrl { get; }
+	public string RequestTokenUrl { get; } = requestTokenUrl;
 
 	/// <summary>
 	/// Gets the relative URL to authorize the token.
 	/// </summary>
-	public string AuthorizeUrl { get; }
+	public string AuthorizeUrl { get; } = authorizeUrl;
 }

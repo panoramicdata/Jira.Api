@@ -7,14 +7,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class IssueFilterService : IIssueFilterService
+internal class IssueFilterService(Jira jira) : IIssueFilterService
 {
-	private readonly Jira _jira;
-
-	public IssueFilterService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public Task<IEnumerable<JiraFilter>> GetFavouritesAsync(CancellationToken token = default)
 	{

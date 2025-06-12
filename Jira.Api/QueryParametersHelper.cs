@@ -36,22 +36,14 @@ public class QueryParametersHelper
 		return parameters;
 	}
 
-	public class Parameter
+	public class Parameter(string name, object value, ParameterType type, bool encode = true)
 	{
-		public Parameter(string name, object value, ParameterType type, bool encode = true)
-		{
-			Name = name;
-			Value = value;
-			Type = type;
-			Encode = encode;
-		}
+		public string Name { get; } = name;
 
-		public string Name { get; }
+		public object Value { get; } = value;
 
-		public object Value { get; }
+		public ParameterType Type { get; } = type;
 
-		public ParameterType Type { get; }
-
-		public bool Encode { get; }
+		public bool Encode { get; } = encode;
 	}
 }

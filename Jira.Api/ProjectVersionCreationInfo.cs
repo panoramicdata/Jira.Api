@@ -6,16 +6,12 @@ namespace Jira.Api;
 /// <summary>
 /// Class that encapsulates the necessary information to create a new project version.
 /// </summary>
-public class ProjectVersionCreationInfo
+/// <remarks>
+/// Creates a new instance of ProjectVersionCreationInfo.
+/// </remarks>
+/// <param name="name">The name of the project version.</param>
+public class ProjectVersionCreationInfo(string name)
 {
-	/// <summary>
-	/// Creates a new instance of ProjectVersionCreationInfo.
-	/// </summary>
-	/// <param name="name">The name of the project version.</param>
-	public ProjectVersionCreationInfo(string name)
-	{
-		this.Name = name;
-	}
 
 	/// <summary>
 	/// Key of the project to associate with this version.
@@ -27,7 +23,7 @@ public class ProjectVersionCreationInfo
 	/// Name of the project version.
 	/// </summary>
 	[JsonProperty("name")]
-	public string Name { get; set; }
+	public string Name { get; set; } = name;
 
 	/// <summary>
 	/// Description of the project version.

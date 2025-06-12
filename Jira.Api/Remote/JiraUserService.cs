@@ -8,14 +8,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class JiraUserService : IJiraUserService
+internal class JiraUserService(Jira jira) : IJiraUserService
 {
-	private readonly Jira _jira;
-
-	public JiraUserService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<JiraUser> CreateUserAsync(JiraUserCreationInfo user, CancellationToken token = default(CancellationToken))
 	{

@@ -5,18 +5,12 @@ namespace Jira.Api;
 /// <summary>
 /// The category of an issue status as defined in JIRA.
 /// </summary>
-public class IssueStatusCategory : JiraNamedEntity
+/// <remarks>
+/// Creates an instance of the IssueStatusCategory based on a remote entity.
+/// </remarks>
+public class IssueStatusCategory(RemoteStatusCategory remoteStatusCategory) : JiraNamedEntity(remoteStatusCategory)
 {
-	private readonly RemoteStatusCategory _remoteStatusCategory;
-
-	/// <summary>
-	/// Creates an instance of the IssueStatusCategory based on a remote entity.
-	/// </summary>
-	public IssueStatusCategory(RemoteStatusCategory remoteStatusCategory)
-		: base(remoteStatusCategory)
-	{
-		_remoteStatusCategory = remoteStatusCategory;
-	}
+	private readonly RemoteStatusCategory _remoteStatusCategory = remoteStatusCategory;
 
 	/// <summary>
 	/// The color assigned to this category.

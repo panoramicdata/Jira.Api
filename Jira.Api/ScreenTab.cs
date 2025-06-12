@@ -6,14 +6,10 @@ namespace Jira.Api;
 /// A screen tab.
 /// </summary>
 /// <seealso cref="Atlassian.Jira.JiraNamedEntity" />
-public class ScreenTab : JiraNamedEntity
+/// <remarks>
+/// Initializes a new instance of the <see cref="ScreenTab"/> class.
+/// </remarks>
+/// <param name="remoteScreenTab">The remote screen tab.</param>
+public class ScreenTab(RemoteScreenTab remoteScreenTab) : JiraNamedEntity(remoteScreenTab)
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ScreenTab"/> class.
-	/// </summary>
-	/// <param name="remoteScreenTab">The remote screen tab.</param>
-	public ScreenTab(RemoteScreenTab remoteScreenTab)
-		: base(remoteScreenTab)
-	{
-	}
 }

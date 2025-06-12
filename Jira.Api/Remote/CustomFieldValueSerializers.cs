@@ -7,14 +7,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Jira.Api.Remote;
 
-public class SingleObjectCustomFieldValueSerializer : ICustomFieldValueSerializer
+public class SingleObjectCustomFieldValueSerializer(string propertyName) : ICustomFieldValueSerializer
 {
-	private readonly string _propertyName;
-
-	public SingleObjectCustomFieldValueSerializer(string propertyName)
-	{
-		this._propertyName = propertyName;
-	}
+	private readonly string _propertyName = propertyName;
 
 	public string[] FromJson(JToken json)
 	{
@@ -27,14 +22,9 @@ public class SingleObjectCustomFieldValueSerializer : ICustomFieldValueSerialize
 	}
 }
 
-public class MultiObjectCustomFieldValueSerializer : ICustomFieldValueSerializer
+public class MultiObjectCustomFieldValueSerializer(string propertyName) : ICustomFieldValueSerializer
 {
-	private readonly string _propertyName;
-
-	public MultiObjectCustomFieldValueSerializer(string propertyName)
-	{
-		this._propertyName = propertyName;
-	}
+	private readonly string _propertyName = propertyName;
 
 	public string[] FromJson(JToken json)
 	{
@@ -120,14 +110,9 @@ public class CascadingSelectCustomFieldValueSerializer : ICustomFieldValueSerial
 	}
 }
 
-public class GreenhopperSprintCustomFieldValueSerialiser : ICustomFieldValueSerializer
+public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : ICustomFieldValueSerializer
 {
-	private readonly string _propertyName;
-
-	public GreenhopperSprintCustomFieldValueSerialiser(string propertyName)
-	{
-		this._propertyName = propertyName;
-	}
+	private readonly string _propertyName = propertyName;
 
 	// Sprint field is malformed
 	// See https://ecosystem.atlassian.net/browse/ACJIRA-918 for more information

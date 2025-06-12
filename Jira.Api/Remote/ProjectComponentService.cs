@@ -9,15 +9,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class ProjectComponentService : IProjectComponentService
+internal class ProjectComponentService(Jira jira) : IProjectComponentService
 {
-	private readonly Jira _jira;
-
-	public ProjectComponentService(Jira jira)
-	{
-		_jira = jira;
-
-	}
+	private readonly Jira _jira = jira;
 
 	public async Task<ProjectComponent> CreateComponentAsync(ProjectComponentCreationInfo projectComponent, CancellationToken token = default(CancellationToken))
 	{

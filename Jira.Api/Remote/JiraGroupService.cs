@@ -8,14 +8,9 @@ using RestSharp;
 
 namespace Jira.Api.Remote;
 
-internal class JiraGroupService : IJiraGroupService
+internal class JiraGroupService(Jira jira) : IJiraGroupService
 {
-	private readonly Jira _jira;
-
-	public JiraGroupService(Jira jira)
-	{
-		_jira = jira;
-	}
+	private readonly Jira _jira = jira;
 
 	public Task AddUserAsync(string groupname, string username, CancellationToken token = default(CancellationToken))
 	{
