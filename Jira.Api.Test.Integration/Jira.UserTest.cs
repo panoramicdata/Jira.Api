@@ -7,7 +7,7 @@ namespace Jira.Api.Test.Integration;
 
 public class JiraUserTest
 {
-	private readonly Random _random = new Random();
+	private readonly Random _random = new();
 
 	private JiraUserCreationInfo BuildUserInfo()
 	{

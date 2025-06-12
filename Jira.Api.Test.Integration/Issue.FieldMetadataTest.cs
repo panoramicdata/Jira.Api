@@ -61,7 +61,7 @@ public class IssueFieldMetadataTest
 		Assert.NotNull(option);
 		Assert.Equal(id, option.Id);
 		Assert.Equal(value, option.Value);
-		Regex regex = new Regex(selfRegex);
+		Regex regex = new(selfRegex);
 		Assert.True(regex.Match(option.Self).Success);
 	}
 }

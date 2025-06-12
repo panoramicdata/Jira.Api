@@ -41,15 +41,15 @@ public class IssueTest
 		{
 			var remoteIssue = new RemoteIssue()
 			{
-				affectsVersions = new RemoteVersion[] { new RemoteVersion() { id = "remoteVersion" } },
+				affectsVersions = new RemoteVersion[] { new() { id = "remoteVersion" } },
 				assignee = "assignee",
-				components = new RemoteComponent[] { new RemoteComponent() { id = "remoteComponent" } },
+				components = new RemoteComponent[] { new() { id = "remoteComponent" } },
 				created = new DateTime(2011, 1, 1),
-				customFieldValues = new RemoteCustomFieldValue[] { new RemoteCustomFieldValue() { customfieldId = "customField" } },
+				customFieldValues = new RemoteCustomFieldValue[] { new() { customfieldId = "customField" } },
 				description = "description",
 				duedate = new DateTime(2011, 3, 3),
 				environment = "environment",
-				fixVersions = new RemoteVersion[] { new RemoteVersion() { id = "remoteFixVersion" } },
+				fixVersions = new RemoteVersion[] { new() { id = "remoteFixVersion" } },
 				key = "key",
 				priority = new RemotePriority() { id = "priority" },
 				project = "project",

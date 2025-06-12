@@ -25,7 +25,7 @@ public class CustomFieldTest
 			project = "projectKey",
 			key = "issueKey",
 			customFieldValues = new RemoteCustomFieldValue[]{
-								new RemoteCustomFieldValue(){
+								new(){
 									customfieldId = "123",
 									values = new string[] {"abc"}
 								}

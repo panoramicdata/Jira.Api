@@ -9,7 +9,7 @@ namespace Jira.Api.Test.Integration;
 
 public class IssueUpdateTest
 {
-	private readonly Random _random = new Random();
+	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]

@@ -44,7 +44,7 @@ public class JiraOAuthRestClient(
 	/// </summary>
 	protected override Task<IRestResponse> ExecuteRawResquestAsync(IRestRequest request, CancellationToken token)
 	{
-		Uri fullPath = new Uri(RestSharpClient.BaseUrl, request.Resource);
+		Uri fullPath = new(RestSharpClient.BaseUrl, request.Resource);
 
 		// Move the query parameters to the request parameters.
 		if (!string.IsNullOrEmpty(fullPath.Query))

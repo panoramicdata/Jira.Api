@@ -38,7 +38,7 @@ public class CookiesRestClient : JiraRestClient
 
 public class RestTest
 {
-	private readonly Random _random = new Random();
+	private readonly Random _random = new();
 
 	[Fact]
 	public async Task CanUseCustomRestClient()

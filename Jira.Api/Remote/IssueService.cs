@@ -222,7 +222,7 @@ internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : II
 		{
 			updatesObject.Add("comment", new JArray(new JObject[]
 			{
-					new JObject(new JProperty("add",
+					new(new JProperty("add",
 						new JObject(new JProperty("body", updates.Comment))))
 			}));
 		}

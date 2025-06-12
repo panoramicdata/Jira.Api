@@ -20,7 +20,7 @@ public class CustomFieldCollectionTest
 			project = "bar",
 			key = "foo",
 			customFieldValues = new RemoteCustomFieldValue[]{
-								new RemoteCustomFieldValue(){
+								new(){
 									customfieldId = "123",
 									values = new string[] {"abc"}
 								}
@@ -44,7 +44,7 @@ public class CustomFieldCollectionTest
 			project = "projectKey",
 			key = "issueKey",
 			customFieldValues = new RemoteCustomFieldValue[]{
-								new RemoteCustomFieldValue(){
+								new(){
 									customfieldId = "123",
 									values = new string[] {"abc"}
 								}
