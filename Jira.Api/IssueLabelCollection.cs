@@ -18,7 +18,7 @@ namespace Jira.Api;
 [SuppressMessage("N/A", "CS0661", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 public class IssueLabelCollection(IList<string> labels) : List<string>(labels), IRemoteIssueFieldProvider
 {
-	private readonly List<string> _originalLabels = new(labels);
+	private readonly List<string> _originalLabels = [.. labels];
 
 	/// <summary>
 	/// Adds labels to this collection.

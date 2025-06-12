@@ -52,7 +52,7 @@ public class CustomFieldTest
 
 		// arrange serialization
 		var remoteIssue = issue.ToRemote();
-		var converter = new RemoteIssueJsonConverter(new List<RemoteField> { remoteField }, new Dictionary<string, ICustomFieldValueSerializer>());
+		var converter = new RemoteIssueJsonConverter([remoteField], new Dictionary<string, ICustomFieldValueSerializer>());
 		var serializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
@@ -88,7 +88,7 @@ public class CustomFieldTest
 		});
 
 		// arrange serialization
-		var converter = new RemoteIssueJsonConverter(new List<RemoteField> { remoteField }, new Dictionary<string, ICustomFieldValueSerializer>());
+		var converter = new RemoteIssueJsonConverter([remoteField], new Dictionary<string, ICustomFieldValueSerializer>());
 		var serializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore

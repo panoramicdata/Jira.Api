@@ -24,7 +24,7 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 		_fieldName = fieldName;
 		_jira = jira;
 		_projectKey = projectKey;
-		_originalList = new List<T>(list);
+		_originalList = [.. list];
 	}
 
 	public static bool operator ==(JiraNamedEntityCollection<T> list, string value)

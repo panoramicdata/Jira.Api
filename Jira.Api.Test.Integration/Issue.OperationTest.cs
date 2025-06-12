@@ -183,12 +183,12 @@ public class IssueOperationsTest
 		Assert.Equal(issue3.Key.Value, issueLink.InwardIssue.Key.Value);
 
 		// Verify retrieving subset of links of 1st issue
-		var issueLinkOfType = (await issue1.GetIssueLinksAsync(new List<string>() { "Duplicate" })).Single();
+		var issueLinkOfType = (await issue1.GetIssueLinksAsync(["Duplicate"])).Single();
 		Assert.Equal("Duplicate", issueLinkOfType.LinkType.Name);
 		Assert.Equal(issue1.Key.Value, issueLinkOfType.OutwardIssue.Key.Value);
 		Assert.Equal(issue2.Key.Value, issueLinkOfType.InwardIssue.Key.Value);
 
-		issueLinkOfType = (await issue1.GetIssueLinksAsync(new List<string>() { "Related" })).Single();
+		issueLinkOfType = (await issue1.GetIssueLinksAsync(["Related"])).Single();
 		Assert.Equal("Related", issueLinkOfType.LinkType.Name);
 		Assert.Equal(issue1.Key.Value, issueLinkOfType.OutwardIssue.Key.Value);
 		Assert.Equal(issue3.Key.Value, issueLinkOfType.InwardIssue.Key.Value);
@@ -749,7 +749,7 @@ public class IssueOperationsTest
 
 		// Verify one property exists.
 		propertyKeys = await jira.Issues.GetPropertyKeysAsync(issue.Key.Value);
-		Assert.True(propertyKeys.SequenceEqual(new List<string>() { keyString }));
+		Assert.True(propertyKeys.SequenceEqual([keyString]));
 
 		// Verify the property key returns the exact value
 		var issueProperties = await issue.GetPropertiesAsync([keyString, "non-existent-property"]);

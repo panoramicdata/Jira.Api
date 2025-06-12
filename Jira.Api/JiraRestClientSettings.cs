@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
-using Jira.Api.Remote;
-using Newtonsoft.Json;
 
 namespace Jira.Api;
 
@@ -13,15 +12,15 @@ public class JiraRestClientSettings
 {
 	private bool _userPrivacyEnabled;
 
-	private static IEnumerable<JsonConverter> _defaultJsonConverters = new List<JsonConverter>()
-		{
+	private static IEnumerable<JsonConverter> _defaultJsonConverters =
+		[
 			new JiraUserJsonConverter()
-		};
+		];
 
-	private static IEnumerable<JsonConverter> _gdprJsonConverters = new List<JsonConverter>()
-		{
+	private static IEnumerable<JsonConverter> _gdprJsonConverters =
+		[
 			new JiraUserJsonConverter() { UserPrivacyEnabled = true },
-		};
+		];
 
 	/// <summary>
 	/// Whether to trace each request.
