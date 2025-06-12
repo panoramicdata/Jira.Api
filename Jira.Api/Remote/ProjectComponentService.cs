@@ -29,9 +29,9 @@ internal class ProjectComponentService(Jira jira) : IProjectComponentService
 
 	public async Task DeleteComponentAsync(string componentId, string moveIssuesTo = null, CancellationToken token = default)
 	{
-		var resource = String.Format("/rest/api/2/component/{0}?{1}",
+		var resource = string.Format("/rest/api/2/component/{0}?{1}",
 			componentId,
-			String.IsNullOrEmpty(moveIssuesTo) ? null : "moveIssuesTo=" + Uri.EscapeDataString(moveIssuesTo));
+			string.IsNullOrEmpty(moveIssuesTo) ? null : "moveIssuesTo=" + Uri.EscapeDataString(moveIssuesTo));
 
 		await _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token).ConfigureAwait(false);
 
@@ -42,9 +42,9 @@ internal class ProjectComponentService(Jira jira) : IProjectComponentService
 	{
 		var cache = _jira.Cache;
 
-		if (!cache.Components.Values.Any(c => String.Equals(c.ProjectKey, projectKey)))
+		if (!cache.Components.Values.Any(c => string.Equals(c.ProjectKey, projectKey)))
 		{
-			var resource = String.Format("rest/api/2/project/{0}/components", projectKey);
+			var resource = string.Format("rest/api/2/project/{0}/components", projectKey);
 			var remoteComponents = await _jira.RestClient.ExecuteRequestAsync<RemoteComponent[]>(Method.GET, resource).ConfigureAwait(false);
 			var components = remoteComponents.Select(remoteComponent =>
 			{
@@ -56,7 +56,7 @@ internal class ProjectComponentService(Jira jira) : IProjectComponentService
 		}
 		else
 		{
-			return cache.Components.Values.Where(c => String.Equals(c.ProjectKey, projectKey));
+			return cache.Components.Values.Where(c => string.Equals(c.ProjectKey, projectKey));
 		}
 	}
 }

@@ -165,13 +165,13 @@ public class JiraRestClient : IJiraRestClient
 	{
 		if (this._clientSettings.EnableRequestTrace)
 		{
-			Trace.WriteLine(String.Format("[{0}] Request Url: {1}",
+			Trace.WriteLine(string.Format("[{0}] Request Url: {1}",
 				request.Method,
 				request.Resource));
 
 			if (body != null)
 			{
-				Trace.WriteLine(String.Format("[{0}] Request Data: {1}",
+				Trace.WriteLine(string.Format("[{0}] Request Data: {1}",
 					request.Method,
 					JsonConvert.SerializeObject(body, new JsonSerializerSettings()
 					{
@@ -188,7 +188,7 @@ public class JiraRestClient : IJiraRestClient
 
 		if (this._clientSettings.EnableRequestTrace)
 		{
-			Trace.WriteLine(String.Format("[{0}] Response for Url: {1}\n{2}",
+			Trace.WriteLine(string.Format("[{0}] Response for Url: {1}\n{2}",
 				request.Method,
 				request.Resource,
 				content));
@@ -216,7 +216,7 @@ public class JiraRestClient : IJiraRestClient
 		}
 		else if (!content.StartsWith("{") && !content.StartsWith("["))
 		{
-			throw new InvalidOperationException(String.Format("Response was not recognized as JSON. Content: {0}", content));
+			throw new InvalidOperationException(string.Format("Response was not recognized as JSON. Content: {0}", content));
 		}
 		else
 		{
@@ -228,7 +228,7 @@ public class JiraRestClient : IJiraRestClient
 			}
 			catch (JsonReaderException ex)
 			{
-				throw new InvalidOperationException(String.Format("Failed to parse response as JSON. Content: {0}", content), ex);
+				throw new InvalidOperationException(string.Format("Failed to parse response as JSON. Content: {0}", content), ex);
 			}
 
 			if (parsedContent != null && parsedContent.Type == JTokenType.Object && parsedContent["errorMessages"] != null)

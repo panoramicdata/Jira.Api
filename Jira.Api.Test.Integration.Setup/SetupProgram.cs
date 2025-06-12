@@ -127,7 +127,7 @@ public class SetupProgram
 		if (step <= 4)
 		{
 			var testDataFile = "TestData.zip";
-			if (args != null && args.Length > 0 && !String.IsNullOrWhiteSpace(args[0]))
+			if (args != null && args.Length > 0 && !string.IsNullOrWhiteSpace(args[0]))
 			{
 				testDataFile = $"TestData_{args[0]}.zip";
 			}

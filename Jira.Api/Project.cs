@@ -132,11 +132,11 @@ public class Project(Jira jira, RemoteProject remoteProject) : JiraNamedEntity(r
 	public async Task DeleteComponentAsync(string componentName, string moveIssuesTo = null, CancellationToken token = default)
 	{
 		var components = await this.GetComponentsAsync(token).ConfigureAwait(false);
-		var component = components.First(c => String.Equals(c.Name, componentName));
+		var component = components.First(c => string.Equals(c.Name, componentName));
 
 		if (component == null)
 		{
-			throw new InvalidOperationException(String.Format("Unable to locate a component with name '{0}'", componentName));
+			throw new InvalidOperationException(string.Format("Unable to locate a component with name '{0}'", componentName));
 		}
 
 		await _jira.Components.DeleteComponentAsync(component.Id, moveIssuesTo, token).ConfigureAwait(false);
@@ -183,11 +183,11 @@ public class Project(Jira jira, RemoteProject remoteProject) : JiraNamedEntity(r
 	public async Task DeleteVersionAsync(string versionName, string moveFixIssuesTo = null, string moveAffectedIssuesTo = null, CancellationToken token = default)
 	{
 		var versions = await this.GetVersionsAsync(token).ConfigureAwait(false);
-		var version = versions.FirstOrDefault(v => String.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase));
+		var version = versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase));
 
 		if (version == null)
 		{
-			throw new InvalidOperationException(String.Format("Unable to locate a version with name '{0}'", versionName));
+			throw new InvalidOperationException(string.Format("Unable to locate a version with name '{0}'", versionName));
 		}
 
 		await _jira.Versions.DeleteVersionAsync(version.Id, moveFixIssuesTo, moveAffectedIssuesTo, token).ConfigureAwait(false);

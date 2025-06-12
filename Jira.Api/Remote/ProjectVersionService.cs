@@ -17,9 +17,9 @@ internal class ProjectVersionService(Jira jira) : IProjectVersionService
 	{
 		var cache = _jira.Cache;
 
-		if (!cache.Versions.Values.Any(v => String.Equals(v.ProjectKey, projectKey)))
+		if (!cache.Versions.Values.Any(v => string.Equals(v.ProjectKey, projectKey)))
 		{
-			var resource = String.Format("rest/api/2/project/{0}/versions", projectKey);
+			var resource = string.Format("rest/api/2/project/{0}/versions", projectKey);
 			var remoteVersions = await _jira.RestClient.ExecuteRequestAsync<RemoteVersion[]>(Method.GET, resource, null, token).ConfigureAwait(false);
 			var versions = remoteVersions.Select(remoteVersion =>
 			{
@@ -31,14 +31,14 @@ internal class ProjectVersionService(Jira jira) : IProjectVersionService
 		}
 		else
 		{
-			return cache.Versions.Values.Where(v => String.Equals(v.ProjectKey, projectKey));
+			return cache.Versions.Values.Where(v => string.Equals(v.ProjectKey, projectKey));
 		}
 	}
 
 	public async Task<IPagedQueryResult<ProjectVersion>> GetPagedVersionsAsync(string projectKey, int startAt = 0, int maxResults = 50, CancellationToken token = default)
 	{
 		var settings = _jira.RestClient.Settings.JsonSerializerSettings;
-		var resource = String.Format("rest/api/2/project/{0}/version?startAt={1}&maxResults={2}",
+		var resource = string.Format("rest/api/2/project/{0}/version?startAt={1}&maxResults={2}",
 			projectKey,
 			startAt,
 			maxResults);
@@ -74,10 +74,10 @@ internal class ProjectVersionService(Jira jira) : IProjectVersionService
 
 	public async Task DeleteVersionAsync(string versionId, string moveFixIssuesTo = null, string moveAffectedIssuesTo = null, CancellationToken token = default)
 	{
-		var resource = String.Format("/rest/api/2/version/{0}?{1}&{2}",
+		var resource = string.Format("/rest/api/2/version/{0}?{1}&{2}",
 			versionId,
-			String.IsNullOrEmpty(moveFixIssuesTo) ? null : "moveFixIssuesTo=" + Uri.EscapeDataString(moveFixIssuesTo),
-			String.IsNullOrEmpty(moveAffectedIssuesTo) ? null : "moveAffectedIssuesTo=" + Uri.EscapeDataString(moveAffectedIssuesTo));
+			string.IsNullOrEmpty(moveFixIssuesTo) ? null : "moveFixIssuesTo=" + Uri.EscapeDataString(moveFixIssuesTo),
+			string.IsNullOrEmpty(moveAffectedIssuesTo) ? null : "moveAffectedIssuesTo=" + Uri.EscapeDataString(moveAffectedIssuesTo));
 
 		await _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token).ConfigureAwait(false);
 
@@ -86,7 +86,7 @@ internal class ProjectVersionService(Jira jira) : IProjectVersionService
 
 	public async Task<ProjectVersion> GetVersionAsync(string versionId, CancellationToken token = default)
 	{
-		var resource = String.Format("rest/api/2/version/{0}", versionId);
+		var resource = string.Format("rest/api/2/version/{0}", versionId);
 		var remoteVersion = await _jira.RestClient.ExecuteRequestAsync<RemoteVersion>(Method.GET, resource, null, token).ConfigureAwait(false);
 
 		return new ProjectVersion(_jira, remoteVersion);
@@ -94,7 +94,7 @@ internal class ProjectVersionService(Jira jira) : IProjectVersionService
 
 	public async Task<ProjectVersion> UpdateVersionAsync(ProjectVersion version, CancellationToken token = default)
 	{
-		var resource = String.Format("rest/api/2/version/{0}", version.Id);
+		var resource = string.Format("rest/api/2/version/{0}", version.Id);
 		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
 		var versionJson = JsonConvert.SerializeObject(version.RemoteVersion, serializerSettings);
 		var remoteVersion = await _jira.RestClient.ExecuteRequestAsync<RemoteVersion>(Method.PUT, resource, versionJson, token).ConfigureAwait(false);

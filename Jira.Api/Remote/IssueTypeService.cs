@@ -31,7 +31,7 @@ internal class IssueTypeService(Jira jira) : IIssueTypeService
 
 		if (!cache.ProjectIssueTypes.TryGetValue(projectKey, out JiraEntityDictionary<IssueType> _))
 		{
-			var resource = String.Format("rest/api/2/project/{0}/statuses", projectKey);
+			var resource = string.Format("rest/api/2/project/{0}/statuses", projectKey);
 			var results = await _jira.RestClient.ExecuteRequestAsync<RemoteIssueType[]>(Method.GET, resource, null, token).ConfigureAwait(false);
 			var issueTypes = results.Select(x => new IssueType(x));
 

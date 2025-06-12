@@ -20,7 +20,7 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 		bodyObject.Add("inwardIssue", new JObject(new JProperty("key", inwardIssueKey)));
 		bodyObject.Add("outwardIssue", new JObject(new JProperty("key", outwardIssueKey)));
 
-		if (!String.IsNullOrEmpty(comment))
+		if (!string.IsNullOrEmpty(comment))
 		{
 			bodyObject.Add("comment", new JObject(new JProperty("body", comment)));
 		}
@@ -37,7 +37,7 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 	public async Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(Issue issue, IEnumerable<string> linkTypeNames = null, CancellationToken token = default)
 	{
 		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
-		var resource = String.Format("rest/api/2/issue/{0}?fields=issuelinks,created", issue.Key.Value);
+		var resource = string.Format("rest/api/2/issue/{0}?fields=issuelinks,created", issue.Key.Value);
 		var issueLinksResult = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);
 		var issueLinksJson = issueLinksResult["fields"]["issuelinks"];
 

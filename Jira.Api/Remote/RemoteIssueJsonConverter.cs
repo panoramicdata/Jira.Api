@@ -57,14 +57,14 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 		var issueWrapper = value as RemoteIssueWrapper;
 		if (issueWrapper == null)
 		{
-			throw new InvalidOperationException(String.Format("value must be of type {0}.", typeof(RemoteIssueWrapper)));
+			throw new InvalidOperationException(string.Format("value must be of type {0}.", typeof(RemoteIssueWrapper)));
 		}
 
 		var issue = issueWrapper.RemoteIssue;
 
 		// prepare the JiraUser identifiers
-		issue.assigneeJiraUser = String.IsNullOrEmpty(issue.assignee) ? null : new JiraUser() { InternalIdentifier = issue.assignee };
-		issue.reporterJiraUser = String.IsNullOrEmpty(issue.reporter) ? null : new JiraUser() { InternalIdentifier = issue.reporter };
+		issue.assigneeJiraUser = string.IsNullOrEmpty(issue.assignee) ? null : new JiraUser() { InternalIdentifier = issue.assignee };
+		issue.reporterJiraUser = string.IsNullOrEmpty(issue.reporter) ? null : new JiraUser() { InternalIdentifier = issue.reporter };
 
 		// Round trip the remote issue to get a JObject that has all the fields in the proper format.
 		var issueJsonBuilder = new StringBuilder();
@@ -78,7 +78,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 		AddCustomFieldValuesToObject(issue, fields);
 
 		// Add a field for the parent issue if this is a sub-task
-		if (!String.IsNullOrEmpty(issueWrapper.ParentIssueKey))
+		if (!string.IsNullOrEmpty(issueWrapper.ParentIssueKey))
 		{
 			fields.Add("parent", JObject.FromObject(new
 			{

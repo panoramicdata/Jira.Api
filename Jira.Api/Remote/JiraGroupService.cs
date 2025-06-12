@@ -14,7 +14,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 
 	public Task AddUserAsync(string groupname, string username, CancellationToken token = default)
 	{
-		var resource = String.Format("rest/api/2/group/user?groupname={0}", Uri.EscapeUriString(groupname));
+		var resource = string.Format("rest/api/2/group/user?groupname={0}", Uri.EscapeUriString(groupname));
 		object body = new { name = username };
 		if (_jira.RestClient.Settings.EnableUserPrivacyMode)
 		{
@@ -35,11 +35,11 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 
 	public Task DeleteGroupAsync(string groupName, string swapGroupName = null, CancellationToken token = default)
 	{
-		var resource = String.Format("rest/api/2/group?groupname={0}", Uri.EscapeUriString(groupName));
+		var resource = string.Format("rest/api/2/group?groupname={0}", Uri.EscapeUriString(groupName));
 
-		if (!String.IsNullOrEmpty(swapGroupName))
+		if (!string.IsNullOrEmpty(swapGroupName))
 		{
-			resource += String.Format("&swapGroup={0}", Uri.EscapeUriString(swapGroupName));
+			resource += string.Format("&swapGroup={0}", Uri.EscapeUriString(swapGroupName));
 		}
 
 		return _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token);
@@ -47,7 +47,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 
 	public async Task<IPagedQueryResult<JiraUser>> GetUsersAsync(string groupname, bool includeInactiveUsers = false, int maxResults = 50, int startAt = 0, CancellationToken token = default)
 	{
-		var resource = String.Format(
+		var resource = string.Format(
 			"rest/api/2/group/member?groupname={0}&includeInactiveUsers={1}&startAt={2}&maxResults={3}",
 			Uri.EscapeUriString(groupname),
 			includeInactiveUsers,
@@ -65,7 +65,7 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 
 	public Task RemoveUserAsync(string groupname, string username, CancellationToken token = default)
 	{
-		var resource = String.Format("rest/api/2/group/user?groupname={0}&{1}={2}",
+		var resource = string.Format("rest/api/2/group/user?groupname={0}&{1}={2}",
 			Uri.EscapeUriString(groupname),
 			_jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username",
 			Uri.EscapeUriString(username));

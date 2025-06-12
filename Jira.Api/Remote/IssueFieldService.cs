@@ -34,11 +34,11 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 		var issueTypeId = options.IssueTypeIds.FirstOrDefault();
 		var issueTypeName = options.IssueTypeNames.FirstOrDefault();
 
-		if (!String.IsNullOrEmpty(issueTypeId) || !String.IsNullOrEmpty(issueTypeName))
+		if (!string.IsNullOrEmpty(issueTypeId) || !string.IsNullOrEmpty(issueTypeName))
 		{
 			projectKey = $"{projectKey}::{issueTypeId}::{issueTypeName}";
 		}
-		else if (String.IsNullOrEmpty(projectKey))
+		else if (string.IsNullOrEmpty(projectKey))
 		{
 			return await GetCustomFieldsAsync(token);
 		}
@@ -49,17 +49,17 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 
 			if (options.ProjectKeys.Any())
 			{
-				resource += $"&projectKeys={String.Join(",", options.ProjectKeys)}";
+				resource += $"&projectKeys={string.Join(",", options.ProjectKeys)}";
 			}
 
 			if (options.IssueTypeIds.Any())
 			{
-				resource += $"&issuetypeIds={String.Join(",", options.IssueTypeIds)}";
+				resource += $"&issuetypeIds={string.Join(",", options.IssueTypeIds)}";
 			}
 
 			if (options.IssueTypeNames.Any())
 			{
-				resource += $"&issuetypeNames={String.Join(",", options.IssueTypeNames)}";
+				resource += $"&issuetypeNames={string.Join(",", options.IssueTypeNames)}";
 			}
 
 			var jObject = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);

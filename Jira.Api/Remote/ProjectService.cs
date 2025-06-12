@@ -25,7 +25,7 @@ internal class ProjectService(Jira jira) : IProjectService
 
 	public async Task<Project> GetProjectAsync(string projectKey, CancellationToken token = new CancellationToken())
 	{
-		var resource = String.Format("rest/api/2/project/{0}?expand=lead,url", projectKey);
+		var resource = string.Format("rest/api/2/project/{0}?expand=lead,url", projectKey);
 		var remoteProject = await _jira.RestClient.ExecuteRequestAsync<RemoteProject>(Method.GET, resource, null, token).ConfigureAwait(false);
 		return new Project(_jira, remoteProject);
 	}

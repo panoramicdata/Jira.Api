@@ -166,11 +166,11 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 			var options = new CustomFieldFetchOptions();
 			options.ProjectKeys.Add(_issue.Project);
 
-			if (!String.IsNullOrEmpty(_issue.Type?.Id))
+			if (!string.IsNullOrEmpty(_issue.Type?.Id))
 			{
 				options.IssueTypeIds.Add(_issue.Type.Id);
 			}
-			else if (!String.IsNullOrEmpty(_issue.Type?.Name))
+			else if (!string.IsNullOrEmpty(_issue.Type?.Name))
 			{
 				options.IssueTypeNames.Add(_issue.Type.Name);
 			}

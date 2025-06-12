@@ -79,12 +79,12 @@ public class Attachment(Jira jira, RemoteAttachment remoteAttachment)
 
 	private string GetRequestUrl()
 	{
-		if (String.IsNullOrEmpty(_jira.Url))
+		if (string.IsNullOrEmpty(_jira.Url))
 		{
 			throw new InvalidOperationException("Unable to download attachment, JIRA url has not been set.");
 		}
 
-		return String.Format("{0}secure/attachment/{1}/{2}",
+		return string.Format("{0}secure/attachment/{1}/{2}",
 			_jira.Url.EndsWith("/") ? _jira.Url : _jira.Url + "/",
 			this.Id,
 			this.FileName);

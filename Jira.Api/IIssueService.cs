@@ -115,7 +115,7 @@ public interface IIssueService
 	/// </summary>
 	/// <param name="issueKey">The issue key.</param>
 	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IDictionary<String, IssueFieldEditMetadata>> GetFieldsEditMetadataAsync(string issueKey, CancellationToken token = default);
+	Task<IDictionary<string, IssueFieldEditMetadata>> GetFieldsEditMetadataAsync(string issueKey, CancellationToken token = default);
 
 	/// <summary>
 	/// Adds a comment to an issue.

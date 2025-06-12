@@ -267,6 +267,6 @@ public class IssueCreateTest
 		var subtasks = jira.Issues.GetIssuesFromJqlAsync("project = TST and parent = TST-1").Result;
 
 		Assert.True(subtasks.Any(s => s.Summary.Equals(summaryValue)),
-			String.Format("'{0}' was not found as a sub-task of TST-1", summaryValue));
+			string.Format("'{0}' was not found as a sub-task of TST-1", summaryValue));
 	}
 }

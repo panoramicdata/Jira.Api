@@ -23,20 +23,20 @@ internal class JiraUserService(Jira jira) : IJiraUserService
 	public Task DeleteUserAsync(string usernameOrAccountId, CancellationToken token = default)
 	{
 		var queryString = _jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username";
-		var resource = String.Format($"rest/api/2/user?{queryString}={Uri.EscapeUriString(usernameOrAccountId)}");
+		var resource = string.Format($"rest/api/2/user?{queryString}={Uri.EscapeUriString(usernameOrAccountId)}");
 		return _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token);
 	}
 
 	public Task<JiraUser> GetUserAsync(string usernameOrAccountId, CancellationToken token = default)
 	{
 		var queryString = _jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username";
-		var resource = String.Format($"rest/api/2/user?{queryString}={Uri.EscapeUriString(usernameOrAccountId)}");
+		var resource = string.Format($"rest/api/2/user?{queryString}={Uri.EscapeUriString(usernameOrAccountId)}");
 		return _jira.RestClient.ExecuteRequestAsync<JiraUser>(Method.GET, resource, null, token);
 	}
 
 	public Task<IEnumerable<JiraUser>> SearchUsersAsync(string query, JiraUserStatus userStatus = JiraUserStatus.Active, int maxResults = 50, int startAt = 0, CancellationToken token = default)
 	{
-		var resource = String.Format(
+		var resource = string.Format(
 			"rest/api/2/user/search?{0}={1}&includeActive={2}&includeInactive={3}&startAt={4}&maxResults={5}",
 			_jira.RestClient.Settings.EnableUserPrivacyMode ? "query" : "username",
 			Uri.EscapeUriString(query),

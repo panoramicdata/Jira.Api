@@ -353,7 +353,7 @@ public class IssueUpdateTest
 		issue.SaveChanges();
 		Assert.Null(issue.SecurityLevel);
 
-		var resource = String.Format("rest/api/2/issue/{0}", issue.Key.Value);
+		var resource = string.Format("rest/api/2/issue/{0}", issue.Key.Value);
 		var body = new
 		{
 			fields = new

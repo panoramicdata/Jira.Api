@@ -55,7 +55,7 @@ public class IssueType : JiraNamedConstant
 	{
 		var results = await jira.IssueTypes.GetIssueTypesAsync(token).ConfigureAwait(false);
 
-		if (!String.IsNullOrEmpty(ProjectKey) &&
+		if (!string.IsNullOrEmpty(ProjectKey) &&
 			(SearchByProjectOnly || results.Distinct(new JiraEntityNameEqualityComparer()).Count() != results.Count()))
 		{
 			// There are multiple issue types with the same name. Possibly because there are a combination

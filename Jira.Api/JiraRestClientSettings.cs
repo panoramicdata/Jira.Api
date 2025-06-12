@@ -155,11 +155,11 @@ public class JiraRestClientSettings
 
 	private static string GetBuiltInType(string name)
 	{
-		return String.Format("com.atlassian.jira.plugin.system.customfieldtypes:{0}", name);
+		return string.Format("com.atlassian.jira.plugin.system.customfieldtypes:{0}", name);
 	}
 
 	private static string GetGreenhopperType(string name)
 	{
-		return String.Format("com.pyxis.greenhopper.jira:{0}", name);
+		return string.Format("com.pyxis.greenhopper.jira:{0}", name);
 	}
 }

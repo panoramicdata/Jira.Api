@@ -111,7 +111,7 @@ public class IssueQueryTest
 		}
 
 		// Act: Query for paged issues.
-		var jql = String.Format("summary ~ \"{0}\"", summaryValue);
+		var jql = string.Format("summary ~ \"{0}\"", summaryValue);
 		var result = jira.Issues.GetIssuesFromJqlAsync(jql, 5, 1).Result as IPagedQueryResult<Issue>;
 
 		// Assert

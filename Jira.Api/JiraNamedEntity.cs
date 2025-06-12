@@ -27,7 +27,7 @@ public class JiraNamedEntity : IJiraEntity
 	/// <param name="name">Name of the entity.</param>
 	public JiraNamedEntity(string id, string name = null)
 	{
-		if (String.IsNullOrEmpty(id) && String.IsNullOrEmpty(name))
+		if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(name))
 		{
 			throw new ArgumentNullException($"Named entity should have and id or a name. Id: '{id}'. Name: '{name}'.");
 		}
@@ -53,7 +53,7 @@ public class JiraNamedEntity : IJiraEntity
 
 	public override string ToString()
 	{
-		if (!String.IsNullOrEmpty(Name))
+		if (!string.IsNullOrEmpty(Name))
 		{
 			return Name;
 		}
@@ -65,20 +65,20 @@ public class JiraNamedEntity : IJiraEntity
 
 	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(Jira jira, CancellationToken token)
 	{
-		if (String.IsNullOrEmpty(Id) || String.IsNullOrEmpty(Name))
+		if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name))
 		{
 			var entities = await this.GetEntitiesAsync(jira, token).ConfigureAwait(false);
 			var entity = entities.FirstOrDefault(e =>
-				(!String.IsNullOrEmpty(Name) && String.Equals(e.Name, this.Name, StringComparison.OrdinalIgnoreCase)) ||
-				(!String.IsNullOrEmpty(Id) && String.Equals(e.Id, this.Id, StringComparison.OrdinalIgnoreCase)));
+				(!string.IsNullOrEmpty(Name) && string.Equals(e.Name, this.Name, StringComparison.OrdinalIgnoreCase)) ||
+				(!string.IsNullOrEmpty(Id) && string.Equals(e.Id, this.Id, StringComparison.OrdinalIgnoreCase)));
 
 			if (entity == null)
 			{
-				throw new InvalidOperationException(String.Format("Entity with id '{0}' and name '{1}' was not found for type '{2}'. Available: [{3}]",
+				throw new InvalidOperationException(string.Format("Entity with id '{0}' and name '{1}' was not found for type '{2}'. Available: [{3}]",
 					this.Id,
 					this.Name,
 					this.GetType(),
-					String.Join(",", entities.Select(s => s.Id + ":" + s.Name).ToArray())));
+					string.Join(",", entities.Select(s => s.Id + ":" + s.Name).ToArray())));
 			}
 
 			Id = entity.Id;
@@ -93,7 +93,7 @@ internal class JiraEntityNameEqualityComparer : IEqualityComparer<JiraNamedEntit
 {
 	public bool Equals(JiraNamedEntity x, JiraNamedEntity y)
 	{
-		return String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+		return string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
 	}
 
 	public int GetHashCode(JiraNamedEntity obj)

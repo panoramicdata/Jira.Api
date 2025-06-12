@@ -668,7 +668,7 @@ public class IssueOperationsTest
 		// Create issue and verify it is found in server.
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
-		issue.Summary = String.Format("Issue to delete ({0})", _random.Next(int.MaxValue));
+		issue.Summary = string.Format("Issue to delete ({0})", _random.Next(int.MaxValue));
 		issue.SaveChanges();
 		Assert.True(jira.Issues.Queryable.Where(i => i.Key == issue.Key).Any(), "Expected issue in server");
 

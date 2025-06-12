@@ -93,7 +93,7 @@ public class Issue : IRemoteIssueFieldProvider
 		Votes = remoteIssue.votesData?.votes;
 		HasUserVoted = remoteIssue.votesData != null ? remoteIssue.votesData.hasVoted : false;
 
-		if (!String.IsNullOrEmpty(remoteIssue.parentKey))
+		if (!string.IsNullOrEmpty(remoteIssue.parentKey))
 		{
 			_parentIssueKey = remoteIssue.parentKey;
 		}
@@ -222,7 +222,7 @@ public class Issue : IRemoteIssueFieldProvider
 	{
 		get
 		{
-			if (String.IsNullOrEmpty(this._originalIssue.key))
+			if (string.IsNullOrEmpty(this._originalIssue.key))
 			{
 				throw new InvalidOperationException("Unable to retrieve JIRA id, issue has not been created.");
 			}
@@ -465,7 +465,7 @@ public class Issue : IRemoteIssueFieldProvider
 	public void SaveChanges()
 	{
 		Issue serverIssue = null;
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			var newKey = _jira.Issues.CreateIssueAsync(this).Result;
 			serverIssue = _jira.Issues.GetIssueAsync(newKey).Result;
@@ -486,7 +486,7 @@ public class Issue : IRemoteIssueFieldProvider
 	public async Task<Issue> SaveChangesAsync(CancellationToken token = default)
 	{
 		Issue serverIssue;
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			var newKey = await _jira.Issues.CreateIssueAsync(this, token).ConfigureAwait(false);
 			serverIssue = await _jira.Issues.GetIssueAsync(newKey, token).ConfigureAwait(false);
@@ -510,7 +510,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task LinkToIssueAsync(string inwardIssueKey, string linkName, string comment = null, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to link issue, issue has not been created.");
 		}
@@ -524,7 +524,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<IssueLink>> GetIssueLinksAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get issue links issues, issue has not been created.");
 		}
@@ -539,7 +539,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<IssueLink>> GetIssueLinksAsync(IEnumerable<string> linkTypeNames, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get issue links issues, issue has not been created.");
 		}
@@ -555,7 +555,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="summary">Summary of the remote link.</param>
 	public Task AddRemoteLinkAsync(string remoteUrl, string title, string summary = null)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add remote link, issue has not been created.");
 		}
@@ -569,7 +569,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get remote links, issue has not been created.");
 		}
@@ -585,7 +585,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public async Task WorkflowTransitionAsync(string actionNameOrId, WorkflowTransitionUpdates additionalUpdates = null, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to execute workflow transition, issue has not been created.");
 		}
@@ -603,7 +603,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IPagedQueryResult<Issue>> GetSubTasksAsync(int? maxIssues = null, int startAt = 0, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve subtasks from server, issue has not been created.");
 		}
@@ -616,7 +616,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// </summary>
 	public Task<IEnumerable<Attachment>> GetAttachmentsAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve attachments from server, issue has not been created.");
 		}
@@ -651,7 +651,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="attachments">Attachment objects that describe the files to upload.</param>
 	public void AddAttachment(params UploadAttachmentInfo[] attachments)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to upload attachments to server, issue has not been created.");
 		}
@@ -666,7 +666,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task AddAttachmentAsync(UploadAttachmentInfo[] attachments, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to upload attachments to server, issue has not been created.");
 		}
@@ -681,7 +681,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task DeleteAttachmentAsync(Attachment attachment, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to delete attachment from server, issue has not been created.");
 		}
@@ -692,9 +692,9 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <summary>
 	/// Gets a dictionary with issue field names as keys and their metadata as values.
 	/// </summary>
-	public Task<IDictionary<String, IssueFieldEditMetadata>> GetIssueFieldsEditMetadataAsync(CancellationToken token = default)
+	public Task<IDictionary<string, IssueFieldEditMetadata>> GetIssueFieldsEditMetadataAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve issue fields from server, make sure the issue has been created.");
 		}
@@ -708,7 +708,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<IssueChangeLog>> GetChangeLogsAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve change logs from server, issue has not been created.");
 		}
@@ -722,7 +722,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<Comment>> GetCommentsAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
@@ -737,7 +737,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<Comment>> GetCommentsAsync(CommentQueryOptions options, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
@@ -753,7 +753,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IPagedQueryResult<Comment>> GetPagedCommentsAsync(int? maxComments = null, int startAt = 0, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
@@ -782,7 +782,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task DeleteCommentAsync(Comment comment, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to delete comment from server, issue has not been created.");
 		}
@@ -797,7 +797,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<Comment> AddCommentAsync(Comment comment, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add comment to issue, issue has not been created.");
 		}
@@ -812,7 +812,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<Comment> UpdateCommentAsync(Comment comment, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to update comment to issue, issue has not been created.");
 		}
@@ -827,7 +827,7 @@ public class Issue : IRemoteIssueFieldProvider
 	[Obsolete("Use Issue.Labels instead.")]
 	public Task<string[]> GetLabelsAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get labels from issue, issue has not been created.");
 		}
@@ -853,7 +853,7 @@ public class Issue : IRemoteIssueFieldProvider
 	[Obsolete("Modify the Issue.Labels collection and call Issue.SaveChanges to update the labels field.")]
 	public Task SetLabelsAsync(string[] labels, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add label to issue, issue has not been created.");
 		}
@@ -890,7 +890,7 @@ public class Issue : IRemoteIssueFieldProvider
 							  string newEstimate = null,
 							  CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add worklog to issue, issue has not been saved to server.");
 		}
@@ -907,7 +907,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task DeleteWorklogAsync(Worklog worklog, WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate, string newEstimate = null, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to delete worklog from issue, issue has not been saved to server.");
 		}
@@ -921,7 +921,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<Worklog>> GetWorklogsAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve worklogs, issue has not been saved to server.");
 		}
@@ -943,7 +943,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public async Task RefreshAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to refresh, issue has not been saved to server.");
 		}
@@ -959,7 +959,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<IssueTransition>> GetAvailableActionsAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve actions, issue has not been saved to server.");
 		}
@@ -973,7 +973,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<IssueTransition>> GetAvailableActionsAsync(bool expandTransitionFields, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve actions, issue has not been saved to server.");
 		}
@@ -991,7 +991,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IssueTimeTrackingData> GetTimeTrackingDataAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve time tracking data, issue has not been saved to server.");
 		}
@@ -1006,7 +1006,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task AddWatcherAsync(string usernameOrAccountId, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add watcher, issue has not been saved to server.");
 		}
@@ -1020,7 +1020,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task<IEnumerable<JiraUser>> GetWatchersAsync(CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get watchers, issue has not been saved to server.");
 		}
@@ -1035,7 +1035,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public Task DeleteWatcherAsync(string usernameOrAccountId, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to remove watcher, issue has not been saved to server.");
 		}
@@ -1050,7 +1050,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Cancellation token for this operation.</param>
 	public async Task AssignAsync(string assignee, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to assign issue, issue has not been saved to server.");
 		}
@@ -1071,7 +1071,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <returns>A dictionary of property values mapped to their keys.</returns>
 	public Task<ReadOnlyDictionary<string, JToken>> GetPropertiesAsync(IEnumerable<string> propertyKeys, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to fetch issue properties, issue has not been saved to server.");
 		}
@@ -1090,7 +1090,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Asynchronous operation control token.</param>
 	public Task SetPropertyAsync(string propertyKey, JToken obj, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add issue properties, issue has not been saved to server.");
 		}
@@ -1108,7 +1108,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="token">Asynchronous operation control token.</param>
 	public Task DeletePropertyAsync(string propertyKey, CancellationToken token = default)
 	{
-		if (String.IsNullOrEmpty(_originalIssue.key))
+		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to remove issue properties, issue has not been saved to server.");
 		}
