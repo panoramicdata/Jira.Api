@@ -13,7 +13,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateIssueAsync(Jira jira)
+	public async Task UpdateIssueAsync(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -34,7 +34,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateNamedEntities_ById(Jira jira)
+	public async Task UpdateNamedEntities_ById(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "AutoLoadNamedEntities_ById " + _random.Next(int.MaxValue);
@@ -51,7 +51,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateNamedEntities_ByName(Jira jira)
+	public async Task UpdateNamedEntities_ByName(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "AutoLoadNamedEntities_Name " + _random.Next(int.MaxValue);
@@ -68,7 +68,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateIssueType(Jira jira)
+	public async Task UpdateIssueType(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -91,7 +91,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateWithAllFieldsSet(Jira jira)
+	public async Task UpdateWithAllFieldsSet(JiraClient jira)
 	{
 		// arrange, create an issue to test.
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
@@ -133,7 +133,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateAssignee(Jira jira)
+	public async Task UpdateAssignee(JiraClient jira)
 	{
 		var summaryValue = "Test issue with assignee (Updated)" + _random.Next(int.MaxValue);
 
@@ -157,7 +157,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateComment(Jira jira)
+	public async Task UpdateComment(JiraClient jira)
 	{
 		var summaryValue = "Test Summary with comments " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -199,7 +199,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveVersions(Jira jira)
+	public async Task AddAndRemoveVersions(JiraClient jira)
 	{
 		var summaryValue = "Test issue with versions (Updated)" + _random.Next(int.MaxValue);
 
@@ -253,7 +253,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveComponents(Jira jira)
+	public async Task AddAndRemoveComponents(JiraClient jira)
 	{
 		var summaryValue = "Test issue with components (Updated)" + _random.Next(int.MaxValue);
 
@@ -291,7 +291,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveLabelsFromIssue(Jira jira)
+	public async Task AddAndRemoveLabelsFromIssue(JiraClient jira)
 	{
 		var summaryValue = "Test issue with labels (Updated)" + _random.Next(int.MaxValue);
 
@@ -320,7 +320,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateIssueWithCustomField(Jira jira)
+	public async Task UpdateIssueWithCustomField(JiraClient jira)
 	{
 		var summaryValue = "Test issue with custom field (Updated)" + _random.Next(int.MaxValue);
 
@@ -342,7 +342,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CanAccessSecurityLevel(Jira jira)
+	public async Task CanAccessSecurityLevel(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{

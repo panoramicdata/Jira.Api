@@ -10,7 +10,7 @@ public class JiraGroupTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndRemoveGroupWithUser(Jira jira)
+	public async Task CreateAndRemoveGroupWithUser(JiraClient jira)
 	{
 		// Create the group.
 		var groupName = $"test-group-{_random.Next(int.MaxValue)}";
@@ -34,7 +34,7 @@ public class JiraGroupTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndRemoveGroupWithSpecialCharacterAndUser(Jira jira)
+	public async Task CreateAndRemoveGroupWithSpecialCharacterAndUser(JiraClient jira)
 	{
 		// Create the group.
 		var groupName = $"test-group-@@@@-{_random.Next(int.MaxValue)}";

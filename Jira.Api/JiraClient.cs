@@ -12,7 +12,7 @@ namespace Jira.Api;
 /// <remarks>
 /// Create a client that connects with a JIRA server with specified dependencies.
 /// </remarks>
-public class Jira(ServiceLocator services, JiraCache? cache = null)
+public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 {
 	internal const string DEFAULT_DATE_FORMAT = "yyyy/MM/dd";
 	internal const string DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " HH:mm";
@@ -26,7 +26,7 @@ public class Jira(ServiceLocator services, JiraCache? cache = null)
 	/// <param name="password">Password used to authenticate.</param>
 	/// <param name="settings">Settings to configure the rest client.</param>
 	/// <returns>Jira object configured to use REST API.</returns>
-	public static Jira CreateRestClient(
+	public static JiraClient CreateRestClient(
 		string url,
 		string? username = null,
 		string? password = null,
@@ -49,7 +49,7 @@ public class Jira(ServiceLocator services, JiraCache? cache = null)
 	/// <param name="oAuthSignatureMethod">The signature method used to generate the request token.</param>
 	/// <param name="settings">Settings to configure the rest client.</param>
 	/// <returns>Jira object configured to use REST API.</returns>
-	public static Jira CreateOAuthRestClient(
+	public static JiraClient CreateOAuthRestClient(
 		string url,
 		string consumerKey,
 		string consumerSecret,
@@ -76,12 +76,12 @@ public class Jira(ServiceLocator services, JiraCache? cache = null)
 	/// </summary>
 	/// <param name="restClient">Rest client to use.</param>
 	/// <param name="cache">Cache to use.</param>
-	public static Jira CreateRestClient(
+	public static JiraClient CreateRestClient(
 		IJiraRestClient restClient,
 		JiraCache? cache = null)
 	{
 		var services = new ServiceLocator();
-		var jira = new Jira(services, cache);
+		var jira = new JiraClient(services, cache);
 		ConfigureDefaultServices(services, jira, restClient);
 		return jira;
 	}
@@ -291,7 +291,7 @@ public class Jira(ServiceLocator services, JiraCache? cache = null)
 	/// <summary>
 	/// Maximum number of issues per request
 	/// </summary>
-	[Obsolete("Use Jira.Issues.MaxIssuesPerRequest")]
+	[Obsolete("Use JiraClient.Issues.MaxIssuesPerRequest")]
 	public int MaxIssuesPerRequest
 	{
 		get
@@ -343,10 +343,10 @@ public class Jira(ServiceLocator services, JiraCache? cache = null)
 		 */
 		return value.ToString(
 			value.TimeOfDay == TimeSpan.Zero ? DEFAULT_DATE_FORMAT : DEFAULT_DATE_TIME_FORMAT,
-			Jira.DefaultCultureInfo);
+			JiraClient.DefaultCultureInfo);
 	}
 
-	private static void ConfigureDefaultServices(ServiceLocator services, Jira jira, IJiraRestClient restClient)
+	private static void ConfigureDefaultServices(ServiceLocator services, JiraClient jira, IJiraRestClient restClient)
 	{
 		services.Register<IProjectVersionService>(() => new ProjectVersionService(jira));
 		services.Register<IProjectComponentService>(() => new ProjectComponentService(jira));

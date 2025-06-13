@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class IssueFieldService(Jira jira) : IIssueFieldService
+internal class IssueFieldService(JiraClient jira) : IIssueFieldService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CancellationToken cancellationToken)
 	{
@@ -63,7 +63,7 @@ internal class IssueFieldService(Jira jira) : IIssueFieldService
 			}
 
 			var jObject = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
-			var jProject = jObject["projects"].FirstOrDefault() ?? throw new InvalidOperationException($"Project with key '{projectKey}' was not found on the Jira server.");
+			var jProject = jObject["projects"].FirstOrDefault() ?? throw new InvalidOperationException($"Project with key '{projectKey}' was not found on the JiraClient server.");
 			var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
 			var customFields = jProject["issuetypes"].SelectMany(issueType => GetCustomFieldsFromIssueType(issueType, serializerSettings));
 			var distinctFields = customFields.GroupBy(c => c.Id).Select(g => g.First());

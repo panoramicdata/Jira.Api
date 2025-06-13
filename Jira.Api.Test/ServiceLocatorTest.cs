@@ -15,7 +15,7 @@ public class ServiceLocatorTest
 		// Arrange
 		var projects = new Mock<IProjectService>();
 		var client = new Mock<IJiraRestClient>();
-		var jira = Jira.CreateRestClient(client.Object);
+		var jira = JiraClient.CreateRestClient(client.Object);
 
 		var remoteProject = new RemoteProject() { id = "projId", key = "projKey", name = "my project" };
 		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
@@ -43,7 +43,7 @@ public class ServiceLocatorTest
 		// Arrange
 		var projects = new Mock<IProjectService>();
 		var client = new Mock<IJiraRestClient>();
-		var jira = Jira.CreateRestClient(client.Object);
+		var jira = JiraClient.CreateRestClient(client.Object);
 
 		var remoteProject = new RemoteProject() { id = "projId", key = "projKey", name = "my project" };
 		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))

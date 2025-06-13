@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class ProjectService(Jira jira) : IProjectService
+internal class ProjectService(JiraClient jira) : IProjectService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<IEnumerable<Project>> GetProjectsAsync(CancellationToken cancellationToken)
 	{

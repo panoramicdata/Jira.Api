@@ -17,7 +17,7 @@ namespace Jira.Api;
 /// </summary>
 public class Issue : IRemoteIssueFieldProvider
 {
-	private readonly Jira _jira;
+	private readonly JiraClient _jira;
 
 	private ComparableString _key;
 	private string _project;
@@ -41,7 +41,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// </summary>
 	/// <param name="jira">Jira instance that owns this issue.</param>
 	/// <param name="fields">Fields to be included in the payload when creating the issue.</param>
-	public Issue(Jira jira, CreateIssueFields fields)
+	public Issue(JiraClient jira, CreateIssueFields fields)
 		: this(jira, new RemoteIssue() { project = fields.ProjectKey, timeTracking = fields.TimeTrackingData }, fields.ParentIssueKey)
 	{
 	}
@@ -52,7 +52,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="jira">Jira instance that owns this issue.</param>
 	/// <param name="projectKey">Project key that owns this issue.</param>
 	/// <param name="parentIssueKey">If provided, marks this issue as a subtask of the given parent issue.</param>
-	public Issue(Jira jira, string projectKey, string? parentIssueKey = null)
+	public Issue(JiraClient jira, string projectKey, string? parentIssueKey = null)
 		: this(jira, new RemoteIssue() { project = projectKey }, parentIssueKey)
 	{
 	}
@@ -63,7 +63,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="jira">The Jira instance that owns this issue.</param>
 	/// <param name="remoteIssue">The remote issue object.</param>
 	/// <param name="parentIssueKey">If provided, marks this issue as a subtask of the given parent issue.</param>
-	public Issue(Jira jira, RemoteIssue remoteIssue, string? parentIssueKey = null)
+	public Issue(JiraClient jira, RemoteIssue remoteIssue, string? parentIssueKey = null)
 	{
 		_jira = jira;
 		_parentIssueKey = parentIssueKey;
@@ -163,7 +163,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <summary>
 	/// The JIRA server that created this issue
 	/// </summary>
-	public Jira Jira
+	public JiraClient Jira
 	{
 		get
 		{

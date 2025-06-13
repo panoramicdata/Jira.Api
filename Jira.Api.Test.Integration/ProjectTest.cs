@@ -11,7 +11,7 @@ public class ProjectTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssueTypes(Jira jira)
+	public async Task GetIssueTypes(JiraClient jira)
 	{
 		var project = await jira.Projects.GetProjectAsync("TST", default);
 		var issueTypes = await project.GetIssueTypesAsync(default);
@@ -21,7 +21,7 @@ public class ProjectTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveProjectComponent(Jira jira)
+	public async Task AddAndRemoveProjectComponent(JiraClient jira)
 	{
 		var componentName = "New Component " + _random.Next(int.MaxValue);
 		var projectInfo = new ProjectComponentCreationInfo(componentName);
@@ -41,7 +41,7 @@ public class ProjectTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetProjectComponents(Jira jira)
+	public async Task GetProjectComponents(JiraClient jira)
 	{
 		var components = await jira.Components.GetComponentsAsync("TST", default);
 		Assert.Equal(2, components.Count());
@@ -49,7 +49,7 @@ public class ProjectTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetAndUpdateProjectVersions(Jira jira)
+	public async Task GetAndUpdateProjectVersions(JiraClient jira)
 	{
 		var startDate = new DateTime(2000, 11, 1);
 		var versions = await jira.Versions.GetVersionsAsync("TST", default);
@@ -69,7 +69,7 @@ public class ProjectTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveProjectVersions(Jira jira)
+	public async Task AddAndRemoveProjectVersions(JiraClient jira)
 	{
 		var versionName = "New Version " + _random.Next(int.MaxValue);
 		var project = (await jira.Projects.GetProjectsAsync(default)).First();

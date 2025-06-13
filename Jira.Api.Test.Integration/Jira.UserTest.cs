@@ -23,7 +23,7 @@ public class JiraUserTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateGetAndDeleteUsers(Jira jira)
+	public async Task CreateGetAndDeleteUsers(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 
@@ -52,7 +52,7 @@ public class JiraUserTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateGetAndDeleteUsersWithEmailAsUsername(Jira jira)
+	public async Task CreateGetAndDeleteUsersWithEmailAsUsername(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 		userInfo.Username = userInfo.Email;
@@ -85,7 +85,7 @@ public class JiraUserTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CanAccessAvatarUrls(Jira jira)
+	public async Task CanAccessAvatarUrls(JiraClient jira)
 	{
 		var user = await jira.Users.GetUserAsync("admin", default);
 		Assert.NotNull(user.AvatarUrls);
@@ -97,7 +97,7 @@ public class JiraUserTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task SearchAssignableUsersForIssue(Jira jira)
+	public async Task SearchAssignableUsersForIssue(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 		userInfo.Username = userInfo.Email;
@@ -122,7 +122,7 @@ public class JiraUserTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task SearchAssignableUsersForProject(Jira jira)
+	public async Task SearchAssignableUsersForProject(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 		userInfo.Username = userInfo.Email;
@@ -147,7 +147,7 @@ public class JiraUserTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task SearchAssignableUsersForProjects(Jira jira)
+	public async Task SearchAssignableUsersForProjects(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 		userInfo.Username = userInfo.Email;

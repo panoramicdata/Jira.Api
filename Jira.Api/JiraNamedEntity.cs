@@ -46,7 +46,7 @@ public class JiraNamedEntity : IJiraEntity
 	/// </summary>
 	public string? Name { get; protected set; }
 
-	protected virtual Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
+	protected virtual Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		throw new NotImplementedException();
 	}
@@ -63,7 +63,7 @@ public class JiraNamedEntity : IJiraEntity
 		}
 	}
 
-	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(Jira jira, CancellationToken cancellationToken)
+	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name))
 		{

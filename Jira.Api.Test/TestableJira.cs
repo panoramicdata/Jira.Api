@@ -7,7 +7,7 @@ using Moq;
 
 namespace Jira.Api.Test;
 
-public class TestableJira : Jira
+public class TestableJira : JiraClient
 {
 	public Mock<IJqlExpressionVisitor> Translator;
 	public Mock<IJiraRestClient> RestService;

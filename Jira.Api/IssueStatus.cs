@@ -29,7 +29,7 @@ public class IssueStatus : JiraNamedConstant
 	{
 	}
 
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		var results = await jira.Statuses.GetStatusesAsync(cancellationToken).ConfigureAwait(false);
 		return results as IEnumerable<JiraNamedEntity>;

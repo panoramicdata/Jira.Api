@@ -15,9 +15,9 @@ namespace Jira.Api;
 /// </remarks>
 /// <param name="jira">Instance of the Jira client.</param>
 /// <param name="remoteProject">Remote project.</param>
-public class Project(Jira jira, RemoteProject remoteProject) : JiraNamedEntity(remoteProject)
+public class Project(JiraClient jira, RemoteProject remoteProject) : JiraNamedEntity(remoteProject)
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 	private readonly RemoteProject _remoteProject = remoteProject;
 
 	internal RemoteProject RemoteProject

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class ProjectComponentService(Jira jira) : IProjectComponentService
+internal class ProjectComponentService(JiraClient jira) : IProjectComponentService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<ProjectComponent> CreateComponentAsync(ProjectComponentCreationInfo projectComponent, CancellationToken cancellationToken)
 	{

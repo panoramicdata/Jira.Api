@@ -9,7 +9,7 @@ public class IssueFieldMetadataTest
 {
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task TestNonCustomFieldOption(Jira jira)
+	public async Task TestNonCustomFieldOption(JiraClient jira)
 	{
 		// prepare
 		Issue iss = await jira.Issues.GetIssueAsync("TST-1", default);
@@ -23,7 +23,7 @@ public class IssueFieldMetadataTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task TestCustomFieldOptions(Jira jira)
+	public async Task TestCustomFieldOptions(JiraClient jira)
 	{
 		// prepare
 		Issue iss = await jira.Issues.GetIssueAsync("TST-1", default);

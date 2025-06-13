@@ -29,7 +29,7 @@ public class IssueResolution : JiraNamedEntity
 	{
 	}
 
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		var results = await jira.Resolutions.GetResolutionsAsync(cancellationToken).ConfigureAwait(false);
 		return results as IEnumerable<JiraNamedEntity>;

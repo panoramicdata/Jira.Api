@@ -12,7 +12,7 @@ namespace Jira.Api.Test;
 
 public static class MoqExtensions
 {
-	public static void SetupIssues(this Mock<IIssueService> mock, Jira jira, params RemoteIssue[] remoteIssues)
+	public static void SetupIssues(this Mock<IIssueService> mock, JiraClient jira, params RemoteIssue[] remoteIssues)
 	{
 		var pagedResult = new Mock<IPagedQueryResult<Issue>>();
 		var issues = remoteIssues.Select(i => i.ToLocal(jira));

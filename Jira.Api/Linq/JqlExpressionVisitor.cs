@@ -225,7 +225,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		}
 		else if (valueType == typeof(DateTime))
 		{
-			_jqlWhere.Append($"\"{Jira.FormatDateTimeString((DateTime)value)}\"");
+			_jqlWhere.Append($"\"{JiraClient.FormatDateTimeString((DateTime)value)}\"");
 		}
 		else
 		{

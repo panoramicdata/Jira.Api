@@ -49,7 +49,7 @@ public class IssueType : JiraNamedConstant
 	internal string ProjectKey { get; set; }
 
 	/// <inheritdoc/>
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		var results = await jira.IssueTypes.GetIssueTypesAsync(cancellationToken).ConfigureAwait(false);
 

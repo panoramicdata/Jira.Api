@@ -12,18 +12,18 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CustomFieldsForProject_IfProjectDoesNotExist_ShouldThrowException(Jira jira)
+	public async Task CustomFieldsForProject_IfProjectDoesNotExist_ShouldThrowException(JiraClient jira)
 	{
 		var options = new CustomFieldFetchOptions();
 		options.ProjectKeys.Add("FOO");
 		Exception ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await jira.Fields.GetCustomFieldsAsync(options, default));
 
-		Assert.Contains("Project with key 'FOO' was not found on the Jira server.", ex.Message);
+		Assert.Contains("Project with key 'FOO' was not found on the JiraClient server.", ex.Message);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CustomFieldsForProject_ShouldReturnAllCustomFieldsOfAllIssueTypes(Jira jira)
+	public async Task CustomFieldsForProject_ShouldReturnAllCustomFieldsOfAllIssueTypes(JiraClient jira)
 	{
 		var options = new CustomFieldFetchOptions();
 		options.ProjectKeys.Add("TST");
@@ -36,7 +36,7 @@ public class IssueCustomFieldTest
 	/// </summary>
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CustomFieldsForProjectAndIssueType_ShouldReturnAllCustomFieldsTheIssueType(Jira jira)
+	public async Task CustomFieldsForProjectAndIssueType_ShouldReturnAllCustomFieldsTheIssueType(JiraClient jira)
 	{
 		var options = new CustomFieldFetchOptions();
 		options.ProjectKeys.Add("TST");
@@ -54,7 +54,7 @@ public class IssueCustomFieldTest
 	/// </summary>
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CanSetCustomFieldUsingSearchByProjectOnly(Jira jira)
+	public async Task CanSetCustomFieldUsingSearchByProjectOnly(JiraClient jira)
 	{
 		var summaryValue = "Test issue with custom field by project" + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -77,7 +77,7 @@ public class IssueCustomFieldTest
 	[Fact]
 	public async Task CanHandleCustomFieldWithoutSerializerThatIsArrayOfObjects()
 	{
-		var jira = Jira.CreateRestClient(new TraceReplayer("Trace_CustomFieldArrayOfObjects.txt"));
+		var jira = JiraClient.CreateRestClient(new TraceReplayer("Trace_CustomFieldArrayOfObjects.txt"));
 		var issue = (await jira.Issues.GetIssuesFromJqlAsync("foo", 0, null, default)).Single();
 
 		Assert.True(issue["Watchers"].Value.Length > 0);
@@ -87,7 +87,7 @@ public class IssueCustomFieldTest
 	public async Task CanHandleCustomFieldSetToEmptyArrayByDefaultFromServer()
 	{
 		// See: https://bitbucket.org/farmas/atlassian.net-sdk/issues/372
-		var jira = Jira.CreateRestClient(new TraceReplayer("Trace_CustomFieldEmptyArray.txt"));
+		var jira = JiraClient.CreateRestClient(new TraceReplayer("Trace_CustomFieldEmptyArray.txt"));
 		var issue = await jira.Issues.GetIssueAsync("GIT-103", default);
 
 		issue.Summary = "Some change";
@@ -98,7 +98,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndReadCustomFieldById(Jira jira)
+	public async Task AddAndReadCustomFieldById(JiraClient jira)
 	{
 		var summaryValue = "Test issue with custom text" + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -117,7 +117,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateIssueWithCascadingSelectFieldWithOnlyParentOptionSet(Jira jira)
+	public async Task CreateIssueWithCascadingSelectFieldWithOnlyParentOptionSet(JiraClient jira)
 	{
 		var summaryValue = "Test issue with cascading select" + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -141,7 +141,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithLargeNumberCustomField(Jira jira)
+	public async Task CreateAndQueryIssueWithLargeNumberCustomField(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -159,7 +159,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithComplexCustomFields(Jira jira)
+	public async Task CreateAndQueryIssueWithComplexCustomFields(JiraClient jira)
 	{
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
 		var dateTimeStr = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz");
@@ -227,7 +227,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CanClearValueOfCustomField(Jira jira)
+	public async Task CanClearValueOfCustomField(JiraClient jira)
 	{
 		var summaryValue = "Test issue " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -259,7 +259,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndUpdateIssueWithComplexCustomFields(Jira jira)
+	public async Task CreateAndUpdateIssueWithComplexCustomFields(JiraClient jira)
 	{
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
 		var dateTimeStr = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz");
@@ -344,7 +344,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQuerySprintName(Jira jira)
+	public async Task CreateAndQuerySprintName(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
 		{
@@ -363,7 +363,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateAndQuerySprintName(Jira jira)
+	public async Task UpdateAndQuerySprintName(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
 		{
@@ -385,7 +385,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CanUpdateIssueWithoutModifyingCustomFields(Jira jira)
+	public async Task CanUpdateIssueWithoutModifyingCustomFields(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
 		{
@@ -404,7 +404,7 @@ public class IssueCustomFieldTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task ThrowsErrorWhenSettingSprintByName(Jira jira)
+	public async Task ThrowsErrorWhenSettingSprintByName(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
 		{

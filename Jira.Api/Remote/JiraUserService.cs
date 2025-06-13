@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class JiraUserService(Jira jira) : IJiraUserService
+internal class JiraUserService(JiraClient jira) : IJiraUserService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<JiraUser> CreateUserAsync(JiraUserCreationInfo user, CancellationToken cancellationToken)
 	{

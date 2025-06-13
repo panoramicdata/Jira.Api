@@ -24,7 +24,7 @@ public static class ExtensionMethods
 	/// <summary>
 	/// Create a new Issue from a RemoteIssue
 	/// </summary>
-	public static Issue ToLocal(this RemoteIssue remoteIssue, Jira jira = null)
+	public static Issue ToLocal(this RemoteIssue remoteIssue, JiraClient jira = null)
 	{
 		return new Issue(jira, remoteIssue);
 	}
@@ -32,7 +32,7 @@ public static class ExtensionMethods
 	/// <summary>
 	/// Create a new Attachment from a RemoteAttachment
 	/// </summary>
-	public static Attachment ToLocal(this RemoteAttachment remoteAttachment, Jira jira)
+	public static Attachment ToLocal(this RemoteAttachment remoteAttachment, JiraClient jira)
 	{
 		return new Attachment(jira, remoteAttachment);
 	}
@@ -40,7 +40,7 @@ public static class ExtensionMethods
 	/// <summary>
 	/// Creates a new Version from RemoteVersion
 	/// </summary>
-	public static ProjectVersion ToLocal(this RemoteVersion remoteVersion, Jira jira)
+	public static ProjectVersion ToLocal(this RemoteVersion remoteVersion, JiraClient jira)
 	{
 		return new ProjectVersion(jira, remoteVersion);
 	}

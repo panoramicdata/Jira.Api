@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class IssueService(Jira jira, JiraRestClientSettings restSettings) : IIssueService
+internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings) : IIssueService
 {
 	private const int DEFAULT_MAX_ISSUES_PER_REQUEST = 20;
 	private const string ALL_FIELDS_QUERY_STRING = "*all";
 
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 	private readonly JiraRestClientSettings _restSettings = restSettings;
 	private readonly string[] _excludedFields = ["comment", "attachment", "issuelinks", "subtasks", "watches", "worklog"];
 

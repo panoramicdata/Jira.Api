@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class IssueStatusService(Jira jira) : IIssueStatusService
+internal class IssueStatusService(JiraClient jira) : IIssueStatusService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<IEnumerable<IssueStatus>> GetStatusesAsync(CancellationToken cancellationToken)
 	{

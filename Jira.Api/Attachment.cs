@@ -13,9 +13,9 @@ namespace Jira.Api;
 /// </remarks>
 /// <param name="jira">Object used to interact with JIRA.</param>
 /// <param name="remoteAttachment">Remote attachment entity.</param>
-public class Attachment(Jira jira, RemoteAttachment remoteAttachment)
+public class Attachment(JiraClient jira, RemoteAttachment remoteAttachment)
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	/// <summary>
 	/// Id of attachment

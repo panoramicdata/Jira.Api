@@ -30,7 +30,7 @@ public class IssuePriority : JiraNamedConstant
 	{
 	}
 
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		var priorities = await jira.Priorities.GetPrioritiesAsync(cancellationToken).ConfigureAwait(false);
 		return priorities as IEnumerable<JiraNamedEntity>;

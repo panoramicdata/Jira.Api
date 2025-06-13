@@ -18,7 +18,7 @@ public class JqlExpressionTranslatorTest
 
 		_translator = new JqlExpressionVisitor();
 
-		var jira = Jira.CreateRestClient("http://foo");
+		var jira = JiraClient.CreateRestClient("http://foo");
 		var issues = new Mock<IIssueService>();
 		var provider = new JiraQueryProvider(_translator, issues.Object);
 

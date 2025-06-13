@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class JiraGroupService(Jira jira) : IJiraGroupService
+internal class JiraGroupService(JiraClient jira) : IJiraGroupService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public Task AddUserAsync(
 		string groupName,

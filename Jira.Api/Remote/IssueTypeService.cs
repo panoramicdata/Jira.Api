@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class IssueTypeService(Jira jira) : IIssueTypeService
+internal class IssueTypeService(JiraClient jira) : IIssueTypeService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<IEnumerable<IssueType>> GetIssueTypesAsync(CancellationToken cancellationToken)
 	{

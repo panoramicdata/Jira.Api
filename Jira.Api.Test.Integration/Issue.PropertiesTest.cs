@@ -8,7 +8,7 @@ public class IssuePropertiesTest
 {
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task ReporterUserAndAssigneeUserAvailableFromResponse(Jira jira)
+	public async Task ReporterUserAndAssigneeUserAvailableFromResponse(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -44,7 +44,7 @@ public class IssuePropertiesTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task TimeTrackingPropertyIncludedInResponses(Jira jira)
+	public async Task TimeTrackingPropertyIncludedInResponses(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -66,7 +66,7 @@ public class IssuePropertiesTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task VotesAndHasVotedProperties(Jira jira)
+	public async Task VotesAndHasVotedProperties(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -82,7 +82,7 @@ public class IssuePropertiesTest
 		Assert.False(issue.HasUserVoted);
 
 		// cast a vote with a second user.
-		var jiraTester = Jira.CreateRestClient(JiraProvider.HOST, "test", "test");
+		var jiraTester = JiraClient.CreateRestClient(JiraProvider.HOST, "test", "test");
 		await jiraTester.RestClient.ExecuteRequestAsync(RestSharp.Method.Post, $"rest/api/2/issue/{issue.Key.Value}/votes", null, default);
 
 		// verify votes for first user

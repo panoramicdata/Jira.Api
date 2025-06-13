@@ -15,7 +15,7 @@ public class ScreenTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetScreenAvailableFields(Jira jira)
+	public async Task GetScreenAvailableFields(JiraClient jira)
 	{
 		var screenAvailableFields = await jira.Screens.GetScreenAvailableFieldsAsync(SCREEN_ID, default);
 
@@ -25,7 +25,7 @@ public class ScreenTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetScreenTabs(Jira jira)
+	public async Task GetScreenTabs(JiraClient jira)
 	{
 		var screenTabs = await jira.Screens.GetScreenTabsAsync(SCREEN_ID, null, default);
 
@@ -40,7 +40,7 @@ public class ScreenTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetScreenTabFields(Jira jira)
+	public async Task GetScreenTabFields(JiraClient jira)
 	{
 		var screenTabFields = await jira.Screens.GetScreenTabFieldsAsync(SCREEN_ID, SCREEN_TAB_ID, null, default);
 

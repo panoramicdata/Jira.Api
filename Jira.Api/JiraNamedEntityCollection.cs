@@ -13,12 +13,12 @@ namespace Jira.Api;
 [SuppressMessage("N/A", "CS0661", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProvider where T : JiraNamedEntity
 {
-	protected readonly Jira _jira;
+	protected readonly JiraClient _jira;
 	protected readonly string _projectKey;
 	protected readonly string _fieldName;
 	private readonly List<T> _originalList;
 
-	internal JiraNamedEntityCollection(string fieldName, Jira jira, string projectKey, IList<T> list)
+	internal JiraNamedEntityCollection(string fieldName, JiraClient jira, string projectKey, IList<T> list)
 		: base(list)
 	{
 		_fieldName = fieldName;

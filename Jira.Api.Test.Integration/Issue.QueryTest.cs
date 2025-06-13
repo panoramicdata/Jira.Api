@@ -11,7 +11,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssueThatIncludesOnlyOneBasicField(Jira jira)
+	public async Task GetIssueThatIncludesOnlyOneBasicField(JiraClient jira)
 	{
 		var options = new IssueSearchOptions("key = TST-1")
 		{
@@ -26,7 +26,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssueThatIncludesOnlyOneNonBasicField(Jira jira)
+	public async Task GetIssueThatIncludesOnlyOneNonBasicField(JiraClient jira)
 	{
 		var options = new IssueSearchOptions("key = TST-1")
 		{
@@ -42,7 +42,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssueThatIncludesOnlyAllNonBasicFields(Jira jira)
+	public async Task GetIssueThatIncludesOnlyAllNonBasicFields(JiraClient jira)
 	{
 		// Arrange
 		var issue = new Issue(jira, "TST")
@@ -86,7 +86,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesAsyncWhenIssueDoesNotExist(Jira jira)
+	public async Task GetIssuesAsyncWhenIssueDoesNotExist(JiraClient jira)
 	{
 		var dict = await jira.Issues.GetIssuesAsync(["TST-9999"], default);
 
@@ -95,7 +95,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesWithPagingMetadata(Jira jira)
+	public async Task GetIssuesWithPagingMetadata(JiraClient jira)
 	{
 		// Arrange: Create 3 issues to query.
 		var summaryValue = "Test-Summary-" + Guid.NewGuid().ToString();
@@ -122,7 +122,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesFromFilterWithByName(Jira jira)
+	public async Task GetIssuesFromFilterWithByName(JiraClient jira)
 	{
 		var issues = await jira.Filters.GetIssuesFromFavoriteAsync("One Issue Filter", 0, null, default);
 
@@ -135,7 +135,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesFromFilterWithByNameWithFields(Jira jira)
+	public async Task GetIssuesFromFilterWithByNameWithFields(JiraClient jira)
 	{
 		var issues = await jira.Filters.GetIssuesFromFavoriteWithFieldsAsync("One Issue Filter", 0, null, ["watches"], default);
 
@@ -148,7 +148,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesFromFilterById(Jira jira)
+	public async Task GetIssuesFromFilterById(JiraClient jira)
 	{
 		var issues = await jira.Filters.GetIssuesFromFilterAsync("10000", 0, null, default);
 
@@ -161,7 +161,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesFromFilterByIdWithFields(Jira jira)
+	public async Task GetIssuesFromFilterByIdWithFields(JiraClient jira)
 	{
 		var issues = await jira.Filters.GetIssuesFromFilterWithFieldsAsync("10000", 0, null, ["watches"], default);
 
@@ -174,7 +174,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void QueryWithZeroResults(Jira jira)
+	public void QueryWithZeroResults(JiraClient jira)
 	{
 		var issues = from i in jira.Issues.Queryable
 					 where i.Created == new DateTime(2010, 1, 1)
@@ -185,7 +185,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task QueryIssueWithLabel(Jira jira)
+	public async Task QueryIssueWithLabel(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -206,7 +206,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void QueryIssueWithCustomDateField(Jira jira)
+	public void QueryIssueWithCustomDateField(JiraClient jira)
 	{
 		var issue = (from i in jira.Issues.Queryable
 					 where i["Custom Date Field"] <= new DateTime(2012, 4, 1)
@@ -217,7 +217,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task QueryIssuesWithTakeExpression(Jira jira)
+	public async Task QueryIssuesWithTakeExpression(JiraClient jira)
 	{
 		// create 2 issues with same summary
 		var randomNumber = _random.Next(int.MaxValue);
@@ -234,7 +234,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task MaximumNumberOfIssuesPerRequest(Jira jira)
+	public async Task MaximumNumberOfIssuesPerRequest(JiraClient jira)
 	{
 		// create 2 issues with same summary
 		var randomNumber = _random.Next(int.MaxValue);
@@ -253,7 +253,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetIssuesFromJqlAsync(Jira jira)
+	public async Task GetIssuesFromJqlAsync(JiraClient jira)
 	{
 		var issues = await jira.Issues.GetIssuesFromJqlAsync("key = TST-1", 0, null, default);
 		Assert.Single(issues);

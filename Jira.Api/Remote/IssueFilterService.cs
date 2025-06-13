@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class IssueFilterService(Jira jira) : IIssueFilterService
+internal class IssueFilterService(JiraClient jira) : IIssueFilterService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public Task<IEnumerable<JiraFilter>> GetFavouritesAsync(CancellationToken cancellationToken)
 	{

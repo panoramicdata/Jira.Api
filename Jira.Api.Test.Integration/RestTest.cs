@@ -12,7 +12,7 @@ public class RestTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task ExecuteRestRequest(Jira jira)
+	public async Task ExecuteRestRequest(JiraClient jira)
 	{
 		var users = await jira.RestClient.ExecuteRequestAsync<JiraNamedResource[]>(Method.Get, "rest/api/2/user/assignable/multiProjectSearch?projectKeys=TST", null, default);
 
@@ -22,7 +22,7 @@ public class RestTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task ExecuteRawRestRequest(Jira jira)
+	public async Task ExecuteRawRestRequest(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -49,7 +49,7 @@ public class RestTest
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 #endif
 
-		var jira = Jira.CreateRestClient("http://farmasXXX.atlassian.net");
+		var jira = JiraClient.CreateRestClient("http://farmasXXX.atlassian.net");
 
 		var exception = await Assert.ThrowsAsync<ResourceNotFoundException>(() => jira.Issues.GetIssueAsync("TST-1", default));
 	}

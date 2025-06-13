@@ -11,7 +11,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateIssueWithIssueTypesPerProject(Jira jira)
+	public async Task CreateIssueWithIssueTypesPerProject(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -28,7 +28,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateIssueWithOriginalEstimate(Jira jira)
+	public async Task CreateIssueWithOriginalEstimate(JiraClient jira)
 	{
 		var fields = new CreateIssueFields("TST")
 		{
@@ -48,7 +48,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateIssueAsync(Jira jira)
+	public async Task CreateIssueAsync(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -78,7 +78,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithMinimumFieldsSet(Jira jira)
+	public async Task CreateAndQueryIssueWithMinimumFieldsSet(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 
@@ -104,7 +104,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithAllFieldsSet(Jira jira)
+	public async Task CreateAndQueryIssueWithAllFieldsSet(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var expectedDueDate = new DateTime(2011, 12, 12);
@@ -140,7 +140,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithSubTask(Jira jira)
+	public async Task CreateAndQueryIssueWithSubTask(JiraClient jira)
 	{
 		var parentTask = jira.CreateIssue("TST");
 		parentTask.Type = "1";
@@ -165,7 +165,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithVersions(Jira jira)
+	public async Task CreateAndQueryIssueWithVersions(JiraClient jira)
 	{
 		var summaryValue = "Test issue with versions (Created)" + _random.Next(int.MaxValue);
 
@@ -200,7 +200,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithComponents(Jira jira)
+	public async Task CreateAndQueryIssueWithComponents(JiraClient jira)
 	{
 		var summaryValue = "Test issue with components (Created)" + _random.Next(int.MaxValue);
 
@@ -227,7 +227,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateAndQueryIssueWithCustomField(Jira jira)
+	public async Task CreateAndQueryIssueWithCustomField(JiraClient jira)
 	{
 		var summaryValue = "Test issue with custom field (Created)" + _random.Next(int.MaxValue);
 
@@ -252,7 +252,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CreateIssueAsSubtask(Jira jira)
+	public async Task CreateIssueAsSubtask(JiraClient jira)
 	{
 		var summaryValue = "Test issue as subtask " + _random.Next(int.MaxValue);
 

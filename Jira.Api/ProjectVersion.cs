@@ -10,7 +10,7 @@ namespace Jira.Api;
 /// </summary>
 public class ProjectVersion : JiraNamedEntity
 {
-	private readonly Jira _jira;
+	private readonly JiraClient _jira;
 	private RemoteVersion _remoteVersion;
 
 	/// <summary>
@@ -18,7 +18,7 @@ public class ProjectVersion : JiraNamedEntity
 	/// </summary>
 	/// <param name="jira">The jira instance.</param>
 	/// <param name="remoteVersion">The remote version.</param>
-	public ProjectVersion(Jira jira, RemoteVersion remoteVersion)
+	public ProjectVersion(JiraClient jira, RemoteVersion remoteVersion)
 		: base(remoteVersion)
 	{
 		ArgumentNullException.ThrowIfNull(jira);

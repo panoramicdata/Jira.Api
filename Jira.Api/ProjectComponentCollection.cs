@@ -11,12 +11,12 @@ namespace Jira.Api;
 /// </summary>
 public class ProjectComponentCollection : JiraNamedEntityCollection<ProjectComponent>
 {
-	internal ProjectComponentCollection(string fieldName, Jira jira, string projectKey)
+	internal ProjectComponentCollection(string fieldName, JiraClient jira, string projectKey)
 		: this(fieldName, jira, projectKey, [])
 	{
 	}
 
-	internal ProjectComponentCollection(string fieldName, Jira jira, string projectKey, IList<ProjectComponent> list)
+	internal ProjectComponentCollection(string fieldName, JiraClient jira, string projectKey, IList<ProjectComponent> list)
 		: base(fieldName, jira, projectKey, list)
 	{
 	}

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class IssueLinkService(Jira jira) : IIssueLinkService
+internal class IssueLinkService(JiraClient jira) : IIssueLinkService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public Task CreateLinkAsync(
 		string outwardIssueKey,

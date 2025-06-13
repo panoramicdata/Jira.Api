@@ -15,15 +15,15 @@ internal class JiraProvider : IEnumerable<object[]>
 	public const string OAUTHACCESSTOKEN = "ZGUlzyOnuzS929YgIXv6Yt0TiZ8KbUAG";
 	public const string OAUTHTOKENSECRET = "EDeTxUt7QqDkoawenPY3QCaGeVGXa1BJ";
 
-	private static Jira _jiraWithCredentials;
-	private static Jira _jiraWithOAuth;
+	private static JiraClient _jiraWithCredentials;
+	private static JiraClient _jiraWithOAuth;
 
 	private readonly List<object[]> _data;
 
 	static JiraProvider()
 	{
-		_jiraWithCredentials = Jira.CreateRestClient(HOST, USERNAME, PASSWORD);
-		_jiraWithOAuth = Jira.CreateOAuthRestClient(
+		_jiraWithCredentials = JiraClient.CreateRestClient(HOST, USERNAME, PASSWORD);
+		_jiraWithOAuth = JiraClient.CreateOAuthRestClient(
 			HOST,
 			OAUTHCONSUMERKEY,
 			OAUTHCONSUMERSECRET,

@@ -15,7 +15,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	async Task AssignIssue(Jira jira)
+	async Task AssignIssue(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
@@ -33,7 +33,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetChangeLogsForIssue(Jira jira)
+	public async Task GetChangeLogsForIssue(JiraClient jira)
 	{
 		var issue = await jira.Issues.GetIssueAsync("TST-1", default);
 		var changelogs = (await issue.GetChangeLogsAsync(default)).OrderBy(log => log.CreatedDate);
@@ -55,7 +55,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveWatchersToIssue(Jira jira)
+	public async Task AddAndRemoveWatchersToIssue(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
@@ -77,7 +77,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemoveWatchersToIssueWithEmailAsUsername(Jira jira)
+	public async Task AddAndRemoveWatchersToIssueWithEmailAsUsername(JiraClient jira)
 	{
 		// Create issue.
 		var issue = jira.CreateIssue("TST");
@@ -110,7 +110,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetSubTasks(Jira jira)
+	public async Task GetSubTasks(JiraClient jira)
 	{
 		var parentTask = jira.CreateIssue("TST");
 		parentTask.Type = "1";
@@ -129,7 +129,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task RetrieveEmptyIssueLinks(Jira jira)
+	public async Task RetrieveEmptyIssueLinks(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue with no links " + _random.Next(int.MaxValue);
@@ -141,7 +141,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRetrieveIssueLinks(Jira jira)
+	public async Task AddAndRetrieveIssueLinks(JiraClient jira)
 	{
 		var issue1 = jira.CreateIssue("TST");
 		issue1.Summary = "Issue to link from" + _random.Next(int.MaxValue);
@@ -197,7 +197,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRetrieveRemoteLinks(Jira jira)
+	public async Task AddAndRetrieveRemoteLinks(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue to link from" + _random.Next(int.MaxValue);
@@ -227,7 +227,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetActionsAsync(Jira jira)
+	public async Task GetActionsAsync(JiraClient jira)
 	{
 		var issue = await jira.Issues.GetIssueAsync("TST-1", default);
 		var transitions = await issue.GetAvailableActionsAsync(default);
@@ -252,7 +252,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetActionsWithFields(Jira jira)
+	public async Task GetActionsWithFields(JiraClient jira)
 	{
 		var issue = await jira.Issues.GetIssueAsync("TST-1", default);
 		var transitions = await issue.GetAvailableActionsAsync(true, default);
@@ -279,7 +279,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task TransitionIssueAsync(Jira jira)
+	public async Task TransitionIssueAsync(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue to resolve with async" + _random.Next(int.MaxValue);
@@ -296,7 +296,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task TransitionIssueByIdAsync(Jira jira)
+	public async Task TransitionIssueByIdAsync(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue to resolve with async" + _random.Next(int.MaxValue);
@@ -314,7 +314,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task TransitionIssueAsyncWithCommentAndFields(Jira jira)
+	public async Task TransitionIssueAsyncWithCommentAndFields(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue to resolve with async" + _random.Next(int.MaxValue);
@@ -339,7 +339,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task Transition_ResolveIssue(Jira jira)
+	public async Task Transition_ResolveIssue(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue to resolve " + _random.Next(int.MaxValue);
@@ -357,7 +357,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task Transition_ResolveIssue_AsWontFix(Jira jira)
+	public async Task Transition_ResolveIssue_AsWontFix(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue to resolve " + _random.Next(int.MaxValue);
@@ -373,7 +373,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetTimeTrackingDataForIssue(Jira jira)
+	public async Task GetTimeTrackingDataForIssue(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "Issue with timetracking " + _random.Next(int.MaxValue);
@@ -391,7 +391,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task GetResolutionDate(Jira jira)
+	public async Task GetResolutionDate(JiraClient jira)
 	{
 		// Arrange
 		var issue = jira.CreateIssue("TST");
@@ -414,7 +414,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddGetRemoveAttachmentsFromIssue(Jira jira)
+	public async Task AddGetRemoveAttachmentsFromIssue(JiraClient jira)
 	{
 		var summaryValue = "Test Summary with attachment " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -460,7 +460,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task DownloadAttachments(Jira jira)
+	public async Task DownloadAttachments(JiraClient jira)
 	{
 		// create an issue
 		var summaryValue = "Test Summary with attachment " + _random.Next(int.MaxValue);
@@ -493,7 +493,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task DownloadAttachmentData(Jira jira)
+	public async Task DownloadAttachmentData(JiraClient jira)
 	{
 		// create an issue
 		var summaryValue = "Test Summary with attachment " + _random.Next(int.MaxValue);
@@ -521,7 +521,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndGetComments(Jira jira)
+	public async Task AddAndGetComments(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -552,7 +552,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndUpdateComments(Jira jira)
+	public async Task AddAndUpdateComments(JiraClient jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -594,7 +594,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddGetAndDeleteCommentsAsync(Jira jira)
+	public async Task AddGetAndDeleteCommentsAsync(JiraClient jira)
 	{
 		var summaryValue = "Test Summary with comments " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -632,7 +632,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task CanRetrievePagedCommentsAsync(Jira jira)
+	public async Task CanRetrievePagedCommentsAsync(JiraClient jira)
 	{
 		var summaryValue = "Test Summary with comments " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -665,7 +665,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task DeleteIssue(Jira jira)
+	public async Task DeleteIssue(JiraClient jira)
 	{
 		// Create issue and verify it is found in server.
 		var issue = jira.CreateIssue("TST");
@@ -681,7 +681,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndGetWorklogs(Jira jira)
+	public async Task AddAndGetWorklogs(JiraClient jira)
 	{
 		var summaryValue = "Test issue with work logs" + _random.Next(int.MaxValue);
 
@@ -708,7 +708,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task DeleteWorklog(Jira jira)
+	public async Task DeleteWorklog(JiraClient jira)
 	{
 		var summary = "Test issue with worklogs" + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -728,7 +728,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddAndRemovePropertyAndVerifyProperties(Jira jira)
+	public async Task AddAndRemovePropertyAndVerifyProperties(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -773,7 +773,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task RemoveInexistantPropertyAndVerifyNoOp(Jira jira)
+	public async Task RemoveInexistantPropertyAndVerifyNoOp(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -794,7 +794,7 @@ public class IssueOperationsTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task AddNullPropertyAndVerify(Jira jira)
+	public async Task AddNullPropertyAndVerify(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -826,7 +826,7 @@ public class IssueOperationsTest
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 
-	public async Task AddObjectPropertyAndVerify(Jira jira)
+	public async Task AddObjectPropertyAndVerify(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -861,7 +861,7 @@ public class IssueOperationsTest
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 
-	public async Task AddBoolPropertyAndVerify(Jira jira)
+	public async Task AddBoolPropertyAndVerify(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -892,7 +892,7 @@ public class IssueOperationsTest
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 
-	public async Task AddListPropertyAndVerify(Jira jira)
+	public async Task AddListPropertyAndVerify(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{

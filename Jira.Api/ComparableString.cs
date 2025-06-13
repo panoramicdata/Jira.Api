@@ -77,7 +77,7 @@ public class ComparableString(string value)
 		}
 		else
 		{
-			return field.Value == Jira.FormatDateTimeString(value);
+			return field.Value == JiraClient.FormatDateTimeString(value);
 		}
 	}
 
@@ -89,28 +89,28 @@ public class ComparableString(string value)
 		}
 		else
 		{
-			return field.Value != Jira.FormatDateTimeString(value);
+			return field.Value != JiraClient.FormatDateTimeString(value);
 		}
 	}
 
 	public static bool operator >(ComparableString field, DateTime value)
 	{
-		return field.Value.CompareTo(Jira.FormatDateTimeString(value)) > 0;
+		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) > 0;
 	}
 
 	public static bool operator <(ComparableString field, DateTime value)
 	{
-		return field.Value.CompareTo(Jira.FormatDateTimeString(value)) < 0;
+		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) < 0;
 	}
 
 	public static bool operator <=(ComparableString field, DateTime value)
 	{
-		return field.Value.CompareTo(Jira.FormatDateTimeString(value)) <= 0;
+		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) <= 0;
 	}
 
 	public static bool operator >=(ComparableString field, DateTime value)
 	{
-		return field.Value.CompareTo(Jira.FormatDateTimeString(value)) >= 0;
+		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) >= 0;
 	}
 
 	public override string ToString()

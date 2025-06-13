@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
-internal class ProjectVersionService(Jira jira) : IProjectVersionService
+internal class ProjectVersionService(JiraClient jira) : IProjectVersionService
 {
-	private readonly Jira _jira = jira;
+	private readonly JiraClient _jira = jira;
 
 	public async Task<IEnumerable<ProjectVersion>> GetVersionsAsync(string projectKey, CancellationToken cancellationToken)
 	{
