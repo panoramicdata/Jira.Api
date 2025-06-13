@@ -1,6 +1,8 @@
-# Atlassian.NET SDK
+# Jira.Api nuget package for .NET developers
+[![NuGet](https://img.shields.io/nuget/v/Jira.Api.svg)](https://www.nuget.org/packages/Jira.Api/)
+[![License: BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.com/software/jira).
+Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.com/software/jira) in .NET (C# etc.).
 
 ## Support Notice
 
