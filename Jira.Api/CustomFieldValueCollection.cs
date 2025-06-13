@@ -16,8 +16,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 {
 	private readonly Issue _issue;
 
-	internal CustomFieldValueCollection(Issue issue)
-		: this(issue, new List<CustomFieldValue>())
+	internal CustomFieldValueCollection(Issue issue) : this(issue, [])
 	{
 	}
 
@@ -33,21 +32,11 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	public bool SearchByProjectOnly { get; set; }
 
 	/// <summary>
-	/// Add a custom field by name
-	/// </summary>
-	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
-	/// <param name="fieldValue">The value of the field</param>
-	public CustomFieldValueCollection Add(string fieldName, string fieldValue)
-	{
-		return Add(fieldName, [fieldValue]);
-	}
-
-	/// <summary>
 	/// Add a custom field by name with an array of values
 	/// </summary>
 	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
 	/// <param name="fieldValues">The values of the field</param>
-	public CustomFieldValueCollection AddArray(string fieldName, params string[] fieldValues)
+	public CustomFieldValueCollection AddArray(string fieldName, string[] fieldValues)
 	{
 		return Add(fieldName, fieldValues, new MultiStringCustomFieldValueSerializer());
 	}
@@ -67,7 +56,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldName">The name of the custom field as defined in JIRA.</param>
 	/// <param name="parentOption">The value of the parent option.</param>
 	/// <param name="childOption">The value of the child option.</param>
-	public CustomFieldValueCollection AddCascadingSelectField(string fieldName, string parentOption, string childOption = null)
+	public CustomFieldValueCollection AddCascadingSelectField(string fieldName, string parentOption, string? childOption)
 	{
 		var options = new List<string>() { parentOption };
 
@@ -84,7 +73,8 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// </summary>
 	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
 	/// <param name="fieldValues">The values of the field</param>
-	public CustomFieldValueCollection Add(string fieldName, string[] fieldValues, ICustomFieldValueSerializer serializer = null)
+	/// <param name="serializer"></param>
+	public CustomFieldValueCollection Add(string fieldName, string[] fieldValues, ICustomFieldValueSerializer? serializer)
 	{
 		var fieldId = GetCustomFieldId(fieldName);
 		Items.Add(new CustomFieldValue(fieldId, fieldName, _issue) { Values = fieldValues, Serializer = serializer });
@@ -96,7 +86,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// </summary>
 	/// <param name="fieldId">The id of the custom field as defined in JIRA.</param>
 	/// <param name="fieldValues">The values of the field.</param>
-	public CustomFieldValueCollection AddById(string fieldId, params string[] fieldValues)
+	public CustomFieldValueCollection AddById(string fieldId, string[] fieldValues)
 	{
 		Items.Add(new CustomFieldValue(fieldId, _issue) { Values = fieldValues });
 		return this;
@@ -107,9 +97,9 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// </summary>
 	/// <param name="fieldName">Name of the custom field as defined in JIRA.</param>
 	/// <returns>CascadingSelectCustomField instance if the field has been set on the issue, null otherwise</returns>
-	public CascadingSelectCustomField GetCascadingSelectField(string fieldName)
+	public CascadingSelectCustomField? GetCascadingSelectField(string fieldName)
 	{
-		CascadingSelectCustomField result = null;
+		CascadingSelectCustomField? result = null;
 		var fieldValue = this[fieldName];
 
 		if (fieldValue != null && fieldValue.Values != null)

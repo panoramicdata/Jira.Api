@@ -36,7 +36,7 @@ public class CustomFieldValue
 
 	internal JToken RawValue { get; set; }
 
-	internal ICustomFieldValueSerializer Serializer { get; set; }
+	internal ICustomFieldValueSerializer? Serializer { get; set; }
 
 	/// <summary>
 	/// Name of the custom field as defined in JIRA
