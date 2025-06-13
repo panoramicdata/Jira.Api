@@ -72,6 +72,14 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// Add a custom field by name
 	/// </summary>
 	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
+	/// <param name="fieldValue">The values of the field</param>
+	public CustomFieldValueCollection Add(string fieldName, string fieldValue)
+		=> Add(fieldName, [fieldValue], null);
+
+	/// <summary>
+	/// Add a custom field by name
+	/// </summary>
+	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
 	/// <param name="fieldValues">The values of the field</param>
 	/// <param name="serializer"></param>
 	public CustomFieldValueCollection Add(string fieldName, string[] fieldValues, ICustomFieldValueSerializer? serializer)
