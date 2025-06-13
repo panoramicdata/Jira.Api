@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using Moq;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
-using Moq;
 using Xunit;
 
 namespace Jira.Api.Test;
@@ -230,7 +230,7 @@ public class IssueTest
 			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(CancellationToken.None))
 				.Returns(Task.FromResult(Enumerable.Repeat(new IssueType("1"), 1)));
 
-			var issue = jira.Issues.GetIssueAsync("TST-1").Result;
+			var issue = await jira.Issues.GetIssueAsync("TST-1", default);
 
 			var result = await GetUpdatedFieldsForIssueAsync(issue);
 			Assert.Empty(result);
@@ -261,7 +261,7 @@ public class IssueTest
 			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(CancellationToken.None))
 				.Returns(Task.FromResult(Enumerable.Repeat(new IssueType("1"), 1)));
 
-			var issue = jira.Issues.GetIssueAsync("TST-1").Result;
+			var issue = await jira.Issues.GetIssueAsync("TST-1", default);
 			issue["My Custom Field"] = "My New Value";
 
 			var result = await GetUpdatedFieldsForIssueAsync(issue);
@@ -471,15 +471,15 @@ public class IssueTest
 	public class GetAttachments
 	{
 		[Fact]
-		public void IfIssueNotCreated_ShouldThrowException()
+		public async Task IfIssueNotCreated_ShouldThrowException()
 		{
 			var issue = CreateIssue();
 
-			Assert.Throws<InvalidOperationException>(() => issue.GetAttachmentsAsync().Result);
+			await Assert.ThrowsAsync<InvalidOperationException>(() => issue.GetAttachmentsAsync(default));
 		}
 
 		[Fact]
-		public void IfIssueIsCreated_ShouldLoadAttachments()
+		public async Task IfIssueIsCreated_ShouldLoadAttachments()
 		{
 			//arrange
 			var jira = TestableJira.Create();
@@ -490,7 +490,7 @@ public class IssueTest
 			var issue = (new RemoteIssue() { key = "issueKey" }).ToLocal(jira);
 
 			//act
-			var attachments = issue.GetAttachmentsAsync().Result;
+			var attachments = await issue.GetAttachmentsAsync(default);
 
 			//assert
 			Assert.Single(attachments);
@@ -501,38 +501,38 @@ public class IssueTest
 	public class AddAttachment
 	{
 		[Fact]
-		public void AddAttachment_IfIssueNotCreated_ShouldThrowAnException()
+		public async Task AddAttachment_IfIssueNotCreated_ShouldThrowAnException()
 		{
 			var issue = CreateIssue();
 
-			Assert.Throws<InvalidOperationException>(() => issue.AddAttachment("foo", [1]));
+			await Assert.ThrowsAsync<InvalidOperationException>(() => issue.AddAttachmentAsync("foo", [1], default));
 		}
 	}
 
 	public class WorkflowTransition
 	{
 		[Fact]
-		public void IfTransitionNotFound_ShouldThrowAnException()
+		public async Task IfTransitionNotFound_ShouldThrowAnException()
 		{
 			var jira = TestableJira.Create();
 			var issue = (new RemoteIssue() { key = "key" }).ToLocal(jira);
 
-			Assert.Throws<AggregateException>(() => issue.WorkflowTransitionAsync("foo").Wait());
+			await Assert.ThrowsAsync<AggregateException>(() => issue.WorkflowTransitionAsync("foo", null, default));
 		}
 	}
 
 	public class GetComments
 	{
 		[Fact]
-		public void IfIssueNotCreated_ShouldThrowException()
+		public async Task IfIssueNotCreated_ShouldThrowException()
 		{
 			var issue = CreateIssue();
 
-			Assert.Throws<InvalidOperationException>(() => issue.GetCommentsAsync().Result);
+			await Assert.ThrowsAsync<InvalidOperationException>(() => issue.GetCommentsAsync(default));
 		}
 
 		[Fact]
-		public void IfIssueIsCreated_ShouldLoadComments()
+		public async Task IfIssueIsCreated_ShouldLoadComments()
 		{
 			//arrange
 			var jira = TestableJira.Create();
@@ -541,7 +541,7 @@ public class IssueTest
 			var issue = (new RemoteIssue() { key = "issueKey" }).ToLocal(jira);
 
 			//act
-			var comments = issue.GetCommentsAsync().Result;
+			var comments = await issue.GetCommentsAsync(default);
 
 			//assert
 			Assert.Single(comments);

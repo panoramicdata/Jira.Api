@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Jira.Api.OAuth;
+using LTAF;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.OAuth;
-using LTAF;
 using Xunit;
 using UniTestAssert = Xunit.Assert;
 
@@ -20,7 +20,7 @@ public class OAuthTokenHelperTest
 			JiraProvider.OAUTHCONSUMERSECRET);
 
 		// Generate request token
-		var oAuthRequestToken = await OAuthTokenHelper.GenerateRequestTokenAsync(oAuthTokenSettings);
+		var oAuthRequestToken = await OAuthTokenHelper.GenerateRequestTokenAsync(oAuthTokenSettings, default);
 
 		// Verify request token exists
 		UniTestAssert.NotNull(oAuthRequestToken);

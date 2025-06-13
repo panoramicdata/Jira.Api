@@ -1,7 +1,7 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
@@ -29,8 +29,8 @@ public interface IJiraRestClient
 	/// Executes a request.
 	/// </summary>
 	/// <param name="request">Request object.</param>
-	/// <param name="token">Cancellation token for the operation.</param>
-	Task<IRestResponse> ExecuteRequestAsync(IRestRequest request, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for the operation.</param>
+	Task<RestResponse> ExecuteRequestAsync(RestRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Executes an async request and returns the response as JSON.
@@ -38,8 +38,8 @@ public interface IJiraRestClient
 	/// <param name="method">Request method.</param>
 	/// <param name="resource">Request resource url.</param>
 	/// <param name="requestBody">Request body to be serialized.</param>
-	/// <param name="token">Cancellation token for the operation.</param>
-	Task<JToken> ExecuteRequestAsync(Method method, string resource, object requestBody = null, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for the operation.</param>
+	Task<JToken> ExecuteRequestAsync(Method method, string resource, object? requestBody, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Executes an async request and serializes the response to an object.
@@ -48,19 +48,21 @@ public interface IJiraRestClient
 	/// <param name="method">Request method.</param>
 	/// <param name="resource">Request resource url.</param>
 	/// <param name="requestBody">Request body to be serialized.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<T> ExecuteRequestAsync<T>(Method method, string resource, object requestBody = null, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<T> ExecuteRequestAsync<T>(Method method, string resource, object? requestBody, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Downloads file as a byte array.
 	/// </summary>
 	/// <param name="url">Url to the file location.</param>
-	byte[] DownloadData(string url);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<byte[]?> DownloadDataAsync(string url, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Downloads file to the specified location.
 	/// </summary>
 	/// <param name="url">Url to the file location.</param>
 	/// <param name="fullFileName">Full file name where the file will be downloaded.</param>
-	void Download(string url, string fullFileName);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task DownloadAsync(string url, string fullFileName, CancellationToken cancellationToken);
 }

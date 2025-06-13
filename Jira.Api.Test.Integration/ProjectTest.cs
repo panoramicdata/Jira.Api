@@ -13,81 +13,81 @@ public class ProjectTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetIssueTypes(Jira jira)
 	{
-		var project = await jira.Projects.GetProjectAsync("TST");
-		var issueTypes = await project.GetIssueTypesAsync();
+		var project = await jira.Projects.GetProjectAsync("TST", default);
+		var issueTypes = await project.GetIssueTypesAsync(default);
 
 		Assert.True(issueTypes.Any());
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void AddAndRemoveProjectComponent(Jira jira)
+	public async Task AddAndRemoveProjectComponent(Jira jira)
 	{
 		var componentName = "New Component " + _random.Next(int.MaxValue);
 		var projectInfo = new ProjectComponentCreationInfo(componentName);
-		var project = jira.Projects.GetProjectsAsync().Result.First();
+		var project = (await jira.Projects.GetProjectsAsync(default)).First();
 
 		// Add a project component.
-		var component = project.AddComponentAsync(projectInfo).Result;
+		var component = await project.AddComponentAsync(projectInfo, default);
 		Assert.Equal(componentName, component.Name);
 
-		// Retrive project components.
-		Assert.Contains(project.GetComponentsAsync().Result, p => p.Name == componentName);
+		// Retrieve project components.
+		Assert.Contains(await project.GetComponentsAsync(default), p => p.Name == componentName);
 
 		// Delete project component
-		project.DeleteComponentAsync(component.Name).Wait();
-		Assert.DoesNotContain(project.GetComponentsAsync().Result, p => p.Name == componentName);
+		await project.DeleteComponentAsync(component.Name, null, default);
+		Assert.DoesNotContain(await project.GetComponentsAsync(default), p => p.Name == componentName);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetProjectComponents(Jira jira)
+	public async Task GetProjectComponents(Jira jira)
 	{
-		var components = jira.Components.GetComponentsAsync("TST").Result;
+		var components = await jira.Components.GetComponentsAsync("TST", default);
 		Assert.Equal(2, components.Count());
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetAndUpdateProjectVersions(Jira jira)
+	public async Task GetAndUpdateProjectVersions(Jira jira)
 	{
 		var startDate = new DateTime(2000, 11, 1);
-		var versions = jira.Versions.GetVersionsAsync("TST").Result;
+		var versions = await jira.Versions.GetVersionsAsync("TST", default);
 		Assert.True(versions.Count() >= 3);
 
 		var version = versions.First(v => v.Name == "1.0");
 		var newDescription = "1.0 Release " + _random.Next(int.MaxValue);
 		version.Description = newDescription;
 		version.StartDate = startDate;
-		version.SaveChanges();
+		await version.SaveChangesAsync(default);
 
 		Assert.Equal(newDescription, version.Description);
-		version = jira.Versions.GetVersionsAsync("TST").Result.First(v => v.Name == "1.0");
+		version = (await jira.Versions.GetVersionsAsync("TST", default)).First(v => v.Name == "1.0");
 		Assert.Equal(newDescription, version.Description);
 		Assert.Equal(version.StartDate, startDate);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void AddAndRemoveProjectVersions(Jira jira)
+	public async Task AddAndRemoveProjectVersions(Jira jira)
 	{
 		var versionName = "New Version " + _random.Next(int.MaxValue);
-		var project = jira.Projects.GetProjectsAsync().Result.First();
+		var project = (await jira.Projects.GetProjectsAsync(default)).First();
 		var projectInfo = new ProjectVersionCreationInfo(versionName)
 		{
 			StartDate = new DateTime(2000, 11, 1)
 		};
 
 		// Add a project version.
-		var version = project.AddVersionAsync(projectInfo).Result;
+		var version = await project.AddVersionAsync(projectInfo, default);
 		Assert.Equal(versionName, version.Name);
 		Assert.Equal(version.StartDate, projectInfo.StartDate);
 
-		// Retrive project versions.
-		Assert.Contains(project.GetPagedVersionsAsync().Result, p => p.Name == versionName);
+		// Retrieve project versions.
+		Assert.Contains(await project.GetPagedVersionsAsync(0, 50, default), p => p.Name == versionName);
 
 		// Delete project version
-		project.DeleteVersionAsync(version.Name).Wait();
-		Assert.DoesNotContain(project.GetPagedVersionsAsync().Result, p => p.Name == versionName);
+		await project.DeleteVersionAsync(version.Name, null, null, default);
+		Assert.DoesNotContain(await project.GetPagedVersionsAsync(0, 50, default), p => p.Name == versionName);
 	}
 }

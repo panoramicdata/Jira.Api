@@ -16,13 +16,13 @@ public interface IIssueRemoteLinkService
 	/// <param name="remoteUrl">Remote url to link to.</param>
 	/// <param name="title">Title of the remote link.</param>
 	/// <param name="summary">Summary of the remote link.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string summary, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string? summary, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Returns all remote links associated with a given issue.
 	/// </summary>
 	/// <param name="issueKey">The issue to retrieve remote links for.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksForIssueAsync(string issueKey, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksForIssueAsync(string issueKey, CancellationToken cancellationToken);
 }

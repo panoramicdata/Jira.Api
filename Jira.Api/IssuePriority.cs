@@ -25,14 +25,14 @@ public class IssuePriority : JiraNamedConstant
 	/// <summary>
 	/// Creates an instance of the IssuePriority with the given id and name.
 	/// </summary>
-	public IssuePriority(string id, string name = null)
+	public IssuePriority(string id, string? name = null)
 		: base(id, name)
 	{
 	}
 
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken token)
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
 	{
-		var priorities = await jira.Priorities.GetPrioritiesAsync(token).ConfigureAwait(false);
+		var priorities = await jira.Priorities.GetPrioritiesAsync(cancellationToken).ConfigureAwait(false);
 		return priorities as IEnumerable<JiraNamedEntity>;
 	}
 

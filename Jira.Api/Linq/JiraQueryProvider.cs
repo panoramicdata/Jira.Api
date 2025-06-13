@@ -35,7 +35,7 @@ public class JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService i
 	{
 		var jql = _translator.Process(expression);
 
-		var temp = _issues.GetIssuesFromJqlAsync(jql.Expression, jql.NumberOfResults, jql.SkipResults ?? 0).Result;
+		var temp = _issues.GetIssuesFromJqlAsync(jql.Expression, jql.SkipResults ?? 0, jql.NumberOfResults, default).GetAwaiter().GetResult();
 		IQueryable<Issue> issues = temp.AsQueryable();
 
 		if (isEnumerable)

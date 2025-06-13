@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Jira.Api;
 
@@ -23,9 +25,9 @@ public class ProjectVersionCollection : JiraNamedEntityCollection<ProjectVersion
 	/// Add a version by name
 	/// </summary>
 	/// <param name="versionName">Version name</param>
-	public void Add(string versionName)
+	public async Task AddAsync(string versionName, CancellationToken cancellationToken)
 	{
-		var version = _jira.Versions.GetVersionsAsync(_projectKey).Result.FirstOrDefault(v => v.Name.Equals(versionName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(string.Format("Unable to find version with name '{0}'.", versionName));
+		var version = (await _jira.Versions.GetVersionsAsync(_projectKey, cancellationToken)).FirstOrDefault(v => v.Name.Equals(versionName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"Unable to find version with name '{versionName}'.");
 		Add(version);
 	}
 }

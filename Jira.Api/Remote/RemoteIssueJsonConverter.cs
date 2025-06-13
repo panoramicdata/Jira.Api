@@ -8,11 +8,11 @@ using System.Text;
 
 namespace Jira.Api.Remote;
 
-public class RemoteIssueWrapper(RemoteIssue remoteIssue, string parentIssueKey = null)
+public class RemoteIssueWrapper(RemoteIssue remoteIssue, string? parentIssueKey = null)
 {
 	public RemoteIssue RemoteIssue { get; private set; } = remoteIssue;
 
-	public string ParentIssueKey { get; private set; } = parentIssueKey;
+	public string? ParentIssueKey { get; private set; } = parentIssueKey;
 }
 
 public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDictionary<string, ICustomFieldValueSerializer> customFieldSerializers) : JsonConverter
@@ -54,7 +54,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
-		var issueWrapper = value as RemoteIssueWrapper ?? throw new InvalidOperationException(string.Format("value must be of type {0}.", typeof(RemoteIssueWrapper)));
+		var issueWrapper = value as RemoteIssueWrapper ?? throw new InvalidOperationException($"value must be of type {typeof(RemoteIssueWrapper)}.");
 		var issue = issueWrapper.RemoteIssue;
 
 		// prepare the JiraUser identifiers

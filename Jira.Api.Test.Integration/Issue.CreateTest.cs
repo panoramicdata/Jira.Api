@@ -21,7 +21,7 @@ public class IssueCreateTest
 		};
 
 		issue.Type.SearchByProjectOnly = true;
-		var newIssue = await issue.SaveChangesAsync();
+		var newIssue = await issue.SaveChangesAsync(default);
 
 		Assert.Equal("Bug", newIssue.Type.Name);
 	}
@@ -42,7 +42,7 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		var newIssue = await issue.SaveChangesAsync();
+		var newIssue = await issue.SaveChangesAsync(default);
 		Assert.Equal("1d", newIssue.TimeTrackingData.OriginalEstimate);
 	}
 
@@ -58,7 +58,7 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		var newIssue = await issue.SaveChangesAsync();
+		var newIssue = await issue.SaveChangesAsync(default);
 		Assert.Equal(summaryValue, newIssue.Summary);
 		Assert.Equal("TST", newIssue.Project);
 		Assert.Equal("1", newIssue.Type.Id);
@@ -71,14 +71,14 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		var newSubTask = await subTask.SaveChangesAsync();
+		var newSubTask = await subTask.SaveChangesAsync(default);
 
 		Assert.Equal(newIssue.Key.Value, newSubTask.ParentIssueKey);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateAndQueryIssueWithMinimumFieldsSet(Jira jira)
+	public async Task CreateAndQueryIssueWithMinimumFieldsSet(Jira jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 
@@ -89,7 +89,7 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		var issues = (from i in jira.Issues.Queryable
 					  where i.Key == issue.Key
@@ -104,26 +104,26 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateAndQueryIssueWithAllFieldsSet(Jira jira)
+	public async Task CreateAndQueryIssueWithAllFieldsSet(Jira jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var expectedDueDate = new DateTime(2011, 12, 12);
 		var issue = jira.CreateIssue("TST");
-		issue.AffectsVersions.Add("1.0");
+		await issue.AffectsVersions.AddAsync("1.0", default);
 		issue.Assignee = "admin";
-		issue.Components.Add("Server");
+		await issue.Components.AddAsync("Server", default);
 		issue["Custom Text Field"] = "Test Value";  // custom field
 		issue.Description = "Test Description";
 		issue.DueDate = expectedDueDate;
 		issue.Environment = "Test Environment";
-		issue.FixVersions.Add("2.0");
+		await issue.FixVersions.AddAsync("2.0", default);
 		issue.Priority = "Major";
 		issue.Reporter = "admin";
 		issue.Summary = summaryValue;
 		issue.Type = "1";
 		issue.Labels.Add("testLabel");
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		var queriedIssue = (from i in jira.Issues.Queryable
 							where i.Key == issue.Key
@@ -140,24 +140,24 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateAndQueryIssueWithSubTask(Jira jira)
+	public async Task CreateAndQueryIssueWithSubTask(Jira jira)
 	{
 		var parentTask = jira.CreateIssue("TST");
 		parentTask.Type = "1";
 		parentTask.Summary = "Test issue with SubTask" + _random.Next(int.MaxValue);
-		parentTask.SaveChanges();
+		await parentTask.SaveChangesAsync(default);
 
 		var subTask = jira.CreateIssue("TST", parentTask.Key.Value);
 		subTask.Type = "5"; // SubTask issue type.
 		subTask.Summary = "Test SubTask" + _random.Next(int.MaxValue);
-		subTask.SaveChanges();
+		await subTask.SaveChangesAsync(default);
 
 		Assert.False(parentTask.Type.IsSubTask);
 		Assert.True(subTask.Type.IsSubTask);
 		Assert.Equal(parentTask.Key.Value, subTask.ParentIssueKey);
 
 		// query the subtask again to make sure it loads everything from server.
-		subTask = jira.Issues.GetIssueAsync(subTask.Key.Value).Result;
+		subTask = await jira.Issues.GetIssueAsync(subTask.Key.Value, default);
 		Assert.False(parentTask.Type.IsSubTask);
 		Assert.True(subTask.Type.IsSubTask);
 		Assert.Equal(parentTask.Key.Value, subTask.ParentIssueKey);
@@ -165,7 +165,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateAndQueryIssueWithVersions(Jira jira)
+	public async Task CreateAndQueryIssueWithVersions(Jira jira)
 	{
 		var summaryValue = "Test issue with versions (Created)" + _random.Next(int.MaxValue);
 
@@ -176,13 +176,13 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		issue.AffectsVersions.Add("1.0");
-		issue.AffectsVersions.Add("2.0");
+		await issue.AffectsVersions.AddAsync("1.0", default);
+		await issue.AffectsVersions.AddAsync("2.0", default);
 
-		issue.FixVersions.Add("3.0");
-		issue.FixVersions.Add("2.0");
+		await issue.FixVersions.AddAsync("3.0", default);
+		await issue.FixVersions.AddAsync("2.0", default);
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		var newIssue = (from i in jira.Issues.Queryable
 						where i.AffectsVersions == "1.0" && i.AffectsVersions == "2.0"
@@ -200,7 +200,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateAndQueryIssueWithComponents(Jira jira)
+	public async Task CreateAndQueryIssueWithComponents(Jira jira)
 	{
 		var summaryValue = "Test issue with components (Created)" + _random.Next(int.MaxValue);
 
@@ -211,10 +211,10 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		issue.Components.Add("Server");
-		issue.Components.Add("Client");
+		await issue.Components.AddAsync("Server", default);
+		await issue.Components.AddAsync("Client", default);
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		var newIssue = (from i in jira.Issues.Queryable
 						where i.Summary == summaryValue && i.Components == "Server" && i.Components == "Client"
@@ -227,7 +227,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateAndQueryIssueWithCustomField(Jira jira)
+	public async Task CreateAndQueryIssueWithCustomField(Jira jira)
 	{
 		var summaryValue = "Test issue with custom field (Created)" + _random.Next(int.MaxValue);
 
@@ -240,7 +240,7 @@ public class IssueCreateTest
 		issue["Custom Text Field"] = "My new value";
 		issue["Custom User Field"] = "admin";
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		var newIssue = (from i in jira.Issues.Queryable
 						where i.Summary == summaryValue && i["Custom Text Field"] == "My new value"
@@ -252,7 +252,7 @@ public class IssueCreateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CreateIssueAsSubtask(Jira jira)
+	public async Task CreateIssueAsSubtask(Jira jira)
 	{
 		var summaryValue = "Test issue as subtask " + _random.Next(int.MaxValue);
 
@@ -262,11 +262,11 @@ public class IssueCreateTest
 			Summary = summaryValue,
 			Assignee = "admin"
 		};
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
-		var subtasks = jira.Issues.GetIssuesFromJqlAsync("project = TST and parent = TST-1").Result;
+		var subtasks = await jira.Issues.GetIssuesFromJqlAsync("project = TST and parent = TST-1", 0, null, default);
 
 		Assert.True(subtasks.Any(s => s.Summary.Equals(summaryValue)),
-			string.Format("'{0}' was not found as a sub-task of TST-1", summaryValue));
+			$"'{summaryValue}' was not found as a sub-task of TST-1");
 	}
 }

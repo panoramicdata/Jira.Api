@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using RestSharp;
 
 namespace Jira.Api.Remote;
 
@@ -12,7 +12,7 @@ internal class IssueRemoteLinkService(Jira jira) : IIssueRemoteLinkService
 {
 	private readonly Jira _jira = jira;
 
-	public Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string summary, CancellationToken token = default)
+	public Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string summary, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(title))
 		{
@@ -36,14 +36,14 @@ internal class IssueRemoteLinkService(Jira jira) : IIssueRemoteLinkService
 			bodyObjectContent.Add("summary", summary);
 		}
 
-		return _jira.RestClient.ExecuteRequestAsync(Method.POST, string.Format("rest/api/2/issue/{0}/remotelink", issueKey), bodyObject, token);
+		return _jira.RestClient.ExecuteRequestAsync(Method.Post, $"rest/api/2/issue/{issueKey}/remotelink", bodyObject, cancellationToken);
 	}
 
-	public async Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksForIssueAsync(string issueKey, CancellationToken token = default)
+	public async Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksForIssueAsync(string issueKey, CancellationToken cancellationToken)
 	{
 		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
-		var resource = string.Format("rest/api/2/issue/{0}/remotelink", issueKey);
-		var remoteLinksJson = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);
+		var resource = $"rest/api/2/issue/{issueKey}/remotelink";
+		var remoteLinksJson = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 
 		var links = remoteLinksJson.Cast<JObject>();
 		var result = links.Select(json =>

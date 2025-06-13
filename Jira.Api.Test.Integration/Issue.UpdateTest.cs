@@ -1,8 +1,8 @@
-﻿using System;
+﻿using RestSharp;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using RestSharp;
 using Xunit;
 
 namespace Jira.Api.Test.Integration;
@@ -22,25 +22,25 @@ public class IssueUpdateTest
 			Summary = summaryValue,
 			Assignee = "admin"
 		};
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		//retrieve the issue from server and update
 		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken.None);
 		issue.Type = "2";
 
-		var newIssue = await issue.SaveChangesAsync();
+		var newIssue = await issue.SaveChangesAsync(default);
 		Assert.Equal("2", issue.Type.Id);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void UpdateNamedEntities_ById(Jira jira)
+	public async Task UpdateNamedEntities_ById(Jira jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "AutoLoadNamedEntities_ById " + _random.Next(int.MaxValue);
 		issue.Type = "1";
 		issue.Priority = "5";
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		Assert.Equal("1", issue.Type.Id);
 		Assert.Equal("Bug", issue.Type.Name);
@@ -51,13 +51,13 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void UpdateNamedEntities_ByName(Jira jira)
+	public async Task UpdateNamedEntities_ByName(Jira jira)
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Summary = "AutoLoadNamedEntities_Name " + _random.Next(int.MaxValue);
 		issue.Type = "Bug";
 		issue.Priority = "Trivial";
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		Assert.Equal("1", issue.Type.Id);
 		Assert.Equal("Bug", issue.Type.Name);
@@ -68,7 +68,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void UpdateIssueType(Jira jira)
+	public async Task UpdateIssueType(Jira jira)
 	{
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -77,21 +77,21 @@ public class IssueUpdateTest
 			Summary = summaryValue,
 			Assignee = "admin"
 		};
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		//retrieve the issue from server and update
-		issue = jira.Issues.GetIssueAsync(issue.Key.Value).Result;
+		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
 		issue.Type = "2";
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		//retrieve again and verify
-		issue = jira.Issues.GetIssueAsync(issue.Key.Value).Result;
+		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
 		Assert.Equal("2", issue.Type.Id);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void UpdateWithAllFieldsSet(Jira jira)
+	public async Task UpdateWithAllFieldsSet(Jira jira)
 	{
 		// arrange, create an issue to test.
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
@@ -105,7 +105,7 @@ public class IssueUpdateTest
 			Type = "1",
 			Summary = summaryValue
 		};
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		// act, get an issue and update it
 		var serverIssue = (from i in jira.Issues.Queryable
@@ -117,7 +117,7 @@ public class IssueUpdateTest
 		serverIssue.Environment = "Updated Environment";
 		serverIssue.Summary = "Updated " + summaryValue;
 		serverIssue.Labels.Add("testLabel");
-		serverIssue.SaveChanges();
+		await serverIssue.SaveChangesAsync(default);
 
 		// assert, get the issue again and verify
 		var newServerIssue = (from i in jira.Issues.Queryable
@@ -133,7 +133,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void UpdateAssignee(Jira jira)
+	public async Task UpdateAssignee(Jira jira)
 	{
 		var summaryValue = "Test issue with assignee (Updated)" + _random.Next(int.MaxValue);
 
@@ -144,14 +144,14 @@ public class IssueUpdateTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		issue.Assignee = "test"; //username
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 		Assert.Equal("test", issue.Assignee);
 
 		issue.Assignee = "admin";
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 		Assert.Equal("admin", issue.Assignee);
 	}
 
@@ -168,16 +168,16 @@ public class IssueUpdateTest
 		};
 
 		// create an issue, verify no comments
-		issue.SaveChanges();
-		var comments = await issue.GetPagedCommentsAsync();
+		await issue.SaveChangesAsync(default);
+		var comments = await issue.GetPagedCommentsAsync(0, null, default);
 		Assert.Empty(comments);
 
 		// Add a comment
-		var commentFromAdd = await issue.AddCommentAsync("new comment");
+		var commentFromAdd = await issue.AddCommentAsync("new comment", default);
 		Assert.Equal("new comment", commentFromAdd.Body);
 
 		// Verify comment retrieval
-		comments = await issue.GetPagedCommentsAsync();
+		comments = await issue.GetPagedCommentsAsync(0, null, default);
 
 		Assert.Single(comments);
 		var commentFromGet = comments.First();
@@ -187,10 +187,10 @@ public class IssueUpdateTest
 
 		//Update Comment
 		commentFromGet.Body = "new body";
-		var commentFromUpdate = await issue.UpdateCommentAsync(commentFromGet);
+		var commentFromUpdate = await issue.UpdateCommentAsync(commentFromGet, default);
 
 		//Verify comment updated
-		comments = await issue.GetPagedCommentsAsync();
+		comments = await issue.GetPagedCommentsAsync(0, null, default);
 		commentFromGet = comments.First();
 
 		Assert.Equal(commentFromGet.Id, commentFromUpdate.Id);
@@ -199,7 +199,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void AddAndRemoveVersions(Jira jira)
+	public async Task AddAndRemoveVersions(Jira jira)
 	{
 		var summaryValue = "Test issue with versions (Updated)" + _random.Next(int.MaxValue);
 
@@ -210,21 +210,21 @@ public class IssueUpdateTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
-		issue.AffectsVersions.Add("1.0");
-		issue.FixVersions.Add("2.0");
-		issue.SaveChanges();
+		await issue.AffectsVersions.AddAsync("1.0", default);
+		await issue.FixVersions.AddAsync("2.0", default);
+		await issue.SaveChangesAsync(default);
 		Assert.Single(issue.AffectsVersions);
 		Assert.Single(issue.FixVersions);
 		Assert.Equal("1.0", issue.AffectsVersions.First().Name);
 		Assert.Equal("2.0", issue.FixVersions.First().Name);
 
 		issue.AffectsVersions.Remove("1.0");
-		issue.AffectsVersions.Add("2.0");
+		await issue.AffectsVersions.AddAsync("2.0", default);
 		issue.FixVersions.Remove("2.0");
-		issue.FixVersions.Add("3.0");
-		issue.SaveChanges();
+		await issue.FixVersions.AddAsync("3.0", default);
+		await issue.SaveChangesAsync(default);
 		Assert.Single(issue.AffectsVersions);
 		Assert.Single(issue.FixVersions);
 		Assert.Equal("2.0", issue.AffectsVersions.First().Name);
@@ -232,15 +232,15 @@ public class IssueUpdateTest
 
 		issue.AffectsVersions.Remove("2.0");
 		issue.FixVersions.Remove("3.0");
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 		Assert.Empty(issue.AffectsVersions);
 		Assert.Empty(issue.FixVersions);
 
-		issue.AffectsVersions.Add("1.0");
-		issue.AffectsVersions.Add("2.0");
-		issue.FixVersions.Add("2.0");
-		issue.FixVersions.Add("3.0");
-		issue.SaveChanges();
+		await issue.AffectsVersions.AddAsync("1.0", default);
+		await issue.AffectsVersions.AddAsync("2.0", default);
+		await issue.FixVersions.AddAsync("2.0", default);
+		await issue.FixVersions.AddAsync("3.0", default);
+		await issue.SaveChangesAsync(default);
 
 		Assert.Equal(2, issue.FixVersions.Count);
 		Assert.Contains(issue.FixVersions, v => v.Name == "2.0");
@@ -253,7 +253,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void AddAndRemoveComponents(Jira jira)
+	public async Task AddAndRemoveComponents(Jira jira)
 	{
 		var summaryValue = "Test issue with components (Updated)" + _random.Next(int.MaxValue);
 
@@ -264,26 +264,26 @@ public class IssueUpdateTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
-		issue.Components.Add("Client");
-		issue.SaveChanges();
+		await issue.Components.AddAsync("Client", default);
+		await issue.SaveChangesAsync(default);
 		Assert.Single(issue.Components);
 		Assert.Equal("Client", issue.Components.First().Name);
 
 		issue.Components.Remove("Client");
-		issue.Components.Add("Server");
-		issue.SaveChanges();
+		await issue.Components.AddAsync("Server", default);
+		await issue.SaveChangesAsync(default);
 		Assert.Single(issue.Components);
 		Assert.Equal("Server", issue.Components.First().Name);
 
 		issue.Components.Remove("Server");
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 		Assert.Empty(issue.Components);
 
-		issue.Components.Add("Client");
-		issue.Components.Add("Server");
-		issue.SaveChanges();
+		await issue.Components.AddAsync("Client", default);
+		await issue.Components.AddAsync("Server", default);
+		await issue.SaveChangesAsync(default);
 		Assert.Equal(2, issue.Components.Count);
 		Assert.Contains(issue.Components, c => c.Name == "Server");
 		Assert.Contains(issue.Components, c => c.Name == "Client");
@@ -291,7 +291,7 @@ public class IssueUpdateTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void AddAndRemoveLabelsFromIssue(Jira jira)
+	public async Task AddAndRemoveLabelsFromIssue(Jira jira)
 	{
 		var summaryValue = "Test issue with labels (Updated)" + _random.Next(int.MaxValue);
 
@@ -303,24 +303,24 @@ public class IssueUpdateTest
 		};
 
 		issue.Labels.Add("label1", "label2");
-		issue.SaveChanges();
-		issue = jira.Issues.GetIssueAsync(issue.Key.Value).Result;
+		await issue.SaveChangesAsync(default);
+		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
 		Assert.Equal(2, issue.Labels.Count);
 
 		issue.Labels.RemoveAt(0);
-		issue.SaveChanges();
-		issue = jira.Issues.GetIssueAsync(issue.Key.Value).Result;
+		await issue.SaveChangesAsync(default);
+		issue = jira.Issues.GetIssueAsync(issue.Key.Value, default).Result;
 		Assert.Single(issue.Labels);
 
 		issue.Labels.Clear();
-		issue.SaveChanges();
-		issue = jira.Issues.GetIssueAsync(issue.Key.Value).Result;
+		await issue.SaveChangesAsync(default);
+		issue = jira.Issues.GetIssueAsync(issue.Key.Value, default).Result;
 		Assert.Empty(issue.Labels);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void UpdateIssueWithCustomField(Jira jira)
+	public async Task UpdateIssueWithCustomField(Jira jira)
 	{
 		var summaryValue = "Test issue with custom field (Updated)" + _random.Next(int.MaxValue);
 
@@ -332,17 +332,17 @@ public class IssueUpdateTest
 		};
 		issue["Custom Text Field"] = "My new value";
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		issue["Custom Text Field"] = "My updated value";
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		Assert.Equal("My updated value", issue["Custom Text Field"]);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void CanAccessSecurityLevel(Jira jira)
+	public async Task CanAccessSecurityLevel(Jira jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -350,10 +350,10 @@ public class IssueUpdateTest
 			Summary = "Test Summary " + _random.Next(int.MaxValue),
 			Assignee = "admin"
 		};
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 		Assert.Null(issue.SecurityLevel);
 
-		var resource = string.Format("rest/api/2/issue/{0}", issue.Key.Value);
+		var resource = $"rest/api/2/issue/{issue.Key.Value}";
 		var body = new
 		{
 			fields = new
@@ -364,9 +364,9 @@ public class IssueUpdateTest
 				}
 			}
 		};
-		jira.RestClient.ExecuteRequestAsync(Method.PUT, resource, body).Wait();
+		await jira.RestClient.ExecuteRequestAsync(Method.Put, resource, body, default);
 
-		issue.Refresh();
+		await issue.SaveChangesAsync(default);
 		Assert.Equal("Test Issue Security Level", issue.SecurityLevel.Name);
 	}
 }

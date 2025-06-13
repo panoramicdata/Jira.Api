@@ -1,5 +1,5 @@
-﻿using System;
-using Jira.Api.Remote;
+﻿using Jira.Api.Remote;
+using System;
 
 namespace Jira.Api;
 
@@ -8,7 +8,7 @@ namespace Jira.Api;
 /// </summary>
 public class Worklog
 {
-	public string Author { get; set; }
+	public string? Author { get; set; }
 	public JiraUser AuthorUser { get; private set; }
 	public string Comment { get; set; }
 	public DateTime? StartDate { get; set; }
@@ -28,7 +28,7 @@ public class Worklog
 	/// <param name="timeSpent">Specifies a time duration in JIRA duration format, representing the time spent working</param>
 	/// <param name="startDate">When the work was started</param>
 	/// <param name="comment">An optional comment to describe the work</param>
-	public Worklog(string timeSpent, DateTime startDate, string comment = null)
+	public Worklog(string timeSpent, DateTime startDate, string? comment = null)
 	{
 		TimeSpent = timeSpent;
 		StartDate = startDate;

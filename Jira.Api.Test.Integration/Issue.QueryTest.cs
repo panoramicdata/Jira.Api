@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -20,7 +19,7 @@ public class IssueQueryTest
 			AdditionalFields = ["summary"]
 		};
 
-		var issues = await jira.Issues.GetIssuesFromJqlAsync(options);
+		var issues = await jira.Issues.GetIssuesFromJqlAsync(options, default);
 		Assert.NotNull(issues.First().Summary);
 		Assert.Null(issues.First().Assignee);
 	}
@@ -35,7 +34,7 @@ public class IssueQueryTest
 			AdditionalFields = ["attachment"]
 		};
 
-		var issues = await jira.Issues.GetIssuesFromJqlAsync(options);
+		var issues = await jira.Issues.GetIssuesFromJqlAsync(options, default);
 		var issue = issues.First();
 		Assert.Null(issue.Summary);
 		Assert.NotEmpty(issue.AdditionalFields.Attachments);
@@ -53,10 +52,10 @@ public class IssueQueryTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
-		await issue.AddCommentAsync("My comment");
-		await issue.AddWorklogAsync("1d");
+		await issue.AddCommentAsync("My comment", default);
+		await issue.AddWorklogAsync("1d", WorklogStrategy.AutoAdjustRemainingEstimate, null, default);
 
 		// Act
 		var options = new IssueSearchOptions($"key = {issue.Key.Value}")
@@ -65,7 +64,7 @@ public class IssueQueryTest
 			AdditionalFields = ["comment", "watches", "worklog"]
 		};
 
-		var issues = await jira.Issues.GetIssuesFromJqlAsync(options);
+		var issues = await jira.Issues.GetIssuesFromJqlAsync(options, default);
 		var serverIssue = issues.First();
 
 		// Assert
@@ -89,30 +88,30 @@ public class IssueQueryTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetIssuesAsyncWhenIssueDoesNotExist(Jira jira)
 	{
-		var dict = await jira.Issues.GetIssuesAsync("TST-9999");
+		var dict = await jira.Issues.GetIssuesAsync(["TST-9999"], default);
 
 		Assert.False(dict.ContainsKey("TST-9999"));
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetIssuesWithPagingMetadata(Jira jira)
+	public async Task GetIssuesWithPagingMetadata(Jira jira)
 	{
 		// Arrange: Create 3 issues to query.
 		var summaryValue = "Test-Summary-" + Guid.NewGuid().ToString();
 		for (int i = 0; i < 3; i++)
 		{
-			new Issue(jira, "TST")
+			await new Issue(jira, "TST")
 			{
 				Type = "1",
 				Summary = summaryValue,
 				Assignee = "admin"
-			}.SaveChanges();
+			}.SaveChangesAsync(default);
 		}
 
 		// Act: Query for paged issues.
-		var jql = string.Format("summary ~ \"{0}\"", summaryValue);
-		var result = jira.Issues.GetIssuesFromJqlAsync(jql, 5, 1).Result as IPagedQueryResult<Issue>;
+		var jql = $"summary ~ \"{summaryValue}\"";
+		var result = await jira.Issues.GetIssuesFromJqlAsync(jql, 5, 1, default);
 
 		// Assert
 		Assert.Equal(1, result.StartAt);
@@ -123,9 +122,9 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetIssuesFromFilterWithByName(Jira jira)
+	public async Task GetIssuesFromFilterWithByName(Jira jira)
 	{
-		var issues = jira.Filters.GetIssuesFromFavoriteAsync("One Issue Filter").Result;
+		var issues = await jira.Filters.GetIssuesFromFavoriteAsync("One Issue Filter", 0, null, default);
 
 		Assert.Single(issues);
 		var issue = issues.First();
@@ -136,9 +135,9 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetIssuesFromFilterWithByNameWithFields(Jira jira)
+	public async Task GetIssuesFromFilterWithByNameWithFields(Jira jira)
 	{
-		var issues = jira.Filters.GetIssuesFromFavoriteWithFieldsAsync("One Issue Filter", fields: ["watches"]).Result;
+		var issues = await jira.Filters.GetIssuesFromFavoriteWithFieldsAsync("One Issue Filter", 0, null, ["watches"], default);
 
 		Assert.Single(issues);
 		var issue = issues.First();
@@ -149,9 +148,9 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetIssuesFromFilterById(Jira jira)
+	public async Task GetIssuesFromFilterById(Jira jira)
 	{
-		var issues = jira.Filters.GetIssuesFromFilterAsync("10000").Result;
+		var issues = await jira.Filters.GetIssuesFromFilterAsync("10000", 0, null, default);
 
 		Assert.Single(issues);
 		var issue = issues.First();
@@ -162,9 +161,9 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void GetIssuesFromFilterByIdWithFields(Jira jira)
+	public async Task GetIssuesFromFilterByIdWithFields(Jira jira)
 	{
-		var issues = jira.Filters.GetIssuesFromFilterWithFieldsAsync("10000", fields: ["watches"]).Result;
+		var issues = await jira.Filters.GetIssuesFromFilterWithFieldsAsync("10000", 0, null, ["watches"], default);
 
 		Assert.Single(issues);
 		var issue = issues.First();
@@ -186,7 +185,7 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void QueryIssueWithLabel(Jira jira)
+	public async Task QueryIssueWithLabel(Jira jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -196,7 +195,7 @@ public class IssueQueryTest
 		};
 
 		issue.Labels.Add("test-label");
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		var serverIssue = (from i in jira.Issues.Queryable
 						   where i.Labels == "test-label"
@@ -218,12 +217,12 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void QueryIssuesWithTakeExpression(Jira jira)
+	public async Task QueryIssuesWithTakeExpression(Jira jira)
 	{
 		// create 2 issues with same summary
 		var randomNumber = _random.Next(int.MaxValue);
-		(new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChanges();
-		(new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChanges();
+		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(default);
+		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(default);
 
 		// query with take method to only return 1
 		var issues = (from i in jira.Issues.Queryable
@@ -235,12 +234,12 @@ public class IssueQueryTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void MaximumNumberOfIssuesPerRequest(Jira jira)
+	public async Task MaximumNumberOfIssuesPerRequest(Jira jira)
 	{
 		// create 2 issues with same summary
 		var randomNumber = _random.Next(int.MaxValue);
-		(new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChanges();
-		(new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChanges();
+		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(default);
+		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(default);
 
 		//set maximum issues and query
 		jira.Issues.MaxIssuesPerRequest = 1;
@@ -256,7 +255,7 @@ public class IssueQueryTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetIssuesFromJqlAsync(Jira jira)
 	{
-		var issues = await jira.Issues.GetIssuesFromJqlAsync("key = TST-1");
+		var issues = await jira.Issues.GetIssuesFromJqlAsync("key = TST-1", 0, null, default);
 		Assert.Single(issues);
 	}
 }

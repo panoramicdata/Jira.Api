@@ -6,6 +6,7 @@ aggregatetimeestimate
 api
 async
 atlassian
+auth
 csharp
 datetime
 Deserialize
@@ -15,6 +16,7 @@ issuelinks
 issuetype
 jira
 json
+username
 worklog
 worklogs
 yyyy

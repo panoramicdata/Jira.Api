@@ -27,13 +27,13 @@ public class Issue : IRemoteIssueFieldProvider
 	private DateTime? _dueDate;
 	private DateTime? _resolutionDate;
 	private IssueSecurityLevel _securityLevel;
-	private ProjectVersionCollection _affectsVersions = null;
-	private ProjectVersionCollection _fixVersions = null;
-	private ProjectComponentCollection _components = null;
-	private CustomFieldValueCollection _customFields = null;
-	private IssueLabelCollection _labels = null;
+	private ProjectVersionCollection? _affectsVersions = null;
+	private ProjectVersionCollection? _fixVersions = null;
+	private ProjectComponentCollection? _components = null;
+	private CustomFieldValueCollection? _customFields = null;
+	private IssueLabelCollection? _labels = null;
 	private IssueStatus _status;
-	private string _parentIssueKey;
+	private string? _parentIssueKey;
 	private IssueType _issueType;
 
 	/// <summary>
@@ -52,7 +52,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="jira">Jira instance that owns this issue.</param>
 	/// <param name="projectKey">Project key that owns this issue.</param>
 	/// <param name="parentIssueKey">If provided, marks this issue as a subtask of the given parent issue.</param>
-	public Issue(Jira jira, string projectKey, string parentIssueKey = null)
+	public Issue(Jira jira, string projectKey, string? parentIssueKey = null)
 		: this(jira, new RemoteIssue() { project = projectKey }, parentIssueKey)
 	{
 	}
@@ -63,7 +63,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="jira">The Jira instance that owns this issue.</param>
 	/// <param name="remoteIssue">The remote issue object.</param>
 	/// <param name="parentIssueKey">If provided, marks this issue as a subtask of the given parent issue.</param>
-	public Issue(Jira jira, RemoteIssue remoteIssue, string parentIssueKey = null)
+	public Issue(Jira jira, RemoteIssue remoteIssue, string? parentIssueKey = null)
 	{
 		_jira = jira;
 		_parentIssueKey = parentIssueKey;
@@ -430,7 +430,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// </summary>
 	/// <param name="customFieldName">Custom field name</param>
 	/// <returns>Value of the custom field</returns>
-	public ComparableString this[string customFieldName]
+	public ComparableString? this[string customFieldName]
 	{
 		get
 		{
@@ -454,7 +454,7 @@ public class Issue : IRemoteIssueFieldProvider
 			}
 			else
 			{
-				_customFields.Add(customFieldName, customFieldValue);
+				_customFields.AddArrayAsync(customFieldName, customFieldValue, default).GetAwaiter().GetResult();
 			}
 		}
 	}
@@ -462,39 +462,19 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <summary>
 	/// Saves field changes to server.
 	/// </summary>
-	public void SaveChanges()
-	{
-		Issue serverIssue = null;
-		if (string.IsNullOrEmpty(_originalIssue.key))
-		{
-			var newKey = _jira.Issues.CreateIssueAsync(this).Result;
-			serverIssue = _jira.Issues.GetIssueAsync(newKey).Result;
-		}
-		else
-		{
-			_jira.Issues.UpdateIssueAsync(this).Wait();
-			serverIssue = _jira.Issues.GetIssueAsync(_originalIssue.key).Result;
-		}
-
-		Initialize(serverIssue.OriginalRemoteIssue);
-	}
-
-	/// <summary>
-	/// Saves field changes to server.
-	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task<Issue> SaveChangesAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task<Issue> SaveChangesAsync(CancellationToken cancellationToken)
 	{
 		Issue serverIssue;
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
-			var newKey = await _jira.Issues.CreateIssueAsync(this, token).ConfigureAwait(false);
-			serverIssue = await _jira.Issues.GetIssueAsync(newKey, token).ConfigureAwait(false);
+			var newKey = await _jira.Issues.CreateIssueAsync(this, cancellationToken).ConfigureAwait(false);
+			serverIssue = await _jira.Issues.GetIssueAsync(newKey, cancellationToken).ConfigureAwait(false);
 		}
 		else
 		{
-			await _jira.Issues.UpdateIssueAsync(this, token).ConfigureAwait(false);
-			serverIssue = await _jira.Issues.GetIssueAsync(_originalIssue.key, token).ConfigureAwait(false);
+			await _jira.Issues.UpdateIssueAsync(this, cancellationToken).ConfigureAwait(false);
+			serverIssue = await _jira.Issues.GetIssueAsync(_originalIssue.key, cancellationToken).ConfigureAwait(false);
 		}
 
 		Initialize(serverIssue.OriginalRemoteIssue);
@@ -507,44 +487,44 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="inwardIssueKey">Key of the issue to link.</param>
 	/// <param name="linkName">Name of the issue link type.</param>
 	/// <param name="comment">Comment to add to this issue.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task LinkToIssueAsync(string inwardIssueKey, string linkName, string comment = null, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task LinkToIssueAsync(string inwardIssueKey, string linkName, string? comment, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to link issue, issue has not been created.");
 		}
 
-		return Jira.Links.CreateLinkAsync(Key.Value, inwardIssueKey, linkName, comment, token);
+		return Jira.Links.CreateLinkAsync(Key.Value, inwardIssueKey, linkName, comment, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the issue links associated with this issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueLink>> GetIssueLinksAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueLink>> GetIssueLinksAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get issue links issues, issue has not been created.");
 		}
 
-		return Jira.Links.GetLinksForIssueAsync(this, null, token);
+		return Jira.Links.GetLinksForIssueAsync(this, null, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the issue links associated with this issue.
 	/// </summary>
 	/// <param name="linkTypeNames">Optional subset of link types to retrieve.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueLink>> GetIssueLinksAsync(IEnumerable<string> linkTypeNames, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueLink>> GetIssueLinksAsync(IEnumerable<string> linkTypeNames, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get issue links issues, issue has not been created.");
 		}
 
-		return Jira.Links.GetLinksForIssueAsync(this, linkTypeNames, token);
+		return Jira.Links.GetLinksForIssueAsync(this, linkTypeNames, cancellationToken);
 	}
 
 	/// <summary>
@@ -553,28 +533,29 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="remoteUrl">Remote url to link to.</param>
 	/// <param name="title">Title of the remote link.</param>
 	/// <param name="summary">Summary of the remote link.</param>
-	public Task AddRemoteLinkAsync(string remoteUrl, string title, string summary = null)
+	/// <param name="cancellationToken"></param>
+	public Task AddRemoteLinkAsync(string remoteUrl, string title, string? summary, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add remote link, issue has not been created.");
 		}
 
-		return Jira.RemoteLinks.CreateRemoteLinkAsync(Key.Value, remoteUrl, title, summary);
+		return Jira.RemoteLinks.CreateRemoteLinkAsync(Key.Value, remoteUrl, title, summary, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the remote links associated with this issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get remote links, issue has not been created.");
 		}
 
-		return Jira.RemoteLinks.GetRemoteLinksForIssueAsync(_originalIssue.key, token);
+		return Jira.RemoteLinks.GetRemoteLinksForIssueAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
@@ -582,403 +563,369 @@ public class Issue : IRemoteIssueFieldProvider
 	/// </summary>
 	/// <param name="actionNameOrId">The workflow action name or id to transition to.</param>
 	/// <param name="additionalUpdates">Additional updates to perform when transitioning the issue.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task WorkflowTransitionAsync(string actionNameOrId, WorkflowTransitionUpdates additionalUpdates = null, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task WorkflowTransitionAsync(string actionNameOrId, WorkflowTransitionUpdates? additionalUpdates, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to execute workflow transition, issue has not been created.");
 		}
 
-		await _jira.Issues.ExecuteWorkflowActionAsync(this, actionNameOrId, additionalUpdates, token).ConfigureAwait(false);
-		var issue = await _jira.Issues.GetIssueAsync(_originalIssue.key, token).ConfigureAwait(false);
+		await _jira.Issues.ExecuteWorkflowActionAsync(this, actionNameOrId, additionalUpdates, cancellationToken).ConfigureAwait(false);
+		var issue = await _jira.Issues.GetIssueAsync(_originalIssue.key, cancellationToken).ConfigureAwait(false);
 		Initialize(issue.OriginalRemoteIssue);
 	}
 
 	/// <summary>
 	/// Returns the issues that are marked as sub tasks of this issue.
 	/// </summary>
-	/// <param name="maxIssues">Maximum number of issues to retrieve.</param>
-	/// <param name="startAt">Index of the first issue to return (0-based).</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IPagedQueryResult<Issue>> GetSubTasksAsync(int? maxIssues = null, int startAt = 0, CancellationToken token = default)
+	/// <param name="skip">Index of the first issue to return (0-based).</param>
+	/// <param name="take">Maximum number of issues to retrieve.</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IPagedQueryResult<Issue>> GetSubTasksAsync(int skip, int? take, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve subtasks from server, issue has not been created.");
 		}
 
-		return _jira.Issues.GetSubTasksAsync(_originalIssue.key, maxIssues, startAt, token);
+		return _jira.Issues.GetSubTasksAsync(_originalIssue.key, skip, take, cancellationToken);
 	}
 
 	/// <summary>
 	/// Retrieve attachment metadata from server for this issue
 	/// </summary>
-	public Task<IEnumerable<Attachment>> GetAttachmentsAsync(CancellationToken token = default)
+	public Task<IEnumerable<Attachment>> GetAttachmentsAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve attachments from server, issue has not been created.");
 		}
 
-		return Jira.Issues.GetAttachmentsAsync(Key.Value, token);
+		return Jira.Issues.GetAttachmentsAsync(Key.Value, cancellationToken);
 	}
 
 	/// <summary>
 	/// Add one or more attachments to this issue
 	/// </summary>
-	/// <param name="filePaths">Full paths of files to upload</param>
-	public void AddAttachment(params string[] filePaths)
+	/// <param name="fileInfos">FileInfos of files to upload</param>
+	/// <param name="cancellationToken"></param>
+	public async Task AddAttachmentAsync(FileInfo[] fileInfos, CancellationToken cancellationToken)
 	{
-		var attachments = filePaths.Select(f => new UploadAttachmentInfo(Path.GetFileName(f), _jira.FileSystem.FileReadAllBytes(f))).ToArray();
+		var attachments = fileInfos.Select(f => new UploadAttachmentInfo(f.Name, _jira.FileSystem.FileReadAllBytes(f.FullName))).ToArray();
 
-		AddAttachment(attachments);
+		await AddAttachmentAsync(attachments, cancellationToken);
 	}
 
 	/// <summary>
 	/// Add an attachment to this issue
 	/// </summary>
-	/// <param name="name">Attachment name with extension</param>
-	/// <param name="data">Attachment data</param>
-	public void AddAttachment(string name, byte[] data)
-	{
-		AddAttachment(new UploadAttachmentInfo(name, data));
-	}
+	/// <param name="fileInfo">FileInfo of file to upload</param>
+	/// <param name="cancellationToken"></param>
+	public Task AddAttachmentAsync(FileInfo fileInfo, CancellationToken cancellationToken)
+		=> AddAttachmentAsync([fileInfo], cancellationToken);
+
+	/// <summary>
+	/// Add an attachment to this issue
+	/// </summary>
+	/// <param name="cancellationToken"></param>
+	public Task AddAttachmentAsync(string name, byte[] data, CancellationToken cancellationToken)
+		=> AddAttachmentAsync([new UploadAttachmentInfo(name, data)], cancellationToken);
 
 	/// <summary>
 	/// Add one or more attachments to this issue.
 	/// </summary>
 	/// <param name="attachments">Attachment objects that describe the files to upload.</param>
-	public void AddAttachment(params UploadAttachmentInfo[] attachments)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task AddAttachmentAsync(UploadAttachmentInfo[] attachments, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to upload attachments to server, issue has not been created.");
 		}
 
-		AddAttachmentAsync(attachments).Wait();
-	}
-
-	/// <summary>
-	/// Add one or more attachments to this issue.
-	/// </summary>
-	/// <param name="attachments">Attachment objects that describe the files to upload.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task AddAttachmentAsync(UploadAttachmentInfo[] attachments, CancellationToken token = default)
-	{
-		if (string.IsNullOrEmpty(_originalIssue.key))
-		{
-			throw new InvalidOperationException("Unable to upload attachments to server, issue has not been created.");
-		}
-
-		return _jira.Issues.AddAttachmentsAsync(_originalIssue.key, attachments, token);
+		return _jira.Issues.AddAttachmentsAsync(_originalIssue.key, attachments, cancellationToken);
 	}
 
 	/// <summary>
 	/// Removes an attachment from this issue.
 	/// </summary>
 	/// <param name="attachment">Attachment to remove.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task DeleteAttachmentAsync(Attachment attachment, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task DeleteAttachmentAsync(Attachment attachment, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to delete attachment from server, issue has not been created.");
 		}
 
-		return _jira.Issues.DeleteAttachmentAsync(_originalIssue.key, attachment.Id, token);
+		return _jira.Issues.DeleteAttachmentAsync(_originalIssue.key, attachment.Id, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets a dictionary with issue field names as keys and their metadata as values.
 	/// </summary>
-	public Task<IDictionary<string, IssueFieldEditMetadata>> GetIssueFieldsEditMetadataAsync(CancellationToken token = default)
+	public Task<IDictionary<string, IssueFieldEditMetadata>> GetIssueFieldsEditMetadataAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve issue fields from server, make sure the issue has been created.");
 		}
 
-		return _jira.Issues.GetFieldsEditMetadataAsync(_originalIssue.key, token);
+		return _jira.Issues.GetFieldsEditMetadataAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Retrieve change logs from server for this issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueChangeLog>> GetChangeLogsAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueChangeLog>> GetChangeLogsAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve change logs from server, issue has not been created.");
 		}
 
-		return _jira.Issues.GetChangeLogsAsync(_originalIssue.key, token);
+		return _jira.Issues.GetChangeLogsAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Get the comments for this issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<Comment>> GetCommentsAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<Comment>> GetCommentsAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
 
-		return _jira.Issues.GetCommentsAsync(_originalIssue.key, token);
+		return _jira.Issues.GetCommentsAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Get the comments for this issue.
 	/// </summary>
 	/// <param name="options">Options to use when querying the comments.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<Comment>> GetCommentsAsync(CommentQueryOptions options, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<Comment>> GetCommentsAsync(CommentQueryOptions options, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
 
-		return _jira.Issues.GetCommentsAsync(_originalIssue.key, options, token);
+		return _jira.Issues.GetCommentsAsync(_originalIssue.key, options, cancellationToken);
 	}
 
 	/// <summary>
 	/// Get the comments for this issue.
 	/// </summary>
-	/// <param name="maxComments">Maximum number of comments to retrieve.</param>
-	/// <param name="startAt">Index of the first comment to return (0-based).</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IPagedQueryResult<Comment>> GetPagedCommentsAsync(int? maxComments = null, int startAt = 0, CancellationToken token = default)
+	/// <param name="skip">Index of the first comment to return (0-based).</param>
+	/// <param name="take">Maximum number of comments to retrieve.</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IPagedQueryResult<Comment>> GetPagedCommentsAsync(
+		int skip,
+		int? take,
+		CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve comments from server, issue has not been created.");
 		}
 
-		return Jira.Issues.GetPagedCommentsAsync(Key.Value, maxComments, startAt, token);
+		return Jira.Issues.GetPagedCommentsAsync(Key.Value, skip, take, cancellationToken);
 	}
 
 	/// <summary>
 	/// Add a comment to this issue.
 	/// </summary>
 	/// <param name="comment">Comment text to add.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task<Comment> AddCommentAsync(string comment, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task<Comment> AddCommentAsync(string comment, CancellationToken cancellationToken)
 	{
-		var jiraUser = await Jira.Users.GetMyselfAsync(token);
+		var jiraUser = await Jira.Users.GetMyselfAsync(cancellationToken);
 
 		var author = Jira.RestClient.Settings.EnableUserPrivacyMode ? jiraUser.AccountId : jiraUser.Username;
 
-		return await AddCommentAsync(new Comment() { Author = author, Body = comment }, token);
+		return await AddCommentAsync(new Comment() { Author = author, Body = comment }, cancellationToken);
 	}
 
 	/// <summary>
 	/// Removes a comment from this issue.
 	/// </summary>
 	/// <param name="comment">Comment to remove.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task DeleteCommentAsync(Comment comment, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task DeleteCommentAsync(Comment comment, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to delete comment from server, issue has not been created.");
 		}
 
-		return _jira.Issues.DeleteCommentAsync(_originalIssue.key, comment.Id, token);
+		return _jira.Issues.DeleteCommentAsync(_originalIssue.key, comment.Id, cancellationToken);
 	}
 
 	/// <summary>
 	/// Add a comment to this issue.
 	/// </summary>
 	/// <param name="comment">Comment object to add.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<Comment> AddCommentAsync(Comment comment, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<Comment> AddCommentAsync(Comment comment, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add comment to issue, issue has not been created.");
 		}
 
-		return Jira.Issues.AddCommentAsync(Key.Value, comment, token);
+		return Jira.Issues.AddCommentAsync(Key.Value, comment, cancellationToken);
 	}
 
 	/// <summary>
 	/// Update a comment in this issue.
 	/// </summary>
 	/// <param name="comment">Comment object to update.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<Comment> UpdateCommentAsync(Comment comment, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<Comment> UpdateCommentAsync(Comment comment, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to update comment to issue, issue has not been created.");
 		}
 
-		return Jira.Issues.UpdateCommentAsync(Key.Value, comment, token);
+		return Jira.Issues.UpdateCommentAsync(Key.Value, comment, cancellationToken);
 	}
 
 	/// <summary>
 	/// Retrieve the labels from server for this issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
 	[Obsolete("Use Issue.Labels instead.")]
-	public Task<string[]> GetLabelsAsync(CancellationToken token = default)
+	public Task<string[]> GetLabelsAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get labels from issue, issue has not been created.");
 		}
 
-		return Jira.Issues.GetLabelsAsync(_originalIssue.key, token);
-	}
-
-	/// <summary>
-	/// Sets the labels of this issue.
-	/// </summary>
-	/// <param name="labels">The list of labels to set on the issue</param>
-	[Obsolete("Modify the Issue.Labels collection and call Issue.SaveChanges to update the labels field.")]
-	public Task SetLabelsAsync(params string[] labels)
-	{
-		return SetLabelsAsync(labels, CancellationToken.None);
-	}
-
-	/// <summary>
-	/// Sets the labels of this issue.
-	/// </summary>
-	/// <param name="labels">The list of labels to set on the issue</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	[Obsolete("Modify the Issue.Labels collection and call Issue.SaveChanges to update the labels field.")]
-	public Task SetLabelsAsync(string[] labels, CancellationToken token = default)
-	{
-		if (string.IsNullOrEmpty(_originalIssue.key))
-		{
-			throw new InvalidOperationException("Unable to add label to issue, issue has not been created.");
-		}
-
-		return _jira.Issues.SetLabelsAsync(_originalIssue.key, labels, token);
+		return Jira.Issues.GetLabelsAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	///  Adds a worklog to this issue.
 	/// </summary>
-	/// <param name="timespent">Specifies a time duration in JIRA duration format, representing the time spent working on the worklog</param>
-	/// <param name="worklogStrategy">How to handle the remaining estimate, defaults to AutoAdjustRemainingEstimate</param>
+	/// <param name="timeSpent">Specifies a time duration in JIRA duration format, representing the time spent working on the worklog</param>
+	/// <param name="worklogStrategy">How to handle the remaining estimate, recommend using AutoAdjustRemainingEstimate</param>
 	/// <param name="newEstimate">New estimate (only used if worklogStrategy set to NewRemainingEstimate)</param>
+	/// <param name="cancellationToken"></param>
 	/// <returns>Worklog as constructed by server</returns>
-	public Task<Worklog> AddWorklogAsync(string timespent,
-							 WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate,
-							 string newEstimate = null,
-							 CancellationToken token = default)
+	public Task<Worklog> AddWorklogAsync(
+		string timeSpent,
+		WorklogStrategy worklogStrategy,
+		string? newEstimate,
+		CancellationToken cancellationToken)
 	{
-		// todo: Use the CancellationToken Parameter
-		return AddWorklogAsync(new Worklog(timespent, DateTime.Now), worklogStrategy, newEstimate);
+		return AddWorklogAsync(new Worklog(timeSpent, DateTime.Now), worklogStrategy, newEstimate, cancellationToken);
 	}
 
 	/// <summary>
 	///  Adds a worklog to this issue.
 	/// </summary>
 	/// <param name="worklog">The worklog instance to add</param>
-	/// <param name="worklogStrategy">How to handle the remaining estimate, defaults to AutoAdjustRemainingEstimate</param>
+	/// <param name="worklogStrategy">How to handle the remaining estimate, recommend using AutoAdjustRemainingEstimate</param>
 	/// <param name="newEstimate">New estimate (only used if worklogStrategy set to NewRemainingEstimate)</param>
-	/// <param name="token">Cancellation token for this operation.</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
 	/// <returns>Worklog as constructed by server</returns>
-	public Task<Worklog> AddWorklogAsync(Worklog worklog,
-							  WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate,
-							  string newEstimate = null,
-							  CancellationToken token = default)
+	public Task<Worklog> AddWorklogAsync(
+		Worklog worklog,
+		WorklogStrategy worklogStrategy,
+		string? newEstimate,
+		CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add worklog to issue, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.AddWorklogAsync(_originalIssue.key, worklog, worklogStrategy, newEstimate, token);
+		return _jira.Issues.AddWorklogAsync(_originalIssue.key, worklog, worklogStrategy, newEstimate, cancellationToken);
 	}
 
 	/// <summary>
 	/// Deletes the given worklog from the issue and updates the remaining estimate field.
 	/// </summary>
 	/// <param name="worklog">The worklog to remove.</param>
-	/// <param name="worklogStrategy">How to handle the remaining estimate, defaults to AutoAdjustRemainingEstimate.</param>
+	/// <param name="worklogStrategy">How to handle the remaining estimate, suggest AutoAdjustRemainingEstimate.</param>
 	/// <param name="newEstimate">New estimate (only used if worklogStrategy set to NewRemainingEstimate)</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task DeleteWorklogAsync(Worklog worklog, WorklogStrategy worklogStrategy = WorklogStrategy.AutoAdjustRemainingEstimate, string newEstimate = null, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task DeleteWorklogAsync(
+		Worklog worklog,
+		WorklogStrategy worklogStrategy,
+		string? newEstimate,
+		CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to delete worklog from issue, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.DeleteWorklogAsync(_originalIssue.key, worklog.Id, worklogStrategy, newEstimate, token);
+		return _jira.Issues.DeleteWorklogAsync(_originalIssue.key, worklog.Id, worklogStrategy, newEstimate, cancellationToken);
 	}
 
 	/// <summary>
 	/// Retrieve worklogs for this issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<Worklog>> GetWorklogsAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<Worklog>> GetWorklogsAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve worklogs, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.GetWorklogsAsync(_originalIssue.key, token);
+		return _jira.Issues.GetWorklogsAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Updates all fields from server.
 	/// </summary>
-	public void Refresh()
-	{
-		RefreshAsync().Wait();
-	}
-
-	/// <summary>
-	/// Updates all fields from server.
-	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task RefreshAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task RefreshAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to refresh, issue has not been saved to server.");
 		}
 
-		// todo: Use the CancellationToken Parameter
-		var serverIssue = await _jira.Issues.GetIssueAsync(_originalIssue.key).ConfigureAwait(false);
+		var serverIssue = await _jira.Issues.GetIssueAsync(_originalIssue.key, cancellationToken).ConfigureAwait(false);
 		Initialize(serverIssue.OriginalRemoteIssue);
 	}
 
 	/// <summary>
 	/// Gets the workflow actions that the issue can be transitioned to.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueTransition>> GetAvailableActionsAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueTransition>> GetAvailableActionsAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve actions, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.GetActionsAsync(_originalIssue.key, token);
+		return _jira.Issues.GetActionsAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the workflow actions that the issue can be transitioned to including the fields that are required per action.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueTransition>> GetAvailableActionsAsync(bool expandTransitionFields, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueTransition>> GetAvailableActionsAsync(bool expandTransitionFields, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve actions, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.GetActionsAsync(_originalIssue.key, expandTransitionFields, token);
+		return _jira.Issues.GetActionsAsync(_originalIssue.key, expandTransitionFields, cancellationToken);
 	}
 
 	/// <summary>
@@ -988,75 +935,75 @@ public class Issue : IRemoteIssueFieldProvider
 	/// - Returns information as it was at the moment the issue was read from server, to get latest data use the GetTimeTrackingData method.
 	/// - Use the AddWorklog methods to edit the time tracking information.
 	/// </remarks>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IssueTimeTrackingData> GetTimeTrackingDataAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IssueTimeTrackingData> GetTimeTrackingDataAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to retrieve time tracking data, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.GetTimeTrackingDataAsync(_originalIssue.key, token);
+		return _jira.Issues.GetTimeTrackingDataAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Adds a user to the watchers of the issue.
 	/// </summary>
 	/// <param name="usernameOrAccountId">Username or account id of the user to add as a watcher.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task AddWatcherAsync(string usernameOrAccountId, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task AddWatcherAsync(string usernameOrAccountId, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add watcher, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.AddWatcherAsync(_originalIssue.key, usernameOrAccountId, token);
+		return _jira.Issues.AddWatcherAsync(_originalIssue.key, usernameOrAccountId, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the users that are watching the issue.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<JiraUser>> GetWatchersAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<JiraUser>> GetWatchersAsync(CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to get watchers, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.GetWatchersAsync(_originalIssue.key, token);
+		return _jira.Issues.GetWatchersAsync(_originalIssue.key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Removes a user from the watchers of the issue.
 	/// </summary>
 	/// <param name="usernameOrAccountId">Username or account id of the user to remove as a watcher.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task DeleteWatcherAsync(string usernameOrAccountId, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task DeleteWatcherAsync(string usernameOrAccountId, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to remove watcher, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.DeleteWatcherAsync(_originalIssue.key, usernameOrAccountId, token);
+		return _jira.Issues.DeleteWatcherAsync(_originalIssue.key, usernameOrAccountId, cancellationToken);
 	}
 
 	/// <summary>
 	/// Assigns this issue to the specified user.
 	/// </summary>
 	/// <param name="assignee">The username or account id of the user to assign this issue to.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task AssignAsync(string assignee, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task AssignAsync(string assignee, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to assign issue, issue has not been saved to server.");
 		}
 
-		await _jira.Issues.AssignIssueAsync(Key.Value, assignee, token);
-		var issue = await _jira.Issues.GetIssueAsync(_originalIssue.key, token).ConfigureAwait(false);
+		await _jira.Issues.AssignIssueAsync(Key.Value, assignee, cancellationToken);
+		var issue = await _jira.Issues.GetIssueAsync(_originalIssue.key, cancellationToken).ConfigureAwait(false);
 		Initialize(issue.OriginalRemoteIssue);
 	}
 
@@ -1067,16 +1014,16 @@ public class Issue : IRemoteIssueFieldProvider
 	/// Property keys yielded by <paramref name="propertyKeys"/> must have a length between 0 and 256 (both exclusive).
 	/// </remarks>
 	/// <param name="propertyKeys">Enumeration of requested property keys.</param>
-	/// <param name="token">Asynchronous operation control token.</param>
+	/// <param name="cancellationToken">Asynchronous operation control token.</param>
 	/// <returns>A dictionary of property values mapped to their keys.</returns>
-	public Task<ReadOnlyDictionary<string, JToken>> GetPropertiesAsync(IEnumerable<string> propertyKeys, CancellationToken token = default)
+	public Task<ReadOnlyDictionary<string, JToken>> GetPropertiesAsync(IEnumerable<string> propertyKeys, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to fetch issue properties, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.GetPropertiesAsync(_originalIssue.key, propertyKeys, token);
+		return _jira.Issues.GetPropertiesAsync(_originalIssue.key, propertyKeys, cancellationToken);
 	}
 
 	/// <summary>
@@ -1087,15 +1034,15 @@ public class Issue : IRemoteIssueFieldProvider
 	/// </remarks>
 	/// <param name="propertyKey">The property key.</param>
 	/// <param name="obj">The value to store.</param>
-	/// <param name="token">Asynchronous operation control token.</param>
-	public Task SetPropertyAsync(string propertyKey, JToken obj, CancellationToken token = default)
+	/// <param name="cancellationToken">Asynchronous operation control token.</param>
+	public Task SetPropertyAsync(string propertyKey, JToken obj, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to add issue properties, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.SetPropertyAsync(_originalIssue.key, propertyKey, obj, token);
+		return _jira.Issues.SetPropertyAsync(_originalIssue.key, propertyKey, obj, cancellationToken);
 	}
 
 	/// <summary>
@@ -1105,22 +1052,22 @@ public class Issue : IRemoteIssueFieldProvider
 	/// The property key (<paramref name="propertyKey"/>) must have a length between 0 and 256 (both exclusive).
 	/// </remarks>
 	/// <param name="propertyKey">The property key.</param>
-	/// <param name="token">Asynchronous operation control token.</param>
-	public Task DeletePropertyAsync(string propertyKey, CancellationToken token = default)
+	/// <param name="cancellationToken">Asynchronous operation control token.</param>
+	public Task DeletePropertyAsync(string propertyKey, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(_originalIssue.key))
 		{
 			throw new InvalidOperationException("Unable to remove issue properties, issue has not been saved to server.");
 		}
 
-		return _jira.Issues.DeletePropertyAsync(_originalIssue.key, propertyKey, token);
+		return _jira.Issues.DeletePropertyAsync(_originalIssue.key, propertyKey, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the RemoteFields representing the fields that were updated
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	async Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	async Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
 		var fields = new List<RemoteFieldValue>();
 
@@ -1131,7 +1078,7 @@ public class Issue : IRemoteIssueFieldProvider
 			{
 				if (localProperty.GetValue(this, null) is IRemoteIssueFieldProvider fieldsProvider)
 				{
-					var remoteFieldValues = await fieldsProvider.GetRemoteFieldValuesAsync(token).ConfigureAwait(false);
+					var remoteFieldValues = await fieldsProvider.GetRemoteFieldValuesAsync(cancellationToken).ConfigureAwait(false);
 					fields.AddRange(remoteFieldValues);
 				}
 			}
@@ -1143,8 +1090,8 @@ public class Issue : IRemoteIssueFieldProvider
 					continue;
 				}
 
-				var localStringValue = await GetStringValueForPropertyAsync(this, localProperty, token).ConfigureAwait(false);
-				var remoteStringValue = await GetStringValueForPropertyAsync(_originalIssue, remoteProperty, token).ConfigureAwait(false);
+				var localStringValue = await GetStringValueForPropertyAsync(this, localProperty, cancellationToken).ConfigureAwait(false);
+				var remoteStringValue = await GetStringValueForPropertyAsync(_originalIssue, remoteProperty, cancellationToken).ConfigureAwait(false);
 
 				if (remoteStringValue != localStringValue)
 				{
@@ -1168,7 +1115,7 @@ public class Issue : IRemoteIssueFieldProvider
 		return [.. fields];
 	}
 
-	internal async Task<RemoteIssue> ToRemoteAsync(CancellationToken token)
+	internal async Task<RemoteIssue> ToRemoteAsync(CancellationToken cancellationToken)
 	{
 		var remote = new RemoteIssue
 		{
@@ -1186,25 +1133,25 @@ public class Issue : IRemoteIssueFieldProvider
 
 		if (Status != null)
 		{
-			await Status.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
+			await Status.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
 			remote.status = new RemoteStatus() { id = Status.Id, name = Status.Name };
 		}
 
 		if (Resolution != null)
 		{
-			await Resolution.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
+			await Resolution.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
 			remote.resolution = new RemoteResolution() { id = Resolution.Id, name = Resolution.Name };
 		}
 
 		if (Priority != null)
 		{
-			await Priority.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
+			await Priority.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
 			remote.priority = new RemotePriority() { id = Priority.Id, name = Priority.Name };
 		}
 
 		if (Type != null)
 		{
-			await Type.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
+			await Type.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
 			remote.type = new RemoteIssueType() { id = Type.Id, name = Type.Name };
 		}
 
@@ -1241,7 +1188,7 @@ public class Issue : IRemoteIssueFieldProvider
 		return remote;
 	}
 
-	private async Task<string> GetStringValueForPropertyAsync(object container, PropertyInfo property, CancellationToken token)
+	private async Task<string> GetStringValueForPropertyAsync(object container, PropertyInfo property, CancellationToken cancellationToken)
 	{
 		var value = property.GetValue(container, null);
 
@@ -1254,7 +1201,7 @@ public class Issue : IRemoteIssueFieldProvider
 		{
 			if (property.GetValue(container, null) is JiraNamedEntity jiraNamedEntity)
 			{
-				await jiraNamedEntity.LoadIdAndNameAsync(_jira, token).ConfigureAwait(false);
+				await jiraNamedEntity.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
 				return jiraNamedEntity.Id;
 			}
 

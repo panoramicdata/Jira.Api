@@ -16,9 +16,9 @@ public static class ExtensionMethods
 	/// <summary>
 	/// Create a new RemoteIssue based on the information in a given issue.
 	/// </summary>
-	public static Task<RemoteIssue> ToRemoteAsync(this Issue issue, CancellationToken token = default)
+	public static Task<RemoteIssue> ToRemoteAsync(this Issue issue, CancellationToken cancellationToken)
 	{
-		return issue.ToRemoteAsync(token);
+		return issue.ToRemoteAsync(cancellationToken);
 	}
 
 	/// <summary>

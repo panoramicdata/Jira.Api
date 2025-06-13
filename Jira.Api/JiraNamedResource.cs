@@ -20,7 +20,7 @@ public class JiraNamedResource : IJiraEntity
 	/// <param name="id">Identifier of the resource.</param>
 	/// <param name="name">Name of the resource.</param>
 	/// <param name="self">Url to the resource.</param>
-	public JiraNamedResource(string id, string name, string self = null)
+	public JiraNamedResource(string id, string name, string? self = null)
 	{
 		Id = id;
 		Name = name;
@@ -31,17 +31,17 @@ public class JiraNamedResource : IJiraEntity
 	/// Identifier of this resource.
 	/// </summary>
 	[JsonProperty("id")]
-	public string Id { get; private set; }
+	public string? Id { get; private set; }
 
 	/// <summary>
 	/// Name of this resource.
 	/// </summary>
 	[JsonProperty("name")]
-	public string Name { get; private set; }
+	public string? Name { get; private set; }
 
 	/// <summary>
 	/// Url to access this resource.
 	/// </summary>
 	[JsonProperty("self")]
-	public string Self { get; private set; }
+	public string? Self { get; private set; }
 }

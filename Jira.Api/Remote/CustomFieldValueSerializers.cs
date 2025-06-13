@@ -72,9 +72,7 @@ public class CascadingSelectCustomFieldValueSerializer : ICustomFieldValueSerial
 
 		if (parentOption == null)
 		{
-			throw new InvalidOperationException(string.Format(
-				"Unable to deserialize custom field as a cascading select list. The parent value is required. Json: {0}",
-				json.ToString()));
+			throw new InvalidOperationException($"Unable to deserialize custom field as a cascading select list. The parent value is required. Json: {json.ToString()}");
 		}
 		else if (childOption == null || childOption["value"] == null)
 		{

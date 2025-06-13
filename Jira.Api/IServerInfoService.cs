@@ -12,7 +12,7 @@ public interface IServerInfoService
 	/// Gets the server information.
 	/// </summary>
 	/// <param name="doHealthCheck">if set to <c>true</c>, do a health check.</param>
-	/// <param name="token">The cancellation token.</param>
+	/// <param name="cancellationToken">The cancellation token.</param>
 	/// <returns>The server information.</returns>
-	Task<ServerInfo> GetServerInfoAsync(bool doHealthCheck = false, CancellationToken token = default);
+	Task<ServerInfo> GetServerInfoAsync(bool doHealthCheck, CancellationToken cancellationToken);
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Jira.Api.OAuth;
 
 /// <summary>
-/// Reimplements the <see cref="JiraRestClient"/> to use the OAuth protocol.
+/// Re-implements the <see cref="JiraRestClient"/> to use the OAuth protocol.
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="JiraOAuthRestClient"/> class.
@@ -42,9 +42,9 @@ public class JiraOAuthRestClient(
 	/// <summary>
 	/// Replace the request query with a collection of parameters.
 	/// </summary>
-	protected override Task<IRestResponse> ExecuteRawResquestAsync(IRestRequest request, CancellationToken token)
+	protected override Task<RestResponse> ExecuteRawResquestAsync(RestRequest request, CancellationToken cancellationToken)
 	{
-		Uri fullPath = new(RestSharpClient.BaseUrl, request.Resource);
+		Uri fullPath = new(RestSharpClient.Options.BaseUrl, request.Resource);
 
 		// Move the query parameters to the request parameters.
 		if (!string.IsNullOrEmpty(fullPath.Query))
@@ -57,6 +57,6 @@ public class JiraOAuthRestClient(
 			request.Resource = request.Resource.Replace(fullPath.Query, string.Empty);
 		}
 
-		return base.ExecuteRawResquestAsync(request, token);
+		return base.ExecuteRawResquestAsync(request, cancellationToken);
 	}
 }

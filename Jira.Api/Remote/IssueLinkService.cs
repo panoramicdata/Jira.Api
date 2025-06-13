@@ -13,7 +13,12 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 {
 	private readonly Jira _jira = jira;
 
-	public Task CreateLinkAsync(string outwardIssueKey, string inwardIssueKey, string linkName, string comment, CancellationToken token = default)
+	public Task CreateLinkAsync(
+		string outwardIssueKey,
+		string inwardIssueKey,
+		string linkName,
+		string comment,
+		CancellationToken cancellationToken)
 	{
 		var bodyObject = new JObject
 		{
@@ -27,20 +32,23 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 			bodyObject.Add("comment", new JObject(new JProperty("body", comment)));
 		}
 
-		return _jira.RestClient.ExecuteRequestAsync(Method.POST, "rest/api/2/issueLink", bodyObject, token);
+		return _jira.RestClient.ExecuteRequestAsync(Method.Post, "rest/api/2/issueLink", bodyObject, cancellationToken);
 	}
 
-	public async Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(string issueKey, CancellationToken token = default)
+	public async Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(string issueKey, CancellationToken cancellationToken)
 	{
-		var issue = await _jira.Issues.GetIssueAsync(issueKey, token);
-		return await GetLinksForIssueAsync(issue, null, token);
+		var issue = await _jira.Issues.GetIssueAsync(issueKey, cancellationToken);
+		return await GetLinksForIssueAsync(issue, null, cancellationToken);
 	}
 
-	public async Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(Issue issue, IEnumerable<string> linkTypeNames = null, CancellationToken token = default)
+	public async Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(
+		Issue issue,
+		IEnumerable<string>? linkTypeNames,
+		CancellationToken cancellationToken)
 	{
 		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
-		var resource = string.Format("rest/api/2/issue/{0}?fields=issuelinks,created", issue.Key.Value);
-		var issueLinksResult = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);
+		var resource = $"rest/api/2/issue/{issue.Key.Value}?fields=issuelinks,created";
+		var issueLinksResult = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 		var issueLinksJson = issueLinksResult["fields"]["issuelinks"] ?? throw new InvalidOperationException("There is no 'issueLinks' field on the issue data, make sure issue linking is turned on in JIRA.");
 		var issueLinks = issueLinksJson.Cast<JObject>();
 		var filteredIssueLinks = issueLinks;
@@ -56,8 +64,8 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 			return issueJson["key"].Value<string>();
 		}).ToList();
 
-		var issuesMap = await _jira.Issues.GetIssuesAsync(issuesToGet, token).ConfigureAwait(false);
-		if (!issuesMap.Keys.Contains(issue.Key.ToString()))
+		var issuesMap = await _jira.Issues.GetIssuesAsync(issuesToGet, cancellationToken).ConfigureAwait(false);
+		if (!issuesMap.ContainsKey(issue.Key.ToString()))
 		{
 			issuesMap.Add(issue.Key.ToString(), issue);
 		}
@@ -77,14 +85,14 @@ internal class IssueLinkService(Jira jira) : IIssueLinkService
 		});
 	}
 
-	public async Task<IEnumerable<IssueLinkType>> GetLinkTypesAsync(CancellationToken token = default)
+	public async Task<IEnumerable<IssueLinkType>> GetLinkTypesAsync(CancellationToken cancellationToken)
 	{
 		var cache = _jira.Cache;
 		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
 
 		if (!cache.LinkTypes.Any())
 		{
-			var results = await _jira.RestClient.ExecuteRequestAsync(Method.GET, "rest/api/2/issueLinkType", null, token).ConfigureAwait(false);
+			var results = await _jira.RestClient.ExecuteRequestAsync(Method.Get, "rest/api/2/issueLinkType", null, cancellationToken).ConfigureAwait(false);
 			var linkTypes = results["issueLinkTypes"]
 				.Cast<JObject>()
 				.Select(issueLinkJson => JsonConvert.DeserializeObject<IssueLinkType>(issueLinkJson.ToString(), serializerSettings));

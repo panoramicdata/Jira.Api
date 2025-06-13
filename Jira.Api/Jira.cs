@@ -12,14 +12,11 @@ namespace Jira.Api;
 /// <remarks>
 /// Create a client that connects with a JIRA server with specified dependencies.
 /// </remarks>
-public class Jira(ServiceLocator services, JiraCache cache = null)
+public class Jira(ServiceLocator services, JiraCache? cache = null)
 {
 	internal const string DEFAULT_DATE_FORMAT = "yyyy/MM/dd";
 	internal const string DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " HH:mm";
 	internal static CultureInfo DefaultCultureInfo = CultureInfo.GetCultureInfo("en-us");
-
-	private readonly JiraCache _cache = cache ?? new JiraCache();
-	private readonly ServiceLocator _services = services;
 
 	/// <summary>
 	/// Creates a JIRA rest client.
@@ -31,9 +28,9 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <returns>Jira object configured to use REST API.</returns>
 	public static Jira CreateRestClient(
 		string url,
-		string username = null,
-		string password = null,
-		JiraRestClientSettings settings = null)
+		string? username = null,
+		string? password = null,
+		JiraRestClientSettings? settings = null)
 	{
 		settings ??= new JiraRestClientSettings();
 		var restClient = new JiraRestClient(url, username, password, settings);
@@ -59,7 +56,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 		string oAuthAccessToken,
 		string oAuthTokenSecret,
 		JiraOAuthSignatureMethod oAuthSignatureMethod = JiraOAuthSignatureMethod.RsaSha1,
-		JiraRestClientSettings settings = null)
+		JiraRestClientSettings? settings = null)
 	{
 		settings ??= new JiraRestClientSettings();
 		var restClient = new JiraOAuthRestClient(
@@ -81,7 +78,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <param name="cache">Cache to use.</param>
 	public static Jira CreateRestClient(
 		IJiraRestClient restClient,
-		JiraCache cache = null)
+		JiraCache? cache = null)
 	{
 		var services = new ServiceLocator();
 		var jira = new Jira(services, cache);
@@ -92,13 +89,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <summary>
 	/// Gets the service locator for this jira instance.
 	/// </summary>
-	public ServiceLocator Services
-	{
-		get
-		{
-			return _services;
-		}
-	}
+	public ServiceLocator Services { get; } = services;
 
 	/// <summary>
 	/// Gets an object to interact with the projects of jira.
@@ -254,6 +245,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 		}
 	}
 
+	/// <summary>
 	/// Gets an object to interact with the Jira screens.
 	/// </summary>
 	public IScreenService Screens
@@ -278,13 +270,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <summary>
 	/// Gets the cache for frequently retrieved server items from JIRA.
 	/// </summary>
-	public JiraCache Cache
-	{
-		get
-		{
-			return _cache;
-		}
-	}
+	public JiraCache Cache { get; } = cache ?? new JiraCache();
 
 	/// <summary>
 	/// Gets a client configured to interact with JIRA's REST API.
@@ -337,7 +323,7 @@ public class Jira(ServiceLocator services, JiraCache cache = null)
 	/// <summary>
 	/// Returns a new issue that when saved will be created on the remote JIRA server.
 	/// </summary>
-	public Issue CreateIssue(string project, string parentIssueKey = null)
+	public Issue CreateIssue(string project, string? parentIssueKey = null)
 	{
 		return new Issue(this, project, parentIssueKey);
 	}

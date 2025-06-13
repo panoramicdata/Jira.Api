@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿using Jira.Api.Remote;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 using Xunit;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 
 namespace Jira.Api.Test;
 
@@ -18,7 +18,7 @@ public class CustomFieldTest
 		var jira = TestableJira.Create();
 		var customField = new CustomField(new RemoteField() { id = "123", name = "CustomField" });
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
-			.Returns(Task.FromResult(Enumerable.Repeat<CustomField>(customField, 1)));
+			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
 		var issue = new RemoteIssue()
 		{
@@ -37,7 +37,7 @@ public class CustomFieldTest
 	}
 
 	[Fact]
-	public void WhenAddingArrayOfValues_CanSerializeAsStringArrayWhenNoSerializerIsFound()
+	public async Task WhenAddingArrayOfValues_CanSerializeAsStringArrayWhenNoSerializerIsFound()
 	{
 		// arrange issue
 		var jira = TestableJira.Create();
@@ -48,7 +48,7 @@ public class CustomFieldTest
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
 			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
-		issue.CustomFields.AddArray("Custom Field", "val1", "val2");
+		await issue.CustomFields.AddArrayAsync("Custom Field", ["val1", "val2"], default);
 
 		// arrange serialization
 		var remoteIssue = issue.ToRemote();
@@ -71,6 +71,7 @@ public class CustomFieldTest
 		Assert.Contains("val1", valueArray);
 		Assert.Contains("val2", valueArray);
 	}
+	private static readonly string[] _val1val2 = ["val1", "val2"];
 
 	[Fact]
 	public void CanDeserializeArrayOfStrings_WhenCustomFieldValueIsArrayAndNoSerializerIsRegistered()
@@ -83,7 +84,7 @@ public class CustomFieldTest
 			{
 				//project = "projectKey",
 				key = "issueKey",
-				customfield_id = new string[] { "val1", "val2" }
+				customfield_id = _val1val2
 			}
 		});
 

@@ -17,7 +17,7 @@ public class ScreenTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetScreenAvailableFields(Jira jira)
 	{
-		var screenAvailableFields = await jira.Screens.GetScreenAvailableFieldsAsync(SCREEN_ID);
+		var screenAvailableFields = await jira.Screens.GetScreenAvailableFieldsAsync(SCREEN_ID, default);
 
 		// Verify there's at least one available field.
 		Assert.Contains(screenAvailableFields, x => x.Name.Equals("Development", StringComparison.InvariantCultureIgnoreCase));
@@ -27,7 +27,7 @@ public class ScreenTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetScreenTabs(Jira jira)
 	{
-		var screenTabs = await jira.Screens.GetScreenTabsAsync(SCREEN_ID);
+		var screenTabs = await jira.Screens.GetScreenTabsAsync(SCREEN_ID, null, default);
 
 		// Verify there's two tabs.
 		Assert.Equal(2, screenTabs.Count());
@@ -42,7 +42,7 @@ public class ScreenTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetScreenTabFields(Jira jira)
 	{
-		var screenTabFields = await jira.Screens.GetScreenTabFieldsAsync(SCREEN_ID, SCREEN_TAB_ID);
+		var screenTabFields = await jira.Screens.GetScreenTabFieldsAsync(SCREEN_ID, SCREEN_TAB_ID, null, default);
 
 		// Verify there's two fields in the "Extra Tab" tab.
 		Assert.Equal(2, screenTabFields.Count());

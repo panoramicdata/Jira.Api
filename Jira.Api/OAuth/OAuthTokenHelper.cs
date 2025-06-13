@@ -1,26 +1,28 @@
-﻿using System;
+﻿using RestSharp;
+using RestSharp.Authenticators;
+using System;
 using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using RestSharp;
-using RestSharp.Authenticators;
 
 namespace Jira.Api.OAuth;
 
 /// <summary>
-/// Helper to create and send request for the OAuth authentification process.
+/// Helper to create and send request for the OAuth authentication process.
 /// </summary>
 public static class OAuthTokenHelper
 {
 	/// <summary>
-	/// Generate a request token for the OAuth authentification process.
+	/// Generate a request token for the OAuth authentication process.
 	/// </summary>
 	/// <param name="oAuthRequestTokenSettings"> The request token settings.</param>
 	/// <param name="cancellationToken">Cancellation token for this operation.</param>
 	/// <returns>The <see cref="OAuthRequestToken" /> containing the request token, the consumer token and the authorize url.</returns>
-	public static Task<OAuthRequestToken> GenerateRequestTokenAsync(OAuthRequestTokenSettings oAuthRequestTokenSettings, CancellationToken cancellationToken = default)
+	public static Task<OAuthRequestToken?> GenerateRequestTokenAsync(
+		OAuthRequestTokenSettings oAuthRequestTokenSettings,
+		CancellationToken cancellationToken)
 	{
 		var authenticator = OAuth1Authenticator.ForRequestToken(
 			oAuthRequestTokenSettings.ConsumerKey,
@@ -29,10 +31,11 @@ public static class OAuthTokenHelper
 
 		authenticator.SignatureMethod = oAuthRequestTokenSettings.SignatureMethod.ToOAuthSignatureMethod();
 
-		var restClient = new RestClient(oAuthRequestTokenSettings.Url)
+		var restClient = new RestClient(new RestClientOptions
 		{
-			Authenticator = authenticator
-		};
+			Authenticator = authenticator,
+			BaseUrl = new(oAuthRequestTokenSettings.Url)
+		});
 
 		return GenerateRequestTokenAsync(
 			restClient,
@@ -42,18 +45,18 @@ public static class OAuthTokenHelper
 	}
 
 	/// <summary>
-	/// Generate a request token for the OAuth authentification process.
+	/// Generate a request token for the OAuth authentication process.
 	/// </summary>
 	/// <param name="restClient">The rest client.</param>
 	/// <param name="requestTokenUrl">The relative url to request the token to Jira.</param>
 	/// <param name="authorizeTokenUrl">The relative url to authorize the token.</param>
 	/// <param name="cancellationToken">Cancellation token for this operation.</param>
 	/// <returns>The <see cref="OAuthRequestToken" /> containing the request token, the consumer token and the authorize url.</returns>
-	public static async Task<OAuthRequestToken> GenerateRequestTokenAsync(
+	public static async Task<OAuthRequestToken?> GenerateRequestTokenAsync(
 		IRestClient restClient,
 		string requestTokenUrl,
 		string authorizeTokenUrl,
-		CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken)
 	{
 		var requestTokenResponse = await restClient.ExecutePostAsync(
 			new RestRequest(requestTokenUrl),
@@ -67,7 +70,7 @@ public static class OAuthTokenHelper
 		var requestTokenQuery = HttpUtility.ParseQueryString(requestTokenResponse.Content.Trim());
 
 		var oauthToken = requestTokenQuery["oauth_token"];
-		var authorizeUri = $"{restClient.BaseUrl}/{authorizeTokenUrl}?oauth_token={oauthToken}";
+		var authorizeUri = $"{restClient.Options.BaseUrl}/{authorizeTokenUrl}?oauth_token={oauthToken}";
 
 		return new OAuthRequestToken(
 			authorizeUri,
@@ -84,7 +87,7 @@ public static class OAuthTokenHelper
 	/// <returns>The access token from Jira.
 	/// Return null if the token was not returned by Jira or the token secret for the request token and the access token don't match.</returns>
 	[Obsolete("Use ObtainOAuthAccessTokenAsync instead and get its OAuthToken field")]
-	public static async Task<string> ObtainAccessTokenAsync(OAuthAccessTokenSettings oAuthAccessTokenSettings, CancellationToken cancellationToken)
+	public static async Task<string?> ObtainAccessTokenAsync(OAuthAccessTokenSettings oAuthAccessTokenSettings, CancellationToken cancellationToken)
 	{
 		var oAuthToken = await ObtainOAuthAccessTokenAsync(oAuthAccessTokenSettings, cancellationToken).ConfigureAwait(false);
 		return oAuthToken?.OAuthToken;
@@ -100,7 +103,7 @@ public static class OAuthTokenHelper
 	/// <returns>The access token from Jira.
 	/// Return null if the token was not returned by Jira or the token secret for the request token and the access token don't match.</returns>
 	[Obsolete("Use ObtainOAuthAccessTokenAsync instead and get its OAuthToken field")]
-	public static async Task<string> ObtainAccessTokenAsync(
+	public static async Task<string?> ObtainAccessTokenAsync(
 		IRestClient restClient,
 		string accessTokenUrl,
 		string oAuthTokenSecret,
@@ -117,7 +120,7 @@ public static class OAuthTokenHelper
 	/// <param name="cancellationToken">The cancellation token.</param>
 	/// <returns>The access token from Jira.
 	/// Return null if the token was not returned by Jira or the token secret for the request token and the access token don't match.</returns>
-	public static Task<OAuthAccessToken> ObtainOAuthAccessTokenAsync(OAuthAccessTokenSettings oAuthAccessTokenSettings, CancellationToken cancellationToken)
+	public static Task<OAuthAccessToken?> ObtainOAuthAccessTokenAsync(OAuthAccessTokenSettings oAuthAccessTokenSettings, CancellationToken cancellationToken)
 	{
 		var authenticator = OAuth1Authenticator.ForAccessToken(
 			oAuthAccessTokenSettings.ConsumerKey,
@@ -127,10 +130,11 @@ public static class OAuthTokenHelper
 			oAuthAccessTokenSettings.OAuthVerifier);
 		authenticator.SignatureMethod = oAuthAccessTokenSettings.SignatureMethod.ToOAuthSignatureMethod();
 
-		var restClient = new RestClient(oAuthAccessTokenSettings.Url)
+		var restClient = new RestClient(new RestClientOptions
 		{
-			Authenticator = authenticator
-		};
+			Authenticator = authenticator,
+			BaseUrl = new(oAuthAccessTokenSettings.Url)
+		});
 
 		return ObtainOAuthAccessTokenAsync(
 			restClient,
@@ -148,14 +152,14 @@ public static class OAuthTokenHelper
 	/// <param name="cancellationToken">The cancellation token.</param>
 	/// <returns>The access token from Jira.
 	/// Return null if the token was not returned by Jira or the token secret for the request token and the access token don't match.</returns>
-	public static async Task<OAuthAccessToken> ObtainOAuthAccessTokenAsync(
+	public static async Task<OAuthAccessToken?> ObtainOAuthAccessTokenAsync(
 		IRestClient restClient,
 		string accessTokenUrl,
 		string oAuthTokenSecret,
 		CancellationToken cancellationToken)
 	{
 		var accessTokenResponse = await restClient.ExecutePostAsync(
-			new RestRequest(accessTokenUrl, Method.POST),
+			new RestRequest(accessTokenUrl, Method.Post),
 			cancellationToken).ConfigureAwait(false);
 
 		if (accessTokenResponse.StatusCode != HttpStatusCode.OK)

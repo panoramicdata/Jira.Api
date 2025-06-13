@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using Jira.Api.Remote;
+using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -9,5 +9,5 @@ namespace Jira.Api;
 /// </summary>
 public interface IRemoteIssueFieldProvider
 {
-	Task<RemoteFieldValue[]> GetRemoteFieldValuesAsync(CancellationToken token);
+	Task<RemoteFieldValue[]> GetRemoteFieldValuesAsync(CancellationToken cancellationToken);
 }

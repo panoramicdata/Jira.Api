@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Jira.Api.Remote;
+using System.Collections.Generic;
 using System.Linq;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -26,7 +26,7 @@ public class IssueTransition : JiraNamedEntity
 	/// <summary>
 	/// Creates an instance of the IssueTransition with the given id and name.
 	/// </summary>
-	public IssueTransition(string id, string name = null)
+	public IssueTransition(string id, string? name = null)
 		: base(id, name)
 	{
 	}

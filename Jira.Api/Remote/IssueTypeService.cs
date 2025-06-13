@@ -1,9 +1,8 @@
-﻿using System;
+﻿using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using RestSharp;
 
 namespace Jira.Api.Remote;
 
@@ -11,13 +10,13 @@ internal class IssueTypeService(Jira jira) : IIssueTypeService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<IEnumerable<IssueType>> GetIssueTypesAsync(CancellationToken token = default)
+	public async Task<IEnumerable<IssueType>> GetIssueTypesAsync(CancellationToken cancellationToken)
 	{
 		var cache = _jira.Cache;
 
 		if (!cache.IssueTypes.Any())
 		{
-			var remoteIssueTypes = await _jira.RestClient.ExecuteRequestAsync<RemoteIssueType[]>(Method.GET, "rest/api/2/issuetype", null, token).ConfigureAwait(false);
+			var remoteIssueTypes = await _jira.RestClient.ExecuteRequestAsync<RemoteIssueType[]>(Method.Get, "rest/api/2/issuetype", null, cancellationToken).ConfigureAwait(false);
 			var issueTypes = remoteIssueTypes.Select(t => new IssueType(t));
 			cache.IssueTypes.TryAdd(issueTypes);
 		}
@@ -25,14 +24,14 @@ internal class IssueTypeService(Jira jira) : IIssueTypeService
 		return cache.IssueTypes.Values;
 	}
 
-	public async Task<IEnumerable<IssueType>> GetIssueTypesForProjectAsync(string projectKey, CancellationToken token = default)
+	public async Task<IEnumerable<IssueType>> GetIssueTypesForProjectAsync(string projectKey, CancellationToken cancellationToken)
 	{
 		var cache = _jira.Cache;
 
 		if (!cache.ProjectIssueTypes.TryGetValue(projectKey, out JiraEntityDictionary<IssueType> _))
 		{
-			var resource = string.Format("rest/api/2/project/{0}/statuses", projectKey);
-			var results = await _jira.RestClient.ExecuteRequestAsync<RemoteIssueType[]>(Method.GET, resource, null, token).ConfigureAwait(false);
+			var resource = $"rest/api/2/project/{projectKey}/statuses";
+			var results = await _jira.RestClient.ExecuteRequestAsync<RemoteIssueType[]>(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 			var issueTypes = results.Select(x => new IssueType(x));
 
 			cache.ProjectIssueTypes.TryAdd(projectKey, new JiraEntityDictionary<IssueType>(issueTypes));

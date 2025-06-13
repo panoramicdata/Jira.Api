@@ -39,7 +39,7 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 		return list is null ? value == null : !list.Any(v => v == value);
 	}
 
-	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)
+	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
 		var fieldValues = new List<RemoteFieldValue>();
 

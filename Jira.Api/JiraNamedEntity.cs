@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -25,7 +25,7 @@ public class JiraNamedEntity : IJiraEntity
 	/// </summary>
 	/// <param name="id">Identifier of the entity.</param>
 	/// <param name="name">Name of the entity.</param>
-	public JiraNamedEntity(string id, string name = null)
+	public JiraNamedEntity(string id, string? name = null)
 	{
 		if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(name))
 		{
@@ -44,9 +44,9 @@ public class JiraNamedEntity : IJiraEntity
 	/// <summary>
 	/// Name of the entity.
 	/// </summary>
-	public string Name { get; protected set; }
+	public string? Name { get; protected set; }
 
-	protected virtual Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken token)
+	protected virtual Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
 	{
 		throw new NotImplementedException();
 	}
@@ -63,18 +63,14 @@ public class JiraNamedEntity : IJiraEntity
 		}
 	}
 
-	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(Jira jira, CancellationToken token)
+	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(Jira jira, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name))
 		{
-			var entities = await GetEntitiesAsync(jira, token).ConfigureAwait(false);
+			var entities = await GetEntitiesAsync(jira, cancellationToken).ConfigureAwait(false);
 			var entity = entities.FirstOrDefault(e =>
 				(!string.IsNullOrEmpty(Name) && string.Equals(e.Name, Name, StringComparison.OrdinalIgnoreCase)) ||
-				(!string.IsNullOrEmpty(Id) && string.Equals(e.Id, Id, StringComparison.OrdinalIgnoreCase))) ?? throw new InvalidOperationException(string.Format("Entity with id '{0}' and name '{1}' was not found for type '{2}'. Available: [{3}]",
-					Id,
-					Name,
-					GetType(),
-					string.Join(",", entities.Select(s => s.Id + ":" + s.Name).ToArray())));
+				(!string.IsNullOrEmpty(Id) && string.Equals(e.Id, Id, StringComparison.OrdinalIgnoreCase))) ?? throw new InvalidOperationException($"Entity with id '{Id}' and name '{Name}' was not found for type '{GetType()}'. Available: [{string.Join(",", entities.Select(s => s.Id + ":" + s.Name).ToArray())}]");
 			Id = entity.Id;
 			Name = entity.Name;
 		}

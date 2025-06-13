@@ -22,7 +22,7 @@ public class JiraNamedConstant : JiraNamedEntity
 	/// <summary>
 	/// Creates an instance of the JiraNamedConstant with the given id and name.
 	/// </summary>
-	public JiraNamedConstant(string id, string name = null)
+	public JiraNamedConstant(string id, string? name = null)
 		: base(id, name)
 	{
 	}
@@ -30,7 +30,7 @@ public class JiraNamedConstant : JiraNamedEntity
 	/// <summary>
 	/// Description of the entity.
 	/// </summary>
-	public string Description
+	public string? Description
 	{
 		get
 		{
@@ -41,7 +41,7 @@ public class JiraNamedConstant : JiraNamedEntity
 	/// <summary>
 	/// Url to the icon of this entity.
 	/// </summary>
-	public string IconUrl
+	public string? IconUrl
 	{
 		get
 		{

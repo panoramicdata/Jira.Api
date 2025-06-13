@@ -10,17 +10,17 @@ internal class ScreenService(Jira jira) : IScreenService
 {
 	private readonly Jira _jira = jira;
 
-	public async Task<IEnumerable<ScreenField>> GetScreenAvailableFieldsAsync(string screenId, CancellationToken token = default)
+	public async Task<IEnumerable<ScreenField>> GetScreenAvailableFieldsAsync(string screenId, CancellationToken cancellationToken)
 	{
 		var resource = $"rest/api/2/screens/{screenId}/availableFields";
 
-		var remoteScreenFields = await _jira.RestClient.ExecuteRequestAsync<IEnumerable<RemoteScreenField>>(Method.GET, resource, null, token).ConfigureAwait(false);
+		var remoteScreenFields = await _jira.RestClient.ExecuteRequestAsync<IEnumerable<RemoteScreenField>>(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 
 		var screenFields = remoteScreenFields.Select(x => new ScreenField(x));
 		return screenFields;
 	}
 
-	public async Task<IEnumerable<ScreenTab>> GetScreenTabsAsync(string screenId, string projectKey = null, CancellationToken token = default)
+	public async Task<IEnumerable<ScreenTab>> GetScreenTabsAsync(string screenId, string? projectKey, CancellationToken cancellationToken)
 	{
 		var resource = $"rest/api/2/screens/{screenId}/tabs";
 		if (!string.IsNullOrWhiteSpace(projectKey))
@@ -28,13 +28,13 @@ internal class ScreenService(Jira jira) : IScreenService
 			resource += $"?projectKey={projectKey}";
 		}
 
-		var remoteScreenTabs = await _jira.RestClient.ExecuteRequestAsync<IEnumerable<RemoteScreenTab>>(Method.GET, resource, null, token).ConfigureAwait(false);
+		var remoteScreenTabs = await _jira.RestClient.ExecuteRequestAsync<IEnumerable<RemoteScreenTab>>(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 
 		var screenTabs = remoteScreenTabs.Select(x => new ScreenTab(x));
 		return screenTabs;
 	}
 
-	public async Task<IEnumerable<ScreenField>> GetScreenTabFieldsAsync(string screenId, string tabId, string projectKey = null, CancellationToken token = default)
+	public async Task<IEnumerable<ScreenField>> GetScreenTabFieldsAsync(string screenId, string tabId, string? projectKey, CancellationToken cancellationToken)
 	{
 		var resource = $"rest/api/2/screens/{screenId}/tabs/{tabId}/fields";
 		if (!string.IsNullOrWhiteSpace(projectKey))
@@ -42,7 +42,7 @@ internal class ScreenService(Jira jira) : IScreenService
 			resource += $"?projectKey={projectKey}";
 		}
 
-		var remoteScreenFields = await _jira.RestClient.ExecuteRequestAsync<IEnumerable<RemoteScreenField>>(Method.GET, resource, null, token).ConfigureAwait(false);
+		var remoteScreenFields = await _jira.RestClient.ExecuteRequestAsync<IEnumerable<RemoteScreenField>>(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 
 		var screenFields = remoteScreenFields.Select(x => new ScreenField(x));
 		return screenFields;

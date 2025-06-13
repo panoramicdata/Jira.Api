@@ -12,6 +12,6 @@ public interface IIssuePriorityService
 	/// <summary>
 	/// Returns all the issue priorities within JIRA.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssuePriority>> GetPrioritiesAsync(CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<IssuePriority>> GetPrioritiesAsync(CancellationToken cancellationToken);
 }

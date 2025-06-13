@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Jira.Api.Remote;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
@@ -24,14 +24,14 @@ public class IssueResolution : JiraNamedEntity
 	/// <summary>
 	/// Creates an instance of the IssueResolution with the given id and name.
 	/// </summary>
-	public IssueResolution(string id, string name = null)
+	public IssueResolution(string id, string? name = null)
 		: base(id, name)
 	{
 	}
 
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken token)
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
 	{
-		var results = await jira.Resolutions.GetResolutionsAsync(token).ConfigureAwait(false);
+		var results = await jira.Resolutions.GetResolutionsAsync(cancellationToken).ConfigureAwait(false);
 		return results as IEnumerable<JiraNamedEntity>;
 	}
 

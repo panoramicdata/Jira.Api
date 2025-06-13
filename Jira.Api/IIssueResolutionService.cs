@@ -12,6 +12,6 @@ public interface IIssueResolutionService
 	/// <summary>
 	/// Returns all the issue resolutions within JIRA.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueResolution>> GetResolutionsAsync(CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<IssueResolution>> GetResolutionsAsync(CancellationToken cancellationToken);
 }

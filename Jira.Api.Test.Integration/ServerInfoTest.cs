@@ -9,7 +9,7 @@ public class ServerInfoTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetServerInfoWithoutHealthCheck(Jira jira)
 	{
-		var serverInfo = await jira.ServerInfo.GetServerInfoAsync();
+		var serverInfo = await jira.ServerInfo.GetServerInfoAsync(false, default);
 
 		Assert.Equal("Server", serverInfo.DeploymentType);
 		Assert.Equal("Your Company Jira", serverInfo.ServerTitle);
@@ -20,7 +20,7 @@ public class ServerInfoTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetServerInfoWithHealthCheck(Jira jira)
 	{
-		var serverInfo = await jira.ServerInfo.GetServerInfoAsync(true);
+		var serverInfo = await jira.ServerInfo.GetServerInfoAsync(true, default);
 
 		Assert.Equal("Server", serverInfo.DeploymentType);
 		Assert.Equal("Your Company Jira", serverInfo.ServerTitle);

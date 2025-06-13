@@ -1,18 +1,15 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
 
 namespace Jira.Api;
 
 /// <summary>
 /// The type of the issue as defined in JIRA
 /// </summary>
-[SuppressMessage("N/A", "CS0660", Justification = "Operator overloads are used for LINQ to JQL provider.")]
-[SuppressMessage("N/A", "CS0661", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 public class IssueType : JiraNamedConstant
 {
 	/// <summary>
@@ -31,7 +28,7 @@ public class IssueType : JiraNamedConstant
 	/// <param name="id">Identifiers of the issue type.</param>
 	/// <param name="name">Name of the issue type.</param>
 	/// <param name="isSubTask">Whether the issue type is a sub task.</param>
-	public IssueType(string id, string name = null, bool isSubTask = false)
+	public IssueType(string id, string? name = null, bool isSubTask = false)
 		: base(id, name)
 	{
 		IsSubTask = isSubTask;
@@ -51,16 +48,17 @@ public class IssueType : JiraNamedConstant
 
 	internal string ProjectKey { get; set; }
 
-	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken token)
+	/// <inheritdoc/>
+	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(Jira jira, CancellationToken cancellationToken)
 	{
-		var results = await jira.IssueTypes.GetIssueTypesAsync(token).ConfigureAwait(false);
+		var results = await jira.IssueTypes.GetIssueTypesAsync(cancellationToken).ConfigureAwait(false);
 
 		if (!string.IsNullOrEmpty(ProjectKey) &&
 			(SearchByProjectOnly || results.Distinct(new JiraEntityNameEqualityComparer()).Count() != results.Count()))
 		{
 			// There are multiple issue types with the same name. Possibly because there are a combination
 			//  of classic and NextGen projects in Jira. Get the issue types from the project if it is defined.
-			results = await jira.IssueTypes.GetIssueTypesForProjectAsync(ProjectKey).ConfigureAwait(false);
+			results = await jira.IssueTypes.GetIssueTypesForProjectAsync(ProjectKey, cancellationToken).ConfigureAwait(false);
 		}
 
 		return results as IEnumerable<JiraNamedEntity>;

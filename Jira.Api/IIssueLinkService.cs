@@ -12,8 +12,8 @@ public interface IIssueLinkService
 	/// <summary>
 	/// Returns all available issue link types.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueLinkType>> GetLinkTypesAsync(CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<IssueLinkType>> GetLinkTypesAsync(CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Creates an issue link between two issues.
@@ -22,21 +22,21 @@ public interface IIssueLinkService
 	/// <param name="inwardIssueKey">Key of the inward issue.</param>
 	/// <param name="linkName">Name of the issue link.</param>
 	/// <param name="comment">Comment to add to the outward issue.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task CreateLinkAsync(string outwardIssueKey, string inwardIssueKey, string linkName, string comment, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task CreateLinkAsync(string outwardIssueKey, string inwardIssueKey, string linkName, string? comment, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Returns all issue links associated with a given issue.
 	/// </summary>
 	/// <param name="issueKey">The issue key to retrieve links for.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(string issueKey, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(string issueKey, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Returns all issue links associated with a given issue.
 	/// </summary>
 	/// <param name="issue">The issue to retrieve links for.</param>
 	/// <param name="linkTypeNames">Optional subset of link types to retrieve.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(Issue issue, IEnumerable<string> linkTypeNames = null, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<IssueLink>> GetLinksForIssueAsync(Issue issue, IEnumerable<string>? linkTypeNames, CancellationToken cancellationToken);
 }

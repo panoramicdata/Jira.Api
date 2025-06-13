@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
@@ -12,9 +12,12 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 {
 	private readonly Jira _jira = jira;
 
-	public Task AddUserAsync(string groupname, string username, CancellationToken token = default)
+	public Task AddUserAsync(
+		string groupName,
+		string username,
+		CancellationToken cancellationToken)
 	{
-		var resource = string.Format("rest/api/2/group/user?groupname={0}", Uri.EscapeUriString(groupname));
+		var resource = $"rest/api/2/group/user?groupName={WebUtility.UrlEncode(groupName)}";
 		object body = new { name = username };
 		if (_jira.RestClient.Settings.EnableUserPrivacyMode)
 		{
@@ -22,39 +25,48 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 		}
 
 		var requestBody = JToken.FromObject(body);
-		return _jira.RestClient.ExecuteRequestAsync(Method.POST, resource, requestBody, token);
+		return _jira.RestClient.ExecuteRequestAsync(Method.Post, resource, requestBody, cancellationToken);
 	}
 
-	public Task CreateGroupAsync(string groupName, CancellationToken token = default)
+	public Task CreateGroupAsync(string groupName, CancellationToken cancellationToken)
 	{
 		var resource = "rest/api/2/group";
 		var requestBody = JToken.FromObject(new { name = groupName });
 
-		return _jira.RestClient.ExecuteRequestAsync(Method.POST, resource, requestBody, token);
+		return _jira.RestClient.ExecuteRequestAsync(Method.Post, resource, requestBody, cancellationToken);
 	}
 
-	public Task DeleteGroupAsync(string groupName, string swapGroupName = null, CancellationToken token = default)
+	public Task DeleteGroupAsync(string groupName, string? swapGroupName, CancellationToken cancellationToken)
 	{
-		var resource = string.Format("rest/api/2/group?groupname={0}", Uri.EscapeUriString(groupName));
+		var resource = $"rest/api/2/group?groupName={WebUtility.UrlEncode(groupName)}";
 
 		if (!string.IsNullOrEmpty(swapGroupName))
 		{
-			resource += string.Format("&swapGroup={0}", Uri.EscapeUriString(swapGroupName));
+			resource += $"&swapGroup={WebUtility.UrlEncode(swapGroupName)}";
 		}
 
-		return _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token);
+		return _jira.RestClient.ExecuteRequestAsync(Method.Delete, resource, null, cancellationToken);
 	}
 
-	public async Task<IPagedQueryResult<JiraUser>> GetUsersAsync(string groupname, bool includeInactiveUsers = false, int maxResults = 50, int startAt = 0, CancellationToken token = default)
+	/// <summary>
+	/// Get users
+	/// </summary>
+	/// <param name="groupName"></param>
+	/// <param name="includeInactiveUsers"></param>
+	/// <param name="skip"></param>
+	/// <param name="take">Suggest 50</param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public async Task<IPagedQueryResult<JiraUser>> GetUsersAsync(
+		string groupName,
+		bool includeInactiveUsers,
+		int skip,
+		int take,
+		CancellationToken cancellationToken)
 	{
-		var resource = string.Format(
-			"rest/api/2/group/member?groupname={0}&includeInactiveUsers={1}&startAt={2}&maxResults={3}",
-			Uri.EscapeUriString(groupname),
-			includeInactiveUsers,
-			startAt,
-			maxResults);
+		var resource = $"rest/api/2/group/member?groupName={WebUtility.UrlEncode(groupName)}&includeInactiveUsers={includeInactiveUsers}&startAt={skip}&maxResults={take}";
 
-		var response = await _jira.RestClient.ExecuteRequestAsync(Method.GET, resource, null, token).ConfigureAwait(false);
+		var response = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 		var serializerSetting = _jira.RestClient.Settings.JsonSerializerSettings;
 		var users = response["values"]
 			.Cast<JObject>()
@@ -63,14 +75,11 @@ internal class JiraGroupService(Jira jira) : IJiraGroupService
 		return PagedQueryResult<JiraUser>.FromJson((JObject)response, users);
 	}
 
-	public Task RemoveUserAsync(string groupname, string username, CancellationToken token = default)
+	public Task RemoveUserAsync(string groupName, string username, CancellationToken cancellationToken)
 	{
-		var resource = string.Format("rest/api/2/group/user?groupname={0}&{1}={2}",
-			Uri.EscapeUriString(groupname),
-			_jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username",
-			Uri.EscapeUriString(username));
+		var resource = $"rest/api/2/group/user?groupName={WebUtility.UrlEncode(groupName)}&{(_jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username")}={WebUtility.UrlEncode(username)}";
 
-		return _jira.RestClient.ExecuteRequestAsync(Method.DELETE, resource, null, token);
+		return _jira.RestClient.ExecuteRequestAsync(Method.Delete, resource, null, cancellationToken);
 
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Jira.Api;
 
@@ -23,9 +25,9 @@ public class ProjectComponentCollection : JiraNamedEntityCollection<ProjectCompo
 	/// Add a component by name
 	/// </summary>
 	/// <param name="componentName">Component name</param>
-	public void Add(string componentName)
+	public async Task AddAsync(string componentName, CancellationToken cancellationToken)
 	{
-		var component = _jira.Components.GetComponentsAsync(_projectKey).Result.FirstOrDefault(v => v.Name.Equals(componentName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(string.Format("Unable to find component with name '{0}'.", componentName));
+		var component = (await _jira.Components.GetComponentsAsync(_projectKey, cancellationToken)).FirstOrDefault(v => v.Name.Equals(componentName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"Unable to find component with name '{componentName}'.");
 		Add(component);
 	}
 }

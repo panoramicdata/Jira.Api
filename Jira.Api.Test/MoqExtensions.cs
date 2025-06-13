@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Jira.Api.Remote;
+using Moq;
+using Moq.Language.Flow;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jira.Api.Remote;
-using Moq;
-using Moq.Language.Flow;
 
 namespace Jira.Api.Test;
 
@@ -17,7 +17,7 @@ public static class MoqExtensions
 		var pagedResult = new Mock<IPagedQueryResult<Issue>>();
 		var issues = remoteIssues.Select(i => i.ToLocal(jira));
 		pagedResult.Setup(p => p.GetEnumerator()).Returns(issues.GetEnumerator());
-		mock.Setup(s => s.GetIssuesFromJqlAsync(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+		mock.Setup(s => s.GetIssuesFromJqlAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(pagedResult.Object));
 	}
 

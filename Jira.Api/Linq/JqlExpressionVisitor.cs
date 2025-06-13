@@ -68,12 +68,10 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 
 		if (expression.Left is MethodCallExpression methodCallExpression)
 		{
-			return string.Format("\"{0}\"", ((ConstantExpression)methodCallExpression.Arguments[0]).Value);
+			return $"\"{((ConstantExpression)methodCallExpression.Arguments[0]).Value}\"";
 		}
 
-		throw new NotSupportedException(string.Format(
-			   "Operator '{0}' can only be applied on the right side of properties and property indexers.",
-			   expression.NodeType));
+		throw new NotSupportedException($"Operator '{expression.NodeType}' can only be applied on the right side of properties and property indexers.");
 	}
 
 	private static bool TryGetPropertyInfoFromBinaryExpression(BinaryExpression expression, out PropertyInfo propertyInfo)
@@ -116,9 +114,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			return newExpression.Constructor.Invoke([.. args]);
 		}
 
-		throw new NotSupportedException(string.Format(
-			   "Operator '{0}' can only be used with constant values.",
-			   expression.NodeType));
+		throw new NotSupportedException($"Operator '{expression.NodeType}' can only be used with constant values.");
 	}
 
 	private void ProcessGreaterAndLessThanOperator(BinaryExpression expression, string operatorString)
@@ -130,7 +126,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		_jqlWhere.Append(fieldName);
 
 		// operator
-		_jqlWhere.Append(string.Format(" {0} ", operatorString));
+		_jqlWhere.Append($" {operatorString} ");
 
 		// value
 		ProcessConstant(value);
@@ -167,7 +163,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
 		}
 
-		_jqlWhere.Append(string.Format(" {0} ", operatorString));
+		_jqlWhere.Append($" {operatorString} ");
 
 		// value
 		ProcessConstant(fieldValue);
@@ -211,7 +207,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
 		}
 
-		_jqlWhere.Append(string.Format(" {0} ", operatorString));
+		_jqlWhere.Append($" {operatorString} ");
 
 		// value
 		ProcessConstant(value);
@@ -225,11 +221,11 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			|| valueType == typeof(LiteralDateTime)
 			|| valueType == typeof(LiteralMatch))
 		{
-			_jqlWhere.Append(string.Format("\"{0}\"", value));
+			_jqlWhere.Append($"\"{value}\"");
 		}
 		else if (valueType == typeof(DateTime))
 		{
-			_jqlWhere.Append(string.Format("\"{0}\"", Jira.FormatDateTimeString((DateTime)value)));
+			_jqlWhere.Append($"\"{Jira.FormatDateTimeString((DateTime)value)}\"");
 		}
 		else
 		{
@@ -303,7 +299,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 
 		if (((LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand).Body is MemberExpression member)
 		{
-			var orderClause = string.Format("{0} {1}", member.Member.Name, orderByDirection);
+			var orderClause = $"{member.Member.Name} {orderByDirection}";
 
 			if (firstOrderBy)
 			{
@@ -361,7 +357,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 				break;
 
 			default:
-				throw new NotSupportedException(string.Format("Expression type '{0}' is not supported.", node.NodeType));
+				throw new NotSupportedException($"Expression type '{node.NodeType}' is not supported.");
 
 		}
 

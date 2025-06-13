@@ -8,9 +8,9 @@ public class ComparableStringTest
 	[Fact]
 	public void RefereceIsNull_EqualsOperators()
 	{
-		ComparableString field = null;
-		Assert.True(field == null);
-		Assert.False(field != null);
+		ComparableString? field = null;
+		Assert.True(field is null);
+		Assert.False(field is not null);
 	}
 
 	public class WithDate

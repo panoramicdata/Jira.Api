@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace Jira.Api;
 
@@ -11,14 +11,14 @@ namespace Jira.Api;
 /// Create a new instance of PagedQueryResult with all metadata provided.
 /// </remarks>
 /// <param name="enumerable">Enumerable to wrap.</param>
-/// <param name="startAt">Index within the total items where this page's paged result starts.</param>
-/// <param name="itemsPerPage">Number of items returned per page.</param>
+/// <param name="skip">Index within the total items where this page's paged result starts.</param>
+/// <param name="take">Number of items returned per page.</param>
 /// <param name="totalItems">Number of total items available on the server.</param>
-internal class PagedQueryResult<T>(IEnumerable<T> enumerable, int startAt, int itemsPerPage, int totalItems) : IPagedQueryResult<T>
+internal class PagedQueryResult<T>(IEnumerable<T> enumerable, int skip, int take, int totalItems) : IPagedQueryResult<T>
 {
 	private readonly IEnumerable<T> _enumerable = enumerable;
-	private readonly int _startAt = startAt;
-	private readonly int _itemsPerPage = itemsPerPage;
+	private readonly int _skip = skip;
+	private readonly int take = take;
 	private readonly int _totalItems = totalItems;
 
 	/// <summary>
@@ -40,7 +40,7 @@ internal class PagedQueryResult<T>(IEnumerable<T> enumerable, int startAt, int i
 	/// </summary>
 	public int StartAt
 	{
-		get { return _startAt; }
+		get { return _skip; }
 	}
 
 	/// <summary>
@@ -48,7 +48,7 @@ internal class PagedQueryResult<T>(IEnumerable<T> enumerable, int startAt, int i
 	/// </summary>
 	public int ItemsPerPage
 	{
-		get { return _itemsPerPage; }
+		get { return take; }
 	}
 
 	/// <summary>

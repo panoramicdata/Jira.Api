@@ -39,7 +39,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldValue">The value of the field</param>
 	public CustomFieldValueCollection Add(string fieldName, string fieldValue)
 	{
-		return Add(fieldName, [fieldValue]);
+		return Add(fieldName, fieldValue);
 	}
 
 	/// <summary>
@@ -47,18 +47,20 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// </summary>
 	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
 	/// <param name="fieldValues">The values of the field</param>
-	public CustomFieldValueCollection AddArray(string fieldName, params string[] fieldValues)
+	/// <param name="cancellationToken"></param>
+	public async Task<CustomFieldValueCollection> AddArrayAsync(string fieldName, string[] fieldValues, CancellationToken cancellationToken)
 	{
-		return Add(fieldName, fieldValues, new MultiStringCustomFieldValueSerializer());
+		return await AddAsync(fieldName, fieldValues, new MultiStringCustomFieldValueSerializer(), cancellationToken);
 	}
 
 	/// <summary>
 	/// Add a cascading select field.
 	/// </summary>
 	/// <param name="cascadingSelectField">Cascading select field to add.</param>
-	public CustomFieldValueCollection AddCascadingSelectField(CascadingSelectCustomField cascadingSelectField)
+	/// <param name="cancellationToken"></param>
+	public Task<CustomFieldValueCollection> AddCascadingSelectFieldAsync(CascadingSelectCustomField cascadingSelectField, CancellationToken cancellationToken)
 	{
-		return AddCascadingSelectField(cascadingSelectField.Name, cascadingSelectField.ParentOption, cascadingSelectField.ChildOption);
+		return AddCascadingSelectFieldAsync(cascadingSelectField.Name, cascadingSelectField.ParentOption, cascadingSelectField.ChildOption, cancellationToken);
 	}
 
 	/// <summary>
@@ -67,7 +69,12 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="fieldName">The name of the custom field as defined in JIRA.</param>
 	/// <param name="parentOption">The value of the parent option.</param>
 	/// <param name="childOption">The value of the child option.</param>
-	public CustomFieldValueCollection AddCascadingSelectField(string fieldName, string parentOption, string childOption = null)
+	/// <param name="cancellationToken"></param>
+	public Task<CustomFieldValueCollection> AddCascadingSelectFieldAsync(
+		string fieldName,
+		string parentOption,
+		string? childOption,
+		CancellationToken cancellationToken)
 	{
 		var options = new List<string>() { parentOption };
 
@@ -76,7 +83,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 			options.Add(childOption);
 		}
 
-		return AddArray(fieldName, [.. options]);
+		return AddArrayAsync(fieldName, [.. options], cancellationToken);
 	}
 
 	/// <summary>
@@ -84,9 +91,15 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// </summary>
 	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
 	/// <param name="fieldValues">The values of the field</param>
-	public CustomFieldValueCollection Add(string fieldName, string[] fieldValues, ICustomFieldValueSerializer serializer = null)
+	/// <param name="serializer"></param>
+	/// <param name="cancellationToken"></param>
+	public async Task<CustomFieldValueCollection> AddAsync(
+		string fieldName,
+		string[] fieldValues,
+		ICustomFieldValueSerializer? serializer,
+		CancellationToken cancellationToken)
 	{
-		var fieldId = GetCustomFieldId(fieldName);
+		var fieldId = await GetCustomFieldIdAsync(fieldName, cancellationToken);
 		Items.Add(new CustomFieldValue(fieldId, fieldName, _issue) { Values = fieldValues, Serializer = serializer });
 		return this;
 	}
@@ -146,18 +159,19 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// </summary>
 	/// <param name="fieldName">Name of the custom field as defined in JIRA</param>
 	/// <returns>CustomField instance if the field has been set on the issue, null otherwise</returns>
-	public CustomFieldValue this[string fieldName]
+	public CustomFieldValue? this[string fieldName]
 	{
 		get
 		{
-			var fieldId = GetCustomFieldId(fieldName);
+			var fieldId = GetCustomFieldIdAsync(fieldName, default).GetAwaiter().GetResult();
 			return Items.FirstOrDefault(f => f.Id == fieldId);
 		}
 	}
 
-	private string GetCustomFieldId(string fieldName)
+	private async Task<string> GetCustomFieldIdAsync(string fieldName, CancellationToken cancellationToken)
 	{
-		var customFields = _issue.Jira.Fields.GetCustomFieldsAsync().Result.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+		var customFieldsOrig = await _issue.Jira.Fields.GetCustomFieldsAsync(cancellationToken);
+		var customFields = customFieldsOrig.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
 		var searchByProject = (customFields.Count() > 1) || SearchByProjectOnly;
 
 		if (searchByProject)
@@ -175,7 +189,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 				options.IssueTypeNames.Add(_issue.Type.Name);
 			}
 
-			customFields = _issue.Jira.Fields.GetCustomFieldsAsync(options).Result.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+			customFields = (await _issue.Jira.Fields.GetCustomFieldsAsync(options, cancellationToken)).Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
 		}
 
 		if (!customFields.Any())
@@ -196,7 +210,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 		}
 	}
 
-	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)
+	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
 		var fieldValues = Items
 			.Where(field => IsCustomFieldNewOrUpdated(field))

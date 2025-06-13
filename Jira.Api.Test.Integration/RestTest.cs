@@ -1,63 +1,20 @@
 ﻿using Jira.Api.Remote;
 using RestSharp;
-using RestSharp.Authenticators;
 using System;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Jira.Api.Test.Integration;
 
-public class CookiesRestClient : JiraRestClient
-{
-	private readonly IAuthenticator _authenticator;
-
-	public CookiesRestClient(string url, string user, string password)
-		: base(url, user, password)
-	{
-		RestSharpClient.CookieContainer = new CookieContainer();
-		RestSharpClient.Authenticator = null;
-		_authenticator = new HttpBasicAuthenticator(user, password);
-	}
-
-	protected override async Task<IRestResponse> ExecuteRawResquestAsync(IRestRequest request, CancellationToken token)
-	{
-		var response = await RestSharpClient.ExecuteAsync(request, token).ConfigureAwait(false);
-
-		if (response.StatusCode == HttpStatusCode.Unauthorized)
-		{
-			RestSharpClient.Authenticator = _authenticator;
-			response = await RestSharpClient.ExecuteAsync(request, token).ConfigureAwait(false);
-			RestSharpClient.Authenticator = null;
-		}
-
-		return response;
-	}
-}
-
 public class RestTest
 {
 	private readonly Random _random = new();
 
-	[Fact]
-	public async Task CanUseCustomRestClient()
-	{
-		var restClient = new CookiesRestClient(JiraProvider.HOST, JiraProvider.USERNAME, JiraProvider.PASSWORD);
-		var jira = Jira.CreateRestClient(restClient);
-
-		var issue = await jira.Issues.GetIssueAsync("TST-1");
-		Assert.Equal("Sample bug in Test Project", issue.Summary);
-
-		var types = await jira.IssueTypes.GetIssueTypesAsync();
-		Assert.NotEmpty(types);
-	}
-
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void ExecuteRestRequest(Jira jira)
+	public async Task ExecuteRestRequest(Jira jira)
 	{
-		var users = jira.RestClient.ExecuteRequestAsync<JiraNamedResource[]>(Method.GET, "rest/api/2/user/assignable/multiProjectSearch?projectKeys=TST").Result;
+		var users = await jira.RestClient.ExecuteRequestAsync<JiraNamedResource[]>(Method.Get, "rest/api/2/user/assignable/multiProjectSearch?projectKeys=TST", null, default);
 
 		Assert.True(users.Length >= 2);
 		Assert.Contains(users, u => u.Name == "admin");
@@ -65,7 +22,7 @@ public class RestTest
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public void ExecuteRawRestRequest(Jira jira)
+	public async Task ExecuteRawRestRequest(Jira jira)
 	{
 		var issue = new Issue(jira, "TST")
 		{
@@ -74,10 +31,10 @@ public class RestTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
-		var rawBody = string.Format("{{ \"jql\": \"Key=\\\"{0}\\\"\" }}", issue.Key.Value);
-		var json = jira.RestClient.ExecuteRequestAsync(Method.POST, "rest/api/2/search", rawBody).Result;
+		var rawBody = $"{{ \"jql\": \"Key=\\\"{issue.Key.Value}\\\"\" }}";
+		var json = await jira.RestClient.ExecuteRequestAsync(Method.Post, "rest/api/2/search", rawBody, default);
 
 		Assert.Equal(issue.Key.Value, json["issues"][0]["key"].ToString());
 	}
@@ -94,6 +51,6 @@ public class RestTest
 
 		var jira = Jira.CreateRestClient("http://farmasXXX.atlassian.net");
 
-		var exception = await Assert.ThrowsAsync<ResourceNotFoundException>(() => jira.Issues.GetIssueAsync("TST-1"));
+		var exception = await Assert.ThrowsAsync<ResourceNotFoundException>(() => jira.Issues.GetIssueAsync("TST-1", default));
 	}
 }

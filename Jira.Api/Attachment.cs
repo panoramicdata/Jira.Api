@@ -1,5 +1,7 @@
 ﻿using Jira.Api.Remote;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Jira.Api;
 
@@ -59,22 +61,22 @@ public class Attachment(Jira jira, RemoteAttachment remoteAttachment)
 	/// <summary>
 	/// Downloads attachment as a byte array.
 	/// </summary>
-	public byte[] DownloadData()
+	public async Task<byte[]?> DownloadDataAsync(CancellationToken cancellationToken)
 	{
 		var url = GetRequestUrl();
 
-		return _jira.RestClient.DownloadData(url);
+		return await _jira.RestClient.DownloadDataAsync(url, cancellationToken);
 	}
 
 	/// <summary>
 	/// Downloads attachment to specified file
 	/// </summary>
 	/// <param name="fullFileName">Full file name where attachment will be downloaded</param>
-	public void Download(string fullFileName)
+	public async Task DownloadAsync(string fullFileName, CancellationToken cancellationToken)
 	{
 		var url = GetRequestUrl();
 
-		_jira.RestClient.Download(url, fullFileName);
+		await _jira.RestClient.DownloadAsync(url, fullFileName, cancellationToken);
 	}
 
 	private string GetRequestUrl()
@@ -84,9 +86,6 @@ public class Attachment(Jira jira, RemoteAttachment remoteAttachment)
 			throw new InvalidOperationException("Unable to download attachment, JIRA url has not been set.");
 		}
 
-		return string.Format("{0}secure/attachment/{1}/{2}",
-			_jira.Url.EndsWith('/') ? _jira.Url : _jira.Url + "/",
-			Id,
-			FileName);
+		return $"{(_jira.Url.EndsWith('/') ? _jira.Url : _jira.Url + "/")}secure/attachment/{Id}/{FileName}";
 	}
 }

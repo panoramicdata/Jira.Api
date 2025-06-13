@@ -12,13 +12,13 @@ public interface IProjectService
 	/// <summary>
 	/// Returns all projects defined in JIRA.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<IEnumerable<Project>> GetProjectsAsync(CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<IEnumerable<Project>> GetProjectsAsync(CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Returns a single project in JIRA.
 	/// </summary>
 	/// <param name="projectKey">Project key for the single project to load</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	Task<Project> GetProjectAsync(string projectKey, CancellationToken token = default);
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	Task<Project> GetProjectAsync(string projectKey, CancellationToken cancellationToken);
 }

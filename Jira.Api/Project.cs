@@ -97,30 +97,30 @@ public class Project(Jira jira, RemoteProject remoteProject) : JiraNamedEntity(r
 	/// <summary>
 	/// Gets the issue types for the current project.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<IssueType>> GetIssueTypesAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<IssueType>> GetIssueTypesAsync(CancellationToken cancellationToken)
 	{
-		return _jira.IssueTypes.GetIssueTypesForProjectAsync(Key, token);
+		return _jira.IssueTypes.GetIssueTypesForProjectAsync(Key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Creates a new project component.
 	/// </summary>
 	/// <param name="projectComponent">Information of the new component.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<ProjectComponent> AddComponentAsync(ProjectComponentCreationInfo projectComponent, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<ProjectComponent> AddComponentAsync(ProjectComponentCreationInfo projectComponent, CancellationToken cancellationToken)
 	{
 		projectComponent.ProjectKey = Key;
-		return _jira.Components.CreateComponentAsync(projectComponent, token);
+		return _jira.Components.CreateComponentAsync(projectComponent, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the components for the current project.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<ProjectComponent>> GetComponentsAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<ProjectComponent>> GetComponentsAsync(CancellationToken cancellationToken)
 	{
-		return _jira.Components.GetComponentsAsync(Key, token);
+		return _jira.Components.GetComponentsAsync(Key, cancellationToken);
 	}
 
 	/// <summary>
@@ -128,43 +128,49 @@ public class Project(Jira jira, RemoteProject remoteProject) : JiraNamedEntity(r
 	/// </summary>
 	/// <param name="componentName">Name of the component to remove.</param>
 	/// <param name="moveIssuesTo">The component to set on issues where the deleted component is the component, If null then the component is removed.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task DeleteComponentAsync(string componentName, string moveIssuesTo = null, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task DeleteComponentAsync(
+		string componentName,
+		string? moveIssuesTo,
+		CancellationToken cancellationToken)
 	{
-		var components = await GetComponentsAsync(token).ConfigureAwait(false);
-		var component = components.First(c => string.Equals(c.Name, componentName)) ?? throw new InvalidOperationException(string.Format("Unable to locate a component with name '{0}'", componentName));
-		await _jira.Components.DeleteComponentAsync(component.Id, moveIssuesTo, token).ConfigureAwait(false);
+		var components = await GetComponentsAsync(cancellationToken).ConfigureAwait(false);
+		var component = components.First(c => string.Equals(c.Name, componentName)) ?? throw new InvalidOperationException($"Unable to locate a component with name '{componentName}'");
+		await _jira.Components.DeleteComponentAsync(component.Id, moveIssuesTo, cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <summary>
 	/// Creates a new project version.
 	/// </summary>
 	/// <param name="projectVersion">Information of the new project version.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<ProjectVersion> AddVersionAsync(ProjectVersionCreationInfo projectVersion, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<ProjectVersion> AddVersionAsync(ProjectVersionCreationInfo projectVersion, CancellationToken cancellationToken)
 	{
 		projectVersion.ProjectKey = Key;
-		return _jira.Versions.CreateVersionAsync(projectVersion, token);
+		return _jira.Versions.CreateVersionAsync(projectVersion, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the versions for this project.
 	/// </summary>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IEnumerable<ProjectVersion>> GetVersionsAsync(CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IEnumerable<ProjectVersion>> GetVersionsAsync(CancellationToken cancellationToken)
 	{
-		return _jira.Versions.GetVersionsAsync(Key, token);
+		return _jira.Versions.GetVersionsAsync(Key, cancellationToken);
 	}
 
 	/// <summary>
 	/// Gets the paged versions for this project (not-cached).
 	/// </summary>
-	/// <param name="startAt">The page offset, if not specified then defaults to 0.</param>
-	/// <param name="maxResults">How many results on the page should be included. Defaults to 50.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public Task<IPagedQueryResult<ProjectVersion>> GetPagedVersionsAsync(int startAt = 0, int maxResults = 50, CancellationToken token = default)
+	/// <param name="skip">The page offset, if not specified then defaults to 0.</param>
+	/// <param name="take">How many results on the page should be included. Suggest 50.</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public Task<IPagedQueryResult<ProjectVersion>> GetPagedVersionsAsync(
+		int skip,
+		int take,
+		CancellationToken cancellationToken)
 	{
-		return _jira.Versions.GetPagedVersionsAsync(Key, startAt, maxResults, token);
+		return _jira.Versions.GetPagedVersionsAsync(Key, skip, take, cancellationToken);
 	}
 
 	/// <summary>
@@ -173,11 +179,15 @@ public class Project(Jira jira, RemoteProject remoteProject) : JiraNamedEntity(r
 	/// <param name="versionName">Name of the version to delete.</param>
 	/// <param name="moveFixIssuesTo">The version to set fixVersion to on issues where the deleted version is the fix version, If null then the fixVersion is removed.</param>
 	/// <param name="moveAffectedIssuesTo">The version to set fixVersion to on issues where the deleted version is the fix version, If null then the fixVersion is removed.</param>
-	/// <param name="token">Cancellation token for this operation.</param>
-	public async Task DeleteVersionAsync(string versionName, string moveFixIssuesTo = null, string moveAffectedIssuesTo = null, CancellationToken token = default)
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task DeleteVersionAsync(
+		string versionName,
+		string? moveFixIssuesTo,
+		string? moveAffectedIssuesTo,
+		CancellationToken cancellationToken)
 	{
-		var versions = await GetVersionsAsync(token).ConfigureAwait(false);
-		var version = versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(string.Format("Unable to locate a version with name '{0}'", versionName));
-		await _jira.Versions.DeleteVersionAsync(version.Id, moveFixIssuesTo, moveAffectedIssuesTo, token).ConfigureAwait(false);
+		var versions = await GetVersionsAsync(cancellationToken).ConfigureAwait(false);
+		var version = versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"Unable to locate a version with name '{versionName}'");
+		await _jira.Versions.DeleteVersionAsync(version.Id, moveFixIssuesTo, moveAffectedIssuesTo, cancellationToken).ConfigureAwait(false);
 	}
 }

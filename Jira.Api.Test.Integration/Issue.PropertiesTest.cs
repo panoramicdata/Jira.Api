@@ -17,7 +17,7 @@ public class IssuePropertiesTest
 			Assignee = "admin"
 		};
 
-		issue = await issue.SaveChangesAsync();
+		issue = await issue.SaveChangesAsync(default);
 
 		Assert.Equal("admin", issue.Reporter);
 		Assert.Equal("admin@example.com", issue.ReporterUser.Email);
@@ -37,7 +37,7 @@ public class IssuePropertiesTest
 		Assert.NotNull(issue.AssigneeUser.AvatarUrls.Large);
 
 		issue.Assignee = "test";
-		issue = await issue.SaveChangesAsync();
+		issue = await issue.SaveChangesAsync(default);
 		Assert.Equal("test", issue.Assignee);
 		Assert.Equal("test@qa.com", issue.AssigneeUser.Email);
 	}
@@ -53,14 +53,14 @@ public class IssuePropertiesTest
 			Assignee = "admin"
 		};
 
-		var newIssue = await issue.SaveChangesAsync();
+		var newIssue = await issue.SaveChangesAsync(default);
 
 		Assert.NotNull(newIssue.TimeTrackingData);
 		Assert.Null(newIssue.TimeTrackingData.OriginalEstimate);
 
-		await newIssue.AddWorklogAsync("1d");
+		await newIssue.AddWorklogAsync("1d", WorklogStrategy.AutoAdjustRemainingEstimate, null, default);
 
-		var issuesFromQuery = await jira.Issues.GetIssuesFromJqlAsync($"id = {newIssue.Key.Value}");
+		var issuesFromQuery = await jira.Issues.GetIssuesFromJqlAsync($"id = {newIssue.Key.Value}", 0, null, default);
 		Assert.Equal("1d", issuesFromQuery.Single().TimeTrackingData.TimeSpent);
 	}
 
@@ -75,7 +75,7 @@ public class IssuePropertiesTest
 			Assignee = "admin"
 		};
 
-		issue.SaveChanges();
+		await issue.SaveChangesAsync(default);
 
 		// verify no votes
 		Assert.Equal(0, issue.Votes.Value);
@@ -83,15 +83,15 @@ public class IssuePropertiesTest
 
 		// cast a vote with a second user.
 		var jiraTester = Jira.CreateRestClient(JiraProvider.HOST, "test", "test");
-		await jiraTester.RestClient.ExecuteRequestAsync(RestSharp.Method.POST, $"rest/api/2/issue/{issue.Key.Value}/votes");
+		await jiraTester.RestClient.ExecuteRequestAsync(RestSharp.Method.Post, $"rest/api/2/issue/{issue.Key.Value}/votes", null, default);
 
 		// verify votes for first user
-		issue.Refresh();
+		await issue.RefreshAsync(default);
 		Assert.Equal(1, issue.Votes.Value);
 		Assert.False(issue.HasUserVoted);
 
 		// verify votes for second user
-		var issueTester = await jiraTester.Issues.GetIssueAsync(issue.Key.Value);
+		var issueTester = await jiraTester.Issues.GetIssueAsync(issue.Key.Value, default);
 		Assert.Equal(1, issueTester.Votes.Value);
 		Assert.True(issueTester.HasUserVoted);
 	}

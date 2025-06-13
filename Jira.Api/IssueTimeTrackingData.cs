@@ -8,7 +8,7 @@ namespace Jira.Api;
 /// <remarks>
 /// Creates a new instance of the IssueTimeTrackingData class.
 /// </remarks>
-public class IssueTimeTrackingData(string originalEstimate, string remainingEstimate = null)
+public class IssueTimeTrackingData(string originalEstimate, string? remainingEstimate = null)
 {
 	[JsonProperty("originalEstimate")]
 	public string OriginalEstimate { get; private set; } = originalEstimate;
@@ -17,7 +17,7 @@ public class IssueTimeTrackingData(string originalEstimate, string remainingEsti
 	public long? OriginalEstimateInSeconds { get; private set; }
 
 	[JsonProperty("remainingEstimate")]
-	public string RemainingEstimate { get; private set; } = remainingEstimate;
+	public string? RemainingEstimate { get; private set; } = remainingEstimate;
 
 	[JsonProperty("remainingEstimateSeconds")]
 	public long? RemainingEstimateInSeconds { get; private set; }

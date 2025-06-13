@@ -12,7 +12,7 @@ namespace Jira.Api;
 /// <param name="name">Name of the resource.</param>
 /// <param name="jql">Jql of the filter.</param>
 /// <param name="self">Url to the resource.</param>
-public class JiraFilter(string id, string name, string jql = null, string self = null) : JiraNamedResource(id, name, self)
+public class JiraFilter(string id, string name, string? jql = null, string? self = null) : JiraNamedResource(id, name, self)
 {
 
 	/// <summary>

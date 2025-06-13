@@ -12,10 +12,10 @@ public class IssueFieldMetadataTest
 	public async Task TestNonCustomFieldOption(Jira jira)
 	{
 		// prepare
-		Issue iss = jira.Issues.GetIssueAsync("TST-1").Result;
+		Issue iss = await jira.Issues.GetIssueAsync("TST-1", default);
 
 		// exercise
-		var issueFields = await iss.GetIssueFieldsEditMetadataAsync();
+		var issueFields = await iss.GetIssueFieldsEditMetadataAsync(default);
 
 		IssueFieldEditMetadata customRadioField = issueFields["Component/s"];
 		Assert.False(customRadioField.IsCustom);
@@ -26,10 +26,10 @@ public class IssueFieldMetadataTest
 	public async Task TestCustomFieldOptions(Jira jira)
 	{
 		// prepare
-		Issue iss = jira.Issues.GetIssueAsync("TST-1").Result;
+		Issue iss = await jira.Issues.GetIssueAsync("TST-1", default);
 
 		// exercise
-		var issueFields = await iss.GetIssueFieldsEditMetadataAsync();
+		var issueFields = await iss.GetIssueFieldsEditMetadataAsync(default);
 
 		//assert: IssueFieldEditMetadata of issue
 		Assert.True(issueFields.Count >= 34);
@@ -38,7 +38,7 @@ public class IssueFieldMetadataTest
 		Assert.Equal("Custom Radio Field", customRadioField.Name);
 		Assert.False(customRadioField.IsRequired);
 		Assert.Contains(IssueFieldEditMetadataOperation.SET, customRadioField.Operations);
-		Assert.Equal(1, customRadioField.Operations.Count);
+		Assert.Single(customRadioField.Operations);
 		Assert.Equal("option", customRadioField.Schema.Type);
 		Assert.Equal("com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons", customRadioField.Schema.Custom);
 		Assert.Equal(10307, customRadioField.Schema.CustomId);

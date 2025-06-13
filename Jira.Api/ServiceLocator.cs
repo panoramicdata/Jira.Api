@@ -53,7 +53,7 @@ public class ServiceLocator
 		}
 		else
 		{
-			throw new InvalidOperationException(string.Format("Service '{0}' not found.", typeof(TService)));
+			throw new InvalidOperationException($"Service '{typeof(TService)}' not found.");
 		}
 	}
 

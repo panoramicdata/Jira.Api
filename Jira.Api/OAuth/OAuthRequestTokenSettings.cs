@@ -17,7 +17,7 @@ public class OAuthRequestTokenSettings(
 	string url,
 	string consumerKey,
 	string consumerSecret,
-	string callbackUrl = null,
+	string? callbackUrl = null,
 	JiraOAuthSignatureMethod signatureMethod = JiraOAuthSignatureMethod.RsaSha1,
 	string requestTokenUrl = OAuthRequestTokenSettings.DefaultRequestTokenUrl,
 	string authorizeUrl = OAuthRequestTokenSettings.DefaultAuthorizeUrl)
@@ -50,7 +50,7 @@ public class OAuthRequestTokenSettings(
 	/// <summary>
 	/// Gets the callback URL for the request token.
 	/// </summary>
-	public string CallbackUrl { get; } = callbackUrl;
+	public string? CallbackUrl { get; } = callbackUrl;
 
 	/// <summary>
 	/// Gets the signature method used to sign the request.

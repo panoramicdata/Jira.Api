@@ -6,6 +6,21 @@ Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.c
 
 All features tested on JIRA v9.12.2
 
+## NEW IN Jira.Api...
+
+If you are migrating from Atlassian.SDK, there are MANY breaking changes, we believe all for the better.
+The main items:
+
+* The namespace has changed from `Atlassian.SDK` to `Jira.Api`.
+* EVERYTHING is asynchronous now, no more sync methods hiding async under the covers.
+* You MUST provide cancellation tokens to all async methods.
+* There are no more optional parameters, all parameters are required.
+* The order of skip and take parameters has been changed for everyone's sanity.
+	- The new order is `skip, take` instead of `take, skip`.
+	- This is a nasty one if you are already specifying these value.
+	- Sorry, but that's the way it is!
+* Attachment uploads use FileInfo instead of full path file names.
+
 ## Download
 
 - [Get the latest via NuGet](http://nuget.org/List/Packages/Atlassian.SDK).
