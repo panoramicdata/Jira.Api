@@ -20,6 +20,13 @@ public class JiraRestClient : IJiraRestClient
 	private readonly RestClient _restClient;
 	private readonly JiraRestClientSettings _clientSettings;
 
+	/// <summary>
+	/// Authenticates to the JIRA server using the provided URL, username, and password.
+	/// </summary>
+	/// <param name="url"></param>
+	/// <param name="username"></param>
+	/// <param name="password"></param>
+	/// <param name="settings"></param>
 	public JiraRestClient(
 		string url,
 		string? username = null,
@@ -30,6 +37,23 @@ public class JiraRestClient : IJiraRestClient
 			!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password)
 				? new HttpBasicAuthenticator(username, password)
 				: null,
+			settings)
+	{
+	}
+
+	/// <summary>
+	/// Authenticates to the JIRA server using the provided URL and Personal Access Token, which is used in the authentication header as "Bearer TOKEN".
+	/// </summary>
+	/// <param name="url"></param>
+	/// <param name="personalAccessToken"></param>
+	/// <param name="settings"></param>
+	public JiraRestClient(
+		string url,
+		string personalAccessToken,
+		JiraRestClientSettings? settings = null)
+		: this(
+			url,
+			new JwtAuthenticator(personalAccessToken),
 			settings)
 	{
 	}

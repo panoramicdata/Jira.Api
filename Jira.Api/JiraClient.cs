@@ -39,6 +39,24 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	}
 
 	/// <summary>
+	/// Creates a JIRA rest client.
+	/// </summary>
+	/// <param name="url">Url to the JIRA server.</param>
+	/// <param name="personalAccessToken">Personal API token.</param>
+	/// <param name="settings">Settings to configure the rest client.</param>
+	/// <returns>Jira object configured to use REST API.</returns>
+	public static JiraClient CreateRestClient(
+		string url,
+		string personalAccessToken,
+		JiraRestClientSettings? settings = null)
+	{
+		settings ??= new JiraRestClientSettings();
+		var restClient = new JiraRestClient(url, personalAccessToken, settings);
+
+		return CreateRestClient(restClient, settings.Cache);
+	}
+
+	/// <summary>
 	/// Creates a JIRA rest client using OAuth authentication protocol.
 	/// </summary>
 	/// <param name="url">Url to the JIRA server.</param>
