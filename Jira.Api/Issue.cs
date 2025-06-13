@@ -454,7 +454,7 @@ public class Issue : IRemoteIssueFieldProvider
 			}
 			else
 			{
-				_customFields.AddArrayAsync(customFieldName, customFieldValue, default).GetAwaiter().GetResult();
+				_customFields.Add(customFieldName, customFieldValue);
 			}
 		}
 	}
