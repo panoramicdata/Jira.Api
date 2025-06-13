@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
+using RestSharp.Serializers.NewtonsoftJson;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -41,13 +42,13 @@ public class JiraRestClient : IJiraRestClient
 		url = url.EndsWith('/') ? url : url += "/";
 		_clientSettings = settings ?? new JiraRestClientSettings();
 
-		var options = new RestClientOptions(url)
+		_restClient = new RestClient(new RestClientOptions(url)
 		{
 			Proxy = _clientSettings.Proxy,
 			Authenticator = authenticator,
 
-		};
-		_restClient = new RestClient(options);
+		}, configureSerialization: s => s.UseNewtonsoftJson());
+
 	}
 
 	public RestClient RestSharpClient => RestClient;

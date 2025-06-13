@@ -1,5 +1,6 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
+using RestSharp.Serializers.NewtonsoftJson;
 using System;
 using System.Globalization;
 using System.Net;
@@ -35,7 +36,7 @@ public static class OAuthTokenHelper
 		{
 			Authenticator = authenticator,
 			BaseUrl = new(oAuthRequestTokenSettings.Url)
-		});
+		}, configureSerialization: s => s.UseNewtonsoftJson());
 
 		return GenerateRequestTokenAsync(
 			restClient,
@@ -134,7 +135,7 @@ public static class OAuthTokenHelper
 		{
 			Authenticator = authenticator,
 			BaseUrl = new(oAuthAccessTokenSettings.Url)
-		});
+		}, configureSerialization: s => s.UseNewtonsoftJson());
 
 		return ObtainOAuthAccessTokenAsync(
 			restClient,

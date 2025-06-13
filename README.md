@@ -15,12 +15,14 @@ The main items:
 * The namespace has changed from `Atlassian.SDK` to `Jira.Api`.
 * .NET 9.0+ only.  What is this, 2024?
 * EVERYTHING is asynchronous now, no more sync methods hiding async under the covers.
+* Methods still have the same names, but they are now all suffixed with `Async` e.g. UpdateIssueAsync().
 * You MUST provide cancellation tokens to all async methods.
 * There are no more optional parameters, all parameters are required.
 * The order of skip and take parameters has been changed for everyone's sanity.
 	- The new order is `skip, take` instead of `take, skip`.
 	- This is a nasty one if you are already specifying these value.
 * Attachment uploads use FileInfo instead of full path file names.
+* The later versions of RestSharp use (for example) Method.Post instead of Method.POST, so you will need to update your code if you are using RestSharp directly.
 
 Don't like these changes? Here are your options:
 
