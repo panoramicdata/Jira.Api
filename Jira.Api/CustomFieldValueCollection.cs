@@ -33,6 +33,16 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	public bool SearchByProjectOnly { get; set; }
 
 	/// <summary>
+	/// Add a custom field by name
+	/// </summary>
+	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
+	/// <param name="fieldValue">The value of the field</param>
+	public CustomFieldValueCollection Add(string fieldName, string fieldValue)
+	{
+		return AddAsync(fieldName, [fieldValue], null, default).GetAwaiter().GetResult();
+	}
+
+	/// <summary>
 	/// Add a custom field by name with an array of values
 	/// </summary>
 	/// <param name="fieldName">The name of the custom field as defined in JIRA</param>
