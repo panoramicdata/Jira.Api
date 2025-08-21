@@ -3,6 +3,8 @@ root = true
 
 [*.*]
 indent_style = tab
+indent_size = tab
+TabWidth = 4
 
 # C# files
 [*.cs]
@@ -19,6 +21,9 @@ insert_final_newline = false
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = false
+
+# Namespace style
+csharp_style_namespace_declarations = file_scoped:suggestion
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false:silent

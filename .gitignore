@@ -49,3 +49,6 @@ _ReSharper*/
 # NuGet
 packages/
 *.snk
+
+# Local configuration (do not commit)
+Jira.Api.Test.Integration/appsettings.json
