@@ -70,7 +70,7 @@ public class IssueOperationsTest
 
 		var user = (await issue.GetWatchersAsync(default)).First();
 		Assert.Equal("test", user.Username);
-		Assert.True(user.IsActive);
+		Assert.True(user.Active);
 		Assert.Equal("Tester", user.DisplayName);
 		Assert.Equal("test@qa.com", user.Email);
 	}

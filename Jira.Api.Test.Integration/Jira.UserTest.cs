@@ -33,7 +33,7 @@ public class JiraUserTest
 		Assert.Equal(user.DisplayName, userInfo.DisplayName);
 		Assert.Equal(user.Username, userInfo.Username);
 		Assert.NotNull(user.Key);
-		Assert.True(user.IsActive);
+		Assert.True(user.Active);
 		Assert.False(string.IsNullOrEmpty(user.Locale));
 
 		// verify retrieve a user.
@@ -63,7 +63,7 @@ public class JiraUserTest
 		Assert.Equal(user.DisplayName, userInfo.DisplayName);
 		Assert.Equal(user.Username, userInfo.Username);
 		Assert.NotNull(user.Key);
-		Assert.True(user.IsActive);
+		Assert.True(user.Active);
 		Assert.False(string.IsNullOrEmpty(user.Locale));
 
 		// verify retrieve a user.

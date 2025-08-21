@@ -17,7 +17,7 @@ public class JiraUser
 		AccountId = remoteUser.accountId;
 		DisplayName = remoteUser.displayName;
 		Email = remoteUser.emailAddress;
-		IsActive = remoteUser.active;
+		Active = remoteUser.active;
 		Key = remoteUser.key;
 		Locale = remoteUser.locale;
 		Self = remoteUser.self;
@@ -61,7 +61,7 @@ public class JiraUser
 	/// <summary>
 	/// Whether the user is marked as active on the server.
 	/// </summary>
-	public bool IsActive { get; internal set; }
+	public bool Active { get; internal set; }
 
 	/// <summary>
 	/// The locale of the User.
