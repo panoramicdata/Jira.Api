@@ -52,3 +52,5 @@ packages/
 
 # Local configuration (do not commit)
 Jira.Api.Test.Integration/appsettings.json
+nuget_key.txt
+artifacts/
