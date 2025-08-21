@@ -37,7 +37,7 @@ public class CustomFieldTest
 	}
 
 	[Fact]
-	public async Task WhenAddingArrayOfValues_CanSerializeAsStringArrayWhenNoSerializerIsFound()
+	public void WhenAddingArrayOfValues_CanSerializeAsStringArrayWhenNoSerializerIsFound()
 	{
 		// arrange issue
 		var jira = TestableJira.Create();
@@ -48,7 +48,7 @@ public class CustomFieldTest
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
 			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
-		await issue.CustomFields.AddArrayAsync("Custom Field", ["val1", "val2"], default);
+		issue.CustomFields.AddArray("Custom Field", ["val1", "val2"]);
 
 		// arrange serialization
 		var remoteIssue = issue.ToRemote();

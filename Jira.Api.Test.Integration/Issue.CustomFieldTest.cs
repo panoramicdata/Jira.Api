@@ -108,7 +108,7 @@ public class IssueCustomFieldTest
 			Assignee = "admin"
 		};
 
-		issue.CustomFields.AddById("customfield_10000", "My Sample Text");
+		issue.CustomFields.AddById("customfield_10000", ["My Sample Text"]);
 		await issue.SaveChangesAsync(default);
 
 		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
@@ -128,7 +128,7 @@ public class IssueCustomFieldTest
 		};
 
 		// Add cascading select with only parent set.
-		await issue.CustomFields.AddCascadingSelectFieldAsync("Custom Cascading Select Field", "Option3", null, default);
+		issue.CustomFields.AddCascadingSelectField("Custom Cascading Select Field", "Option3", null);
 		await issue.SaveChangesAsync(default);
 
 		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
@@ -183,13 +183,13 @@ public class IssueCustomFieldTest
 		issue["Custom Version Field"] = "1.0";
 		issue["Custom Radio Field"] = "option1";
 		issue["Custom Number Field"] = "12.34";
-		await issue.CustomFields.AddArrayAsync("Custom Labels Field", ["label1", "label2"], default);
-		await issue.CustomFields.AddArrayAsync("Custom Multi Group Field", ["jira-developers", "jira-users"], default);
-		await issue.CustomFields.AddArrayAsync("Custom Multi Select Field", ["option1", "option2"], default);
-		await issue.CustomFields.AddArrayAsync("Custom Multi User Field", ["admin", "test"], default);
-		await issue.CustomFields.AddArrayAsync("Custom Checkboxes Field", ["option1", "option2"], default);
-		await issue.CustomFields.AddArrayAsync("Custom Multi Version Field", ["2.0", "3.0"], default);
-		await issue.CustomFields.AddCascadingSelectFieldAsync("Custom Cascading Select Field", "Option2", "Option2.2", default);
+		issue.CustomFields.AddArray("Custom Labels Field", ["label1", "label2"]);
+		issue.CustomFields.AddArray("Custom Multi Group Field", ["jira-developers", "jira-users"]);
+		issue.CustomFields.AddArray("Custom Multi Select Field", ["option1", "option2"]);
+		issue.CustomFields.AddArray("Custom Multi User Field", ["admin", "test"]);
+		issue.CustomFields.AddArray("Custom Checkboxes Field", ["option1", "option2"]);
+		issue.CustomFields.AddArray("Custom Multi Version Field", ["2.0", "3.0"]);
+		issue.CustomFields.AddCascadingSelectField("Custom Cascading Select Field", "Option2", "Option2.2");
 
 		await issue.SaveChangesAsync(default);
 
@@ -289,13 +289,13 @@ public class IssueCustomFieldTest
 		newIssue["Custom Version Field"] = "1.0";
 		newIssue["Custom Radio Field"] = "option1";
 		newIssue["Custom Number Field"] = "1234";
-		await newIssue.CustomFields.AddArrayAsync("Custom Labels Field", ["label1", "label2"], default);
-		await newIssue.CustomFields.AddArrayAsync("Custom Multi Group Field", ["jira-developers", "jira-users"], default);
-		await newIssue.CustomFields.AddArrayAsync("Custom Multi Select Field", ["option1", "option2"], default);
-		await newIssue.CustomFields.AddArrayAsync("Custom Multi User Field", ["admin", "test"], default);
-		await newIssue.CustomFields.AddArrayAsync("Custom Checkboxes Field", ["option1", "option2"], default);
-		await newIssue.CustomFields.AddArrayAsync("Custom Multi Version Field", ["2.0", "3.0"], default);
-		await newIssue.CustomFields.AddCascadingSelectFieldAsync("Custom Cascading Select Field", "Option2", "Option2.2", default);
+		newIssue.CustomFields.AddArray("Custom Labels Field", ["label1", "label2"]);
+		newIssue.CustomFields.AddArray("Custom Multi Group Field", ["jira-developers", "jira-users"]);
+		newIssue.CustomFields.AddArray("Custom Multi Select Field", ["option1", "option2"]);
+		newIssue.CustomFields.AddArray("Custom Multi User Field", ["admin", "test"]);
+		newIssue.CustomFields.AddArray("Custom Checkboxes Field", ["option1", "option2"]);
+		newIssue.CustomFields.AddArray("Custom Multi Version Field", ["2.0", "3.0"]);
+		newIssue.CustomFields.AddCascadingSelectField("Custom Cascading Select Field", "Option2", "Option2.2");
 
 		await newIssue.SaveChangesAsync(default);
 

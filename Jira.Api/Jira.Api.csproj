@@ -27,9 +27,9 @@
 		<PackageIcon>Icon.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="Properties\**" />
-		<EmbeddedResource Remove="Properties\**" />
-		<None Remove="Properties\**" />
+		<Compile Remove="Properties**" />
+		<EmbeddedResource Remove="Properties**" />
+		<None Remove="Properties**" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\README.md" Pack="true" PackagePath="" />
