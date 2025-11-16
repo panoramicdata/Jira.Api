@@ -15,17 +15,26 @@ public class JiraUserJsonConverter : JsonConverter
 	/// </summary>
 	public bool UserPrivacyEnabled { get; set; }
 
+	/// <summary>
+	/// Determines whether this instance can convert the specified object type
+	/// </summary>
 	public override bool CanConvert(Type objectType)
 	{
 		return objectType == typeof(JiraUser);
 	}
 
+	/// <summary>
+	/// Reads the JSON representation of the object
+	/// </summary>
 	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 	{
 		var remoteUser = serializer.Deserialize<RemoteJiraUser>(reader);
 		return new JiraUser(remoteUser, UserPrivacyEnabled);
 	}
 
+	/// <summary>
+	/// Writes the JSON representation of the object
+	/// </summary>
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
 		if (value is JiraUser user)

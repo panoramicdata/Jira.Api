@@ -29,11 +29,17 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 		AddRange(labels);
 	}
 
+	/// <summary>
+	/// Equality operator for checking if a value exists in the collection
+	/// </summary>
 	public static bool operator ==(IssueLabelCollection list, string value)
 	{
 		return list is null ? value == null : list.Any(v => v == value);
 	}
 
+	/// <summary>
+	/// Inequality operator for checking if a value does not exist in the collection
+	/// </summary>
 	public static bool operator !=(IssueLabelCollection list, string value)
 	{
 		return list is null ? value == null : !list.Any(v => v == value);

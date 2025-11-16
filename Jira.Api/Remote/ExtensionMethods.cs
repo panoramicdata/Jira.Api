@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Remote;
 
+/// <summary>
+/// Extension methods for converting between local and remote JIRA types
+/// </summary>
 public static class ExtensionMethods
 {
 	/// <summary>

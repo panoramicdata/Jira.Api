@@ -8,23 +8,41 @@ using System.Text;
 
 namespace Jira.Api.Remote;
 
+/// <summary>
+/// Wrapper for RemoteIssue with optional parent issue key
+/// </summary>
 public class RemoteIssueWrapper(RemoteIssue remoteIssue, string? parentIssueKey = null)
 {
+	/// <summary>
+	/// The remote issue
+	/// </summary>
 	public RemoteIssue RemoteIssue { get; private set; } = remoteIssue;
 
+	/// <summary>
+	/// The parent issue key (for sub-tasks)
+	/// </summary>
 	public string? ParentIssueKey { get; private set; } = parentIssueKey;
 }
 
+/// <summary>
+/// JSON converter for RemoteIssue serialization and deserialization
+/// </summary>
 public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDictionary<string, ICustomFieldValueSerializer> customFieldSerializers) : JsonConverter
 {
 	private readonly IEnumerable<RemoteField> _remoteFields = remoteFields;
 	private readonly IDictionary<string, ICustomFieldValueSerializer> _customFieldSerializers = customFieldSerializers;
 
+	/// <summary>
+	/// Determines whether this instance can convert the specified object type
+	/// </summary>
 	public override bool CanConvert(Type objectType)
 	{
 		return objectType == typeof(RemoteIssueWrapper);
 	}
 
+	/// <summary>
+	/// Reads the JSON representation of the object
+	/// </summary>
 	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 	{
 		var issueObj = JObject.Load(reader);
@@ -52,6 +70,9 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 		return new RemoteIssueWrapper(remoteIssue);
 	}
 
+	/// <summary>
+	/// Writes the JSON representation of the object
+	/// </summary>
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
 		var issueWrapper = value as RemoteIssueWrapper ?? throw new InvalidOperationException($"value must be of type {typeof(RemoteIssueWrapper)}.");

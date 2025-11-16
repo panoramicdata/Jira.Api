@@ -9,12 +9,27 @@ using System.Threading.Tasks;
 
 namespace Jira.Api;
 
+/// <summary>
+/// A collection of JIRA named entities
+/// </summary>
+/// <typeparam name="T">The type of named entity</typeparam>
 [SuppressMessage("N/A", "CS0660", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 [SuppressMessage("N/A", "CS0661", Justification = "Operator overloads are used for LINQ to JQL provider.")]
 public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProvider where T : JiraNamedEntity
 {
+	/// <summary>
+	/// The JIRA client
+	/// </summary>
 	protected readonly JiraClient _jira;
+
+	/// <summary>
+	/// The project key
+	/// </summary>
 	protected readonly string _projectKey;
+
+	/// <summary>
+	/// The field name
+	/// </summary>
 	protected readonly string _fieldName;
 	private readonly List<T> _originalList;
 
@@ -27,11 +42,17 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 		_originalList = [.. list];
 	}
 
+	/// <summary>
+	/// Equality operator for checking if an entity with the given name exists in the collection
+	/// </summary>
 	public static bool operator ==(JiraNamedEntityCollection<T> list, string value)
 	{
 		return list is null ? value == null : list.Any(v => v.Name == value);
 	}
 
+	/// <summary>
+	/// Inequality operator for checking if an entity with the given name does not exist in the collection
+	/// </summary>
 	public static bool operator !=(JiraNamedEntityCollection<T> list, string value)
 	{
 		return list is null ? value == null : !list.Any(v => v.Name == value);

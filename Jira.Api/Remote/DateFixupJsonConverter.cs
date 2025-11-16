@@ -4,18 +4,30 @@ using Newtonsoft.Json.Linq;
 
 namespace Jira.Api.Remote;
 
+/// <summary>
+/// JSON converter that fixes date format issues with JIRA
+/// </summary>
 public class DateFixupJsonConverter : JsonConverter
 {
+	/// <summary>
+	/// Determines whether this instance can convert the specified object type
+	/// </summary>
 	public override bool CanConvert(Type objectType)
 	{
 		return objectType == typeof(DateTime);
 	}
 
+	/// <summary>
+	/// Reads the JSON representation of the object
+	/// </summary>
 	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 	{
 		return JToken.ReadFrom(reader)?.ToObject(objectType);
 	}
 
+	/// <summary>
+	/// Writes the JSON representation of the object
+	/// </summary>
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
 		// For some reason, the dates default serialization format of JSON.NET is not understood by some

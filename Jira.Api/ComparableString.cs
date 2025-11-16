@@ -11,8 +11,14 @@ namespace Jira.Api;
 /// </remarks>
 public class ComparableString(string value)
 {
+	/// <summary>
+	/// The wrapped string value
+	/// </summary>
 	public string Value { get; set; } = value;
 
+	/// <summary>
+	/// Implicitly converts a string to a ComparableString
+	/// </summary>
 	public static implicit operator ComparableString(string value)
 	{
 		if (value != null)
@@ -25,6 +31,9 @@ public class ComparableString(string value)
 		}
 	}
 
+	/// <summary>
+	/// Equality operator for comparing with a string
+	/// </summary>
 	public static bool operator ==(ComparableString field, string value)
 	{
 		if (field is null)
@@ -37,6 +46,9 @@ public class ComparableString(string value)
 		}
 	}
 
+	/// <summary>
+	/// Inequality operator for comparing with a string
+	/// </summary>
 	public static bool operator !=(ComparableString field, string value)
 	{
 		if (field is null)
@@ -49,26 +61,41 @@ public class ComparableString(string value)
 		}
 	}
 
+	/// <summary>
+	/// Greater than operator for comparing with a string
+	/// </summary>
 	public static bool operator >(ComparableString field, string value)
 	{
 		return field.Value.CompareTo(value) > 0;
 	}
 
+	/// <summary>
+	/// Less than operator for comparing with a string
+	/// </summary>
 	public static bool operator <(ComparableString field, string value)
 	{
 		return field.Value.CompareTo(value) < 0;
 	}
 
+	/// <summary>
+	/// Less than or equal operator for comparing with a string
+	/// </summary>
 	public static bool operator <=(ComparableString field, string value)
 	{
 		return field.Value.CompareTo(value) <= 0;
 	}
 
+	/// <summary>
+	/// Greater than or equal operator for comparing with a string
+	/// </summary>
 	public static bool operator >=(ComparableString field, string value)
 	{
 		return field.Value.CompareTo(value) >= 0;
 	}
 
+	/// <summary>
+	/// Equality operator for comparing with a DateTime
+	/// </summary>
 	public static bool operator ==(ComparableString field, DateTime value)
 	{
 		if (field is null)
@@ -81,6 +108,9 @@ public class ComparableString(string value)
 		}
 	}
 
+	/// <summary>
+	/// Inequality operator for comparing with a DateTime
+	/// </summary>
 	public static bool operator !=(ComparableString field, DateTime value)
 	{
 		if (field is null)
@@ -93,31 +123,49 @@ public class ComparableString(string value)
 		}
 	}
 
+	/// <summary>
+	/// Greater than operator for comparing with a DateTime
+	/// </summary>
 	public static bool operator >(ComparableString field, DateTime value)
 	{
 		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) > 0;
 	}
 
+	/// <summary>
+	/// Less than operator for comparing with a DateTime
+	/// </summary>
 	public static bool operator <(ComparableString field, DateTime value)
 	{
 		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) < 0;
 	}
 
+	/// <summary>
+	/// Less than or equal operator for comparing with a DateTime
+	/// </summary>
 	public static bool operator <=(ComparableString field, DateTime value)
 	{
 		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) <= 0;
 	}
 
+	/// <summary>
+	/// Greater than or equal operator for comparing with a DateTime
+	/// </summary>
 	public static bool operator >=(ComparableString field, DateTime value)
 	{
 		return field.Value.CompareTo(JiraClient.FormatDateTimeString(value)) >= 0;
 	}
 
+	/// <summary>
+	/// Returns the string representation of this instance
+	/// </summary>
 	public override string ToString()
 	{
 		return Value;
 	}
 
+	/// <summary>
+	/// Determines whether the specified object is equal to this instance
+	/// </summary>
 	public override bool Equals(object obj)
 	{
 		if (obj is ComparableString comparableString)
@@ -132,6 +180,9 @@ public class ComparableString(string value)
 		return base.Equals(obj);
 	}
 
+	/// <summary>
+	/// Returns the hash code for this instance
+	/// </summary>
 	public override int GetHashCode()
 	{
 		if (Value == null)

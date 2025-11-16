@@ -29,6 +29,9 @@ public class IssueStatus : JiraNamedConstant
 	{
 	}
 
+	/// <summary>
+	/// Retrieves the list of statuses from JIRA
+	/// </summary>
 	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		var results = await jira.Statuses.GetStatusesAsync(cancellationToken).ConfigureAwait(false);

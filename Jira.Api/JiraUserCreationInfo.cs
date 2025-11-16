@@ -2,31 +2,31 @@ using Newtonsoft.Json;
 
 namespace Jira.Api;
 
-/// <remarks>
+/// <summary>
 /// Class that encapsulates the necessary information to create a new jira user.
-/// </remarks>
+/// </summary>
 public class JiraUserCreationInfo
 {
 	/// <summary>
-	/// Set the username
+	/// The username
 	/// </summary>
 	[JsonProperty("name")]
 	public string Username { get; set; }
 
 	/// <summary>
-	/// Set the DisplayName
+	/// The display name
 	/// </summary>
 	[JsonProperty("displayName")]
 	public string DisplayName { get; set; }
 
 	/// <summary>
-	/// Set the email address
+	/// The email address
 	/// </summary>
 	[JsonProperty("emailAddress")]
 	public string Email { get; set; }
 
 	/// <summary>
-	/// If password field is not set then password will be randomly generated.
+	/// The password (if not set, password will be randomly generated)
 	/// </summary>
 	[JsonProperty("password")]
 	public string Password { get; set; }
@@ -37,6 +37,9 @@ public class JiraUserCreationInfo
 	[JsonProperty("notification")]
 	public bool Notification { get; set; }
 
+	/// <summary>
+	/// Returns the string representation of this user creation info
+	/// </summary>
 	public override string ToString()
 	{
 		return Username;

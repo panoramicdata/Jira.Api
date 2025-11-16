@@ -1,4 +1,5 @@
 # Jira.Api nuget package for .NET developers
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f51368d841ca4d4b9fb142bb72d55b98)](https://app.codacy.com/gh/panoramicdata/Jira.Api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![NuGet](https://img.shields.io/nuget/v/Jira.Api.svg)](https://www.nuget.org/packages/Jira.Api/)
 [![License: BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 

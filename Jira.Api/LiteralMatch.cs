@@ -11,11 +11,17 @@ public class LiteralMatch(string value)
 {
 	private readonly string _value = value;
 
+	/// <summary>
+	/// Returns the string representation
+	/// </summary>
 	public override string ToString()
 	{
 		return _value;
 	}
 
+	/// <summary>
+	/// Equality operator for exact match comparison
+	/// </summary>
 	public static bool operator ==(ComparableString comparable, LiteralMatch literal)
 	{
 		if (comparable is null)
@@ -28,6 +34,9 @@ public class LiteralMatch(string value)
 		}
 	}
 
+	/// <summary>
+	/// Inequality operator for exact match comparison
+	/// </summary>
 	public static bool operator !=(ComparableString comparable, LiteralMatch literal)
 	{
 		if (comparable is null)

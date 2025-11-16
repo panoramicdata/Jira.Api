@@ -24,9 +24,15 @@ public class CommentVisibility
 		Value = role;
 	}
 
+	/// <summary>
+	/// The type of visibility restriction (e.g., "role" or "group")
+	/// </summary>
 	[JsonProperty("type")]
 	public string Type { get; set; }
 
+	/// <summary>
+	/// The value of the visibility restriction (the role or group name)
+	/// </summary>
 	[JsonProperty("value")]
 	public string Value { get; set; }
 }

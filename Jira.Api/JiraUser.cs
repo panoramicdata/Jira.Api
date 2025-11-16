@@ -80,16 +80,25 @@ public class JiraUser
 
 	internal string InternalIdentifier { get; set; }
 
+	/// <summary>
+	/// Returns the string representation of this user
+	/// </summary>
 	public override string ToString()
 	{
 		return InternalIdentifier;
 	}
 
+	/// <summary>
+	/// Determines whether the specified object is equal to this instance
+	/// </summary>
 	public override bool Equals(object other)
 	{
 		return other is JiraUser otherAsThisType && InternalIdentifier.Equals(otherAsThisType.InternalIdentifier);
 	}
 
+	/// <summary>
+	/// Returns the hash code for this instance
+	/// </summary>
 	public override int GetHashCode()
 	{
 		return InternalIdentifier.GetHashCode();

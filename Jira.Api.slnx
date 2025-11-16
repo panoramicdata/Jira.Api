@@ -1,0 +1,40 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="Mixed Platforms" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Documentation/">
+    <File Path="docs/change-history.md" />
+    <File Path="docs/how-to-configure-issue-fields-to-fetch.md" />
+    <File Path="docs/how-to-connect-using-oauth.md" />
+    <File Path="docs/how-to-debug-problems.md" />
+    <File Path="docs/how-to-handle-gdpr-changes.md" />
+    <File Path="docs/how-to-run-the-integration-tests.md" />
+    <File Path="docs/how-to-use-custom-fields.md" />
+    <File Path="docs/how-to-use-the-sdk.md" />
+    <File Path="docs/README.md" />
+    <File Path="docs/reference-appveyor-build-script.md" />
+    <File Path="docs/reference-jql.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="docker-compose.yml" />
+    <File Path="Jira.Api.dic" />
+    <File Path="LICENSE.md" />
+    <File Path="Publish-NuGet.ps1" />
+    <File Path="README.md" />
+    <File Path="version.json" />
+  </Folder>
+  <Project Path="Jira.Api.Test.Integration.Setup/Jira.Api.Test.Integration.Setup.csproj" />
+  <Project Path="Jira.Api.Test.Integration/Jira.Api.Test.Integration.csproj">
+    <Build Solution="*|x86" Project="false" />
+  </Project>
+  <Project Path="Jira.Api.Test/Jira.Api.Test.csproj">
+    <Build Solution="*|x86" Project="false" />
+  </Project>
+  <Project Path="Jira.Api/Jira.Api.csproj">
+    <Build Solution="*|x86" Project="false" />
+  </Project>
+</Solution>

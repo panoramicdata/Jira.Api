@@ -7,64 +7,106 @@ using System.Linq;
 
 namespace Jira.Api.Remote;
 
+/// <summary>
+/// Serializer for single object custom field values
+/// </summary>
 public class SingleObjectCustomFieldValueSerializer(string propertyName) : ICustomFieldValueSerializer
 {
 	private readonly string _propertyName = propertyName;
 
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		return [json[_propertyName]?.ToString()];
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		return new JObject(new JProperty(_propertyName, values[0]));
 	}
 }
 
+/// <summary>
+/// Serializer for multi-object custom field values
+/// </summary>
 public class MultiObjectCustomFieldValueSerializer(string propertyName) : ICustomFieldValueSerializer
 {
 	private readonly string _propertyName = propertyName;
 
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		return [.. ((JArray)json).Select(j => j[_propertyName].ToString())];
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		return JArray.FromObject(values.Select(v => new JObject(new JProperty(_propertyName, v))).ToArray());
 	}
 }
 
+/// <summary>
+/// Serializer for float custom field values
+/// </summary>
 public class FloatCustomFieldValueSerializer : ICustomFieldValueSerializer
 {
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		return [json.ToObject<string>()];
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		return float.Parse(values[0], CultureInfo.InvariantCulture);
 	}
 }
 
+/// <summary>
+/// Serializer for multi-string custom field values
+/// </summary>
 public class MultiStringCustomFieldValueSerializer : ICustomFieldValueSerializer
 {
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		return JsonConvert.DeserializeObject<string[]>(json.ToString());
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		return JArray.FromObject(values);
 	}
 }
 
+/// <summary>
+/// Serializer for cascading select custom field values
+/// </summary>
 public class CascadingSelectCustomFieldValueSerializer : ICustomFieldValueSerializer
 {
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		var parentOption = json["value"];
@@ -84,6 +126,9 @@ public class CascadingSelectCustomFieldValueSerializer : ICustomFieldValueSerial
 		}
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		if (values == null || values.Length < 1)
@@ -108,12 +153,18 @@ public class CascadingSelectCustomFieldValueSerializer : ICustomFieldValueSerial
 	}
 }
 
+/// <summary>
+/// Serializer for Greenhopper sprint custom field values
+/// </summary>
 public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : ICustomFieldValueSerializer
 {
 	private readonly string _propertyName = propertyName;
 
 	// Sprint field is malformed
 	// See https://ecosystem.atlassian.net/browse/ACJIRA-918 for more information
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		return [.. json.ToString()
@@ -122,6 +173,9 @@ public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : 
 			.Select(x => x.Split(['='])[1])];
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		string val = values?.FirstOrDefault();
@@ -135,8 +189,14 @@ public class GreenhopperSprintCustomFieldValueSerialiser(string propertyName) : 
 	}
 }
 
+/// <summary>
+/// Serializer for Greenhopper sprint JSON custom field values
+/// </summary>
 public class GreenhopperSprintJsonCustomFieldValueSerialiser : ICustomFieldValueSerializer
 {
+	/// <summary>
+	/// Deserializes the value from JSON
+	/// </summary>
 	public string[] FromJson(JToken json)
 	{
 		return [.. JsonConvert
@@ -145,6 +205,9 @@ public class GreenhopperSprintJsonCustomFieldValueSerialiser : ICustomFieldValue
 			.Select(x => x.name)];
 	}
 
+	/// <summary>
+	/// Serializes the value to JSON
+	/// </summary>
 	public JToken ToJson(string[] values)
 	{
 		var val = values?.FirstOrDefault();
@@ -160,12 +223,43 @@ public class GreenhopperSprintJsonCustomFieldValueSerialiser : ICustomFieldValue
 
 internal class Sprint
 {
+	/// <summary>
+	/// Sprint ID
+	/// </summary>
 	public int id { get; set; }
+
+	/// <summary>
+	/// Sprint name
+	/// </summary>
 	public string name { get; set; }
+
+	/// <summary>
+	/// Sprint state
+	/// </summary>
 	public string state { get; set; }
+
+	/// <summary>
+	/// Board ID
+	/// </summary>
 	public int boardId { get; set; }
+
+	/// <summary>
+	/// Sprint goal
+	/// </summary>
 	public string goal { get; set; }
+
+	/// <summary>
+	/// Sprint start date
+	/// </summary>
 	public DateTime startDate { get; set; }
+
+	/// <summary>
+	/// Sprint end date
+	/// </summary>
 	public DateTime endDate { get; set; }
+
+	/// <summary>
+	/// Sprint completion date
+	/// </summary>
 	public DateTime completeDate { get; set; }
 }

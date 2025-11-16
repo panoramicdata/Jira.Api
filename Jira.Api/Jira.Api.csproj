@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net90</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
 		<PackageId>Jira.Api</PackageId>
 		<Version>$(Version)</Version>
 		<Authors>Panoramic Data Limited</Authors>
@@ -36,7 +36,7 @@
 		 <None Include="Icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115">
+		<PackageReference Include="Nerdbank.GitVersioning" Version="3.9.50">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

@@ -4,21 +4,33 @@ using System.Linq.Expressions;
 
 namespace Jira.Api.Linq;
 
+/// <summary>
+/// Query provider for JIRA issue queries
+/// </summary>
 public class JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService issues) : IQueryProvider
 {
 	private readonly IJqlExpressionVisitor _translator = translator;
 	private readonly IIssueService _issues = issues;
 
+	/// <summary>
+	/// Creates a queryable instance
+	/// </summary>
 	public IQueryable<T> CreateQuery<T>(Expression expression)
 	{
 		return new JiraQueryable<T>(this, expression);
 	}
 
+	/// <summary>
+	/// Creates a queryable instance
+	/// </summary>
 	public IQueryable CreateQuery(Expression expression)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Executes the query
+	/// </summary>
 	public T Execute<T>(Expression expression)
 	{
 		bool isEnumerable = (typeof(T).Name == "IEnumerable`1");
@@ -26,6 +38,9 @@ public class JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService i
 		return (T)Execute(expression, isEnumerable);
 	}
 
+	/// <summary>
+	/// Executes the query
+	/// </summary>
 	public object Execute(Expression expression)
 	{
 		return Execute(expression, true);

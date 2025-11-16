@@ -44,6 +44,9 @@ public class IssueType : JiraNamedConstant
 	/// </summary>
 	public IssueStatus[] Statuses { get; private set; }
 
+	/// <summary>
+	/// Whether to search by project only when resolving issue types
+	/// </summary>
 	public bool SearchByProjectOnly { get; set; }
 
 	internal string ProjectKey { get; set; }

@@ -72,6 +72,7 @@ public class Attachment(JiraClient jira, RemoteAttachment remoteAttachment)
 	/// Downloads attachment to specified file
 	/// </summary>
 	/// <param name="fullFileName">Full file name where attachment will be downloaded</param>
+	/// <param name="cancellationToken"></param>
 	public async Task DownloadAsync(string fullFileName, CancellationToken cancellationToken)
 	{
 		var url = GetRequestUrl();

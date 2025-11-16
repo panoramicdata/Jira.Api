@@ -30,6 +30,9 @@ public class IssuePriority : JiraNamedConstant
 	{
 	}
 
+	/// <summary>
+	/// Retrieves the list of priorities from JIRA
+	/// </summary>
 	protected override async Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		var priorities = await jira.Priorities.GetPrioritiesAsync(cancellationToken).ConfigureAwait(false);
@@ -102,21 +105,33 @@ public class IssuePriority : JiraNamedConstant
 		}
 	}
 
+	/// <summary>
+	/// Greater than operator (not implemented)
+	/// </summary>
 	public static bool operator >(IssuePriority field, string value)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Less than operator (not implemented)
+	/// </summary>
 	public static bool operator <(IssuePriority field, string value)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Less than or equal operator (not implemented)
+	/// </summary>
 	public static bool operator <=(IssuePriority field, string value)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Greater than or equal operator (not implemented)
+	/// </summary>
 	public static bool operator >=(IssuePriority field, string value)
 	{
 		throw new NotImplementedException();

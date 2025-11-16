@@ -2,6 +2,9 @@
 
 namespace Jira.Api;
 
+/// <summary>
+/// Represents a custom field in JIRA
+/// </summary>
 public class CustomField : JiraNamedEntity
 {
 	/// <summary>
@@ -20,7 +23,13 @@ public class CustomField : JiraNamedEntity
 
 	internal RemoteField RemoteField { get; init; }
 
+	/// <summary>
+	/// The custom field type (e.g., "com.atlassian.jira.plugin.system.customfieldtypes:select")
+	/// </summary>
 	public string CustomType => RemoteField.Schema?.Custom;
 
+	/// <summary>
+	/// The numeric identifier for the custom field
+	/// </summary>
 	public string CustomIdentifier => RemoteField.Schema?.CustomId;
 }

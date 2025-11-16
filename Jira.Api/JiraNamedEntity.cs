@@ -46,11 +46,17 @@ public class JiraNamedEntity : IJiraEntity
 	/// </summary>
 	public string? Name { get; protected set; }
 
+	/// <summary>
+	/// Retrieves entities from JIRA
+	/// </summary>
 	protected virtual Task<IEnumerable<JiraNamedEntity>> GetEntitiesAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Returns the string representation of this entity
+	/// </summary>
 	public override string ToString()
 	{
 		if (!string.IsNullOrEmpty(Name))
