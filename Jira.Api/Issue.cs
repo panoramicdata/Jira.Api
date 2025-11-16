@@ -298,10 +298,7 @@ public class Issue : IRemoteIssueFieldProvider
 		{
 			_issueType = value;
 
-			if (_issueType != null)
-			{
-				_issueType.ProjectKey = _project;
-			}
+			_issueType?.ProjectKey = _project;
 		}
 	}
 
