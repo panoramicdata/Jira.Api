@@ -42,7 +42,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="jira">Jira instance that owns this issue.</param>
 	/// <param name="fields">Fields to be included in the payload when creating the issue.</param>
 	public Issue(JiraClient jira, CreateIssueFields fields)
-		: this(jira, new RemoteIssue() { project = fields.ProjectKey, timeTracking = fields.TimeTrackingData }, fields.ParentIssueKey)
+		: this(jira, new RemoteIssue { project = fields.ProjectKey, timeTracking = fields.TimeTrackingData }, fields.ParentIssueKey)
 	{
 	}
 
@@ -53,7 +53,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <param name="projectKey">Project key that owns this issue.</param>
 	/// <param name="parentIssueKey">If provided, marks this issue as a subtask of the given parent issue.</param>
 	public Issue(JiraClient jira, string projectKey, string? parentIssueKey = null)
-		: this(jira, new RemoteIssue() { project = projectKey }, parentIssueKey)
+		: this(jira, new RemoteIssue { project = projectKey }, parentIssueKey)
 	{
 	}
 
@@ -748,7 +748,7 @@ public class Issue : IRemoteIssueFieldProvider
 
 		var author = Jira.RestClient.Settings.EnableUserPrivacyMode ? jiraUser.AccountId : jiraUser.Username;
 
-		return await AddCommentAsync(new Comment() { Author = author, Body = comment }, cancellationToken);
+		return await AddCommentAsync(new Comment { Author = author, Body = comment }, cancellationToken);
 	}
 
 	/// <summary>
@@ -1103,7 +1103,7 @@ public class Issue : IRemoteIssueFieldProvider
 						remoteFieldName = remoteFieldNameAttr.Name;
 					}
 
-					fields.Add(new RemoteFieldValue()
+					fields.Add(new RemoteFieldValue
 					{
 						id = remoteFieldName,
 						values = [localStringValue]
@@ -1125,7 +1125,7 @@ public class Issue : IRemoteIssueFieldProvider
 			project = Project,
 			reporter = Reporter,
 			summary = Summary,
-			votesData = Votes != null ? new RemoteVotes() { hasVoted = HasUserVoted == true, votes = Votes.Value } : null,
+			votesData = Votes != null ? new RemoteVotes { hasVoted = HasUserVoted == true, votes = Votes.Value } : null,
 			duedate = DueDate,
 			timeTracking = TimeTrackingData,
 			key = Key?.Value
@@ -1134,25 +1134,25 @@ public class Issue : IRemoteIssueFieldProvider
 		if (Status != null)
 		{
 			await Status.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
-			remote.status = new RemoteStatus() { id = Status.Id, name = Status.Name };
+			remote.status = new RemoteStatus { id = Status.Id, name = Status.Name };
 		}
 
 		if (Resolution != null)
 		{
 			await Resolution.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
-			remote.resolution = new RemoteResolution() { id = Resolution.Id, name = Resolution.Name };
+			remote.resolution = new RemoteResolution { id = Resolution.Id, name = Resolution.Name };
 		}
 
 		if (Priority != null)
 		{
 			await Priority.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
-			remote.priority = new RemotePriority() { id = Priority.Id, name = Priority.Name };
+			remote.priority = new RemotePriority { id = Priority.Id, name = Priority.Name };
 		}
 
 		if (Type != null)
 		{
 			await Type.LoadIdAndNameAsync(_jira, cancellationToken).ConfigureAwait(false);
-			remote.type = new RemoteIssueType() { id = Type.Id, name = Type.Name };
+			remote.type = new RemoteIssueType { id = Type.Id, name = Type.Name };
 		}
 
 		if (AffectsVersions.Count > 0)
@@ -1172,7 +1172,7 @@ public class Issue : IRemoteIssueFieldProvider
 
 		if (CustomFields.Count > 0)
 		{
-			remote.customFieldValues = [.. CustomFields.Select(f => new RemoteCustomFieldValue()
+			remote.customFieldValues = [.. CustomFields.Select(f => new RemoteCustomFieldValue
 			{
 				customfieldId = f.Id,
 				values = f.Values,

@@ -113,7 +113,7 @@ public class Comment(RemoteComment remoteComment)
 	{
 		return new RemoteComment
 		{
-			authorUser = Author == null ? null : new JiraUser() { InternalIdentifier = Author },
+			authorUser = Author == null ? null : new JiraUser { InternalIdentifier = Author },
 			body = Body,
 			groupLevel = GroupLevel,
 			roleLevel = RoleLevel,

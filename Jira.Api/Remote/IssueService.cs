@@ -168,7 +168,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		var serializerSettings = await GetIssueSerializerSettingsAsync(cancellationToken).ConfigureAwait(false);
 		var issueJson = JsonConvert.SerializeObject(issueWrapper, serializerSettings);
 
-		var fieldsJsonSerializerSettings = new JsonSerializerSettings()
+		var fieldsJsonSerializerSettings = new JsonSerializerSettings
 		{
 			DateParseHandling = DateParseHandling.None
 		};

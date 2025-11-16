@@ -198,7 +198,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	{
 		var fieldValues = Items
 			.Where(IsCustomFieldNewOrUpdated)
-			.Select(field => new RemoteFieldValue()
+			.Select(field => new RemoteFieldValue
 			{
 				id = field.Id,
 				values = field.Values
