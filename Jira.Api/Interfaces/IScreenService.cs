@@ -6,6 +6,21 @@ namespace Jira.Api.Interfaces;
 public interface IScreenService
 {
 	/// <summary>
+	/// Gets all screens.
+	/// </summary>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	/// <returns>All screens in Jira.</returns>
+	Task<IEnumerable<Screen>> GetScreensAsync(CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Gets a screen by ID.
+	/// </summary>
+	/// <param name="screenId">The screen ID.</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	/// <returns>The screen.</returns>
+	Task<Screen> GetScreenAsync(long screenId, CancellationToken cancellationToken = default);
+
+	/// <summary>
 	/// Gets the screen available fields.
 	/// </summary>
 	Task<IEnumerable<ScreenField>> GetScreenAvailableFieldsAsync(string screenId, CancellationToken cancellationToken = default);

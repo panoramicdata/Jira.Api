@@ -2327,4 +2327,19 @@ namespace Jira.Api.Remote
 		[JsonProperty("values")]
 		public T[]? Values { get; set; }
 	}
+
+	/// <summary>
+	/// Remote representation of a screen.
+	/// </summary>
+	public class RemoteScreen
+	{
+		[JsonProperty("id")]
+		public long Id { get; set; }
+
+		[JsonProperty("name")]
+		public string? Name { get; set; }
+
+		[JsonProperty("description")]
+		public string? Description { get; set; }
+	}
 }

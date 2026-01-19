@@ -4,6 +4,20 @@ internal class ScreenService(JiraClient jira) : IScreenService
 {
 	private readonly JiraClient _jira = jira;
 
+	public async Task<IEnumerable<Screen>> GetScreensAsync(CancellationToken cancellationToken = default)
+	{
+		var resource = "rest/api/2/screens";
+		var result = await _jira.RestClient.ExecuteRequestAsync<RemotePagedResult<RemoteScreen>>(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
+		return result.Values?.Select(x => new Screen(x)) ?? [];
+	}
+
+	public async Task<Screen> GetScreenAsync(long screenId, CancellationToken cancellationToken = default)
+	{
+		var resource = $"rest/api/2/screens/{screenId}";
+		var remoteScreen = await _jira.RestClient.ExecuteRequestAsync<RemoteScreen>(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
+		return new Screen(remoteScreen);
+	}
+
 	public async Task<IEnumerable<ScreenField>> GetScreenAvailableFieldsAsync(string screenId, CancellationToken cancellationToken)
 	{
 		var resource = $"rest/api/2/screens/{screenId}/availableFields";
