@@ -1,0 +1,11 @@
+﻿global using Jira.Api.Exceptions;
+global using Jira.Api.Interfaces;
+global using Jira.Api.Models;
+global using Jira.Api.Remote;
+global using Jira.Api.Services;
+global using RestSharp;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading;
+global using System.Threading.Tasks;

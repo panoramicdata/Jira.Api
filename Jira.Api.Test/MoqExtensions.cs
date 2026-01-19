@@ -1,13 +1,3 @@
-﻿using Jira.Api.Remote;
-using Moq;
-using Moq.Language.Flow;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Jira.Api.Test;
 
 public static class MoqExtensions
@@ -34,12 +24,13 @@ public static class MoqExtensions
 		setup.Returns(() =>
 		{
 			var result = queue.Dequeue();
-			if (result is Exception)
+			if (result is Exception ex)
 			{
-				throw result as Exception;
+				throw ex;
 			}
 
-			return (TResult)result;
+			return (TResult)result!;
 		});
 	}
 }
+

@@ -9,7 +9,21 @@ Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.c
 
 All features tested on JIRA v9.12.2
 
-## NEW IN Jira.Api...
+## ?? BREAKING CHANGES
+
+### Latest Breaking Changes
+
+**Namespace Reorganization:**
+* All interfaces have been moved to `Jira.Api.Interfaces` namespace
+* All models have been moved to `Jira.Api.Models` namespace
+* You will need to add `using Jira.Api.Interfaces;` and `using Jira.Api.Models;` to your code
+
+**New Services Added:**
+* `IWorkflowService` - Query workflows
+* `IWorkflowSchemeService` - Full CRUD operations for workflow schemes
+* `IProjectStatusService` - Query project statuses by issue type
+
+### Previous Breaking Changes (from Atlassian.SDK)
 
 If you are migrating from Atlassian.SDK, there are MANY breaking changes, we believe all for the better.
 
@@ -35,6 +49,62 @@ Don't like these changes? Here are your options:
 * Fork off ... this project and make your own changes.
 
 Caveats - this project is still very new.  We may make further breaking changes in the future, but we will try to avoid them.
+
+## New Features
+
+### Workflow Management
+
+```csharp
+// Get all workflows
+var workflows = await jiraClient.Workflows.GetWorkflowsAsync();
+
+// Get a specific workflow by name  
+var workflow = await jiraClient.Workflows.GetWorkflowAsync("My Workflow");
+```
+
+### Workflow Scheme Management (Full CRUD)
+
+```csharp
+// Get all workflow schemes (paginated)
+var schemes = await jiraClient.WorkflowSchemes.GetWorkflowSchemesAsync(startAt: 0, maxResults: 50);
+
+// Get a workflow scheme by ID
+var scheme = await jiraClient.WorkflowSchemes.GetWorkflowSchemeAsync("10001");
+
+// Get the workflow scheme for a project
+var projectScheme = await jiraClient.WorkflowSchemes.GetWorkflowSchemeForProjectAsync("PROJ");
+
+// Create a new workflow scheme
+var newScheme = await jiraClient.WorkflowSchemes.CreateWorkflowSchemeAsync(
+    name: "My Workflow Scheme",
+    description: "A custom workflow scheme",
+    defaultWorkflow: "jira");
+
+// Update a workflow scheme
+var updatedScheme = await jiraClient.WorkflowSchemes.UpdateWorkflowSchemeAsync(
+    schemeId: "10001",
+    name: "Updated Name",
+    description: "Updated description");
+
+// Delete a workflow scheme
+await jiraClient.WorkflowSchemes.DeleteWorkflowSchemeAsync("10001");
+```
+
+### Project Status Queries
+
+```csharp
+// Get all statuses for a project (grouped by issue type)
+var projectStatuses = await jiraClient.ProjectStatuses.GetProjectStatusesAsync("PROJ");
+
+foreach (var issueTypeStatuses in projectStatuses)
+{
+    Console.WriteLine($"Issue Type: {issueTypeStatuses.Name}");
+    foreach (var status in issueTypeStatuses.Statuses)
+    {
+        Console.WriteLine($"  - {status.Name}");
+    }
+}
+```
 
 ## Download
 

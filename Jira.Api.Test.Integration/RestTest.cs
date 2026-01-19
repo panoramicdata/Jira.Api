@@ -1,12 +1,10 @@
-﻿using Jira.Api.Remote;
+using AwesomeAssertions;
+using Jira.Api.Exceptions;
 using RestSharp;
-using System;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Jira.Api.Test.Integration;
 
-public class RestTest
+public class RestTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private readonly Random _random = new();
 
@@ -14,10 +12,10 @@ public class RestTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task ExecuteRestRequest(JiraClient jira)
 	{
-		var users = await jira.RestClient.ExecuteRequestAsync<JiraNamedResource[]>(Method.Get, "rest/api/2/user/assignable/multiProjectSearch?projectKeys=TST", null, default);
+		var users = await jira.RestClient.ExecuteRequestAsync<JiraNamedResource[]>(Method.Get, "rest/api/2/user/assignable/multiProjectSearch?projectKeys=TST", null, CancellationToken);
 
-		Assert.True(users.Length >= 2);
-		Assert.Contains(users, u => u.Name == "admin");
+		(users.Length >= 2).Should().BeTrue();
+		users.Should().Contain(u => u.Name == "admin");
 	}
 
 	[Theory]
@@ -31,12 +29,17 @@ public class RestTest
 			Assignee = "admin"
 		};
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		var rawBody = $"{{ \"jql\": \"Key=\\\"{issue.Key.Value}\\\"\" }}";
-		var json = await jira.RestClient.ExecuteRequestAsync(Method.Post, "rest/api/2/search", rawBody, default);
-
-		Assert.Equal(issue.Key.Value, json["issues"][0]["key"].ToString());
+		var json = await jira.RestClient.ExecuteRequestAsync(Method.Post, "rest/api/2/search", rawBody, CancellationToken);
+		var issues = json["issues"];
+		issues.Should().ContainSingle();
+		var firstIssue = issues[0];
+		firstIssue.Should().NotBeNull();
+		var key = firstIssue["key"];
+		key.Should().NotBeNull();
+		key.ToString().Should().Be(issue.Key.Value);
 	}
 
 	[Fact]
@@ -51,6 +54,7 @@ public class RestTest
 
 		var jira = JiraClient.CreateRestClient("http://farmasXXX.atlassian.net");
 
-		var exception = await Assert.ThrowsAsync<ResourceNotFoundException>(() => jira.Issues.GetIssueAsync("TST-1", default));
+		var act = () => jira.Issues.GetIssueAsync("TST-1", CancellationToken);
+		await act.Should().ThrowExactlyAsync<ResourceNotFoundException>();
 	}
 }

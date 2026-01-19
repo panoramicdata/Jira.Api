@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Linq.Expressions;
 
 namespace Jira.Api.Linq;
@@ -13,7 +10,6 @@ namespace Jira.Api.Linq;
 public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 {
 	private readonly JiraQueryProvider _provider;
-	private readonly Expression _expression;
 
 	/// <summary>
 	/// Initializes a new instance of the JiraQueryable class
@@ -21,7 +17,7 @@ public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 	public JiraQueryable(JiraQueryProvider provider)
 	{
 		_provider = provider;
-		_expression = Expression.Constant(this);
+		Expression = Expression.Constant(this);
 	}
 
 	/// <summary>
@@ -30,7 +26,7 @@ public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 	public JiraQueryable(JiraQueryProvider provider, Expression expression)
 	{
 		_provider = provider;
-		_expression = expression;
+		Expression = expression;
 	}
 
 	/// <summary>
@@ -60,13 +56,7 @@ public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 	/// <summary>
 	/// The expression tree associated with this queryable
 	/// </summary>
-	public Expression Expression
-	{
-		get
-		{
-			return _expression;
-		}
-	}
+	public Expression Expression { get; }
 
 	/// <summary>
 	/// The query provider that executes the query

@@ -45,7 +45,7 @@ public class OAuthAccessTokenSettings
 	/// Initializes a new instance of the <see cref="OAuthAccessTokenSettings"/> class.
 	/// </summary>
 	/// <param name="oAuthRequestTokenSettings">The settings used to generate the request token.</param>
-	/// <param name="oAuthRequestToken">The request token object returned by <see cref="OAuthTokenHelper.GenerateRequestTokenAsync" />.</param>
+	/// <param name="oAuthRequestToken">The request token object returned by <see cref="OAuthTokenHelper.GenerateRequestTokenAsync(OAuthRequestTokenSettings, CancellationToken)" />.</param>
 	/// <param name="oAuthVerifier">The verification code received from Jira.</param>
 	public OAuthAccessTokenSettings(
 		OAuthRequestTokenSettings oAuthRequestTokenSettings,

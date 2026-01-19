@@ -1,11 +1,7 @@
-﻿using RestSharp;
-using RestSharp.Authenticators;
+﻿using RestSharp.Authenticators;
 using RestSharp.Serializers.NewtonsoftJson;
-using System;
 using System.Globalization;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Jira.Api.OAuth;

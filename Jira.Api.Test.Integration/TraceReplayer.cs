@@ -1,13 +1,7 @@
-﻿using Jira.Api.Remote;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Jira.Api.Test.Integration;
 
@@ -71,3 +65,6 @@ class TraceReplayer : IJiraRestClient
 	public Task DownloadAsync(string url, string fullFileName, CancellationToken cancellationToken)
 		=> throw new NotImplementedException();
 }
+
+
+

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Jira.Api.Linq;
+﻿namespace Jira.Api.Linq;
 
 /// <summary>
 /// Attribute that can be applied to properties that map to different JQL field names

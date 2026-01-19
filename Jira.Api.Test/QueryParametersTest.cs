@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test;
 
@@ -15,14 +14,11 @@ public class QueryParametersTest
 		var parameters = QueryParametersHelper.GetParametersFromPath(url);
 
 		// Assert
-		Assert.NotNull(parameters);
-		Assert.Equal(parameters.Count(), 2);
+		parameters.Should().NotBeNull();
+		parameters.Should().HaveCount(2);
 
-		Assert.Equal(parameters.First().Name, "field1");
-		Assert.Equal(parameters.First().Value, "9");
-
-		Assert.Equal(parameters.ElementAt(1).Name, "field2");
-		Assert.Equal(parameters.ElementAt(1).Value, "Test");
+		parameters.Should().ContainSingle(p => p.Name == "field1" && p.Value.ToString() == "9");
+		parameters.Should().ContainSingle(p => p.Name == "field2" && p.Value.ToString() == "Test");
 	}
 
 	[Fact]
@@ -35,11 +31,9 @@ public class QueryParametersTest
 		var parameters = QueryParametersHelper.GetParametersFromPath(url);
 
 		// Assert
-		Assert.NotNull(parameters);
-		Assert.Equal(parameters.Count(), 1);
-
-		Assert.Equal(parameters.First().Name, "field1");
-		Assert.Equal(parameters.First().Value, "");
+		parameters.Should().NotBeNull();
+		parameters.Should().ContainSingle();
+		parameters.Should().ContainSingle(p => p.Name == "field1" && p.Value.ToString() == "");
 	}
 
 	[Fact]
@@ -52,10 +46,11 @@ public class QueryParametersTest
 		var parameters = QueryParametersHelper.GetParametersFromPath(url);
 
 		// Assert
-		Assert.NotNull(parameters);
-		Assert.Equal(parameters.Count(), 1);
+		parameters.Should().NotBeNull();
+		parameters.Should().ContainSingle();
 
-		Assert.Equal(parameters.First().Name, "field1");
-		Assert.Equal(parameters.First().Value, "value=string==");
+		parameters.First().Name.Should().Be("field1");
+		parameters.First().Value.ToString().Should().Be("value=string==");
 	}
 }
+

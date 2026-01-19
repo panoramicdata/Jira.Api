@@ -1,0 +1,48 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace Jira.Api.Services;
+
+/// <summary>
+/// JsonConverter that deserializes a JSON user into a JiraUser object and serializes a JiraUser object
+/// into a single identifier.
+/// </summary>
+public class JiraUserJsonConverter : JsonConverter
+{
+	/// <summary>
+	/// Whether user privacy mode is enabled (uses 'accountId' insead of 'name' for serialization).
+	/// </summary>
+	public bool UserPrivacyEnabled { get; set; }
+
+	/// <summary>
+	/// Determines whether this instance can convert the specified object type
+	/// </summary>
+	public override bool CanConvert(Type objectType)
+	{
+		return objectType == typeof(JiraUser);
+	}
+
+	/// <summary>
+	/// Reads the JSON representation of the object
+	/// </summary>
+	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+	{
+		var remoteUser = serializer.Deserialize<RemoteJiraUser>(reader);
+		return new JiraUser(remoteUser, UserPrivacyEnabled);
+	}
+
+	/// <summary>
+	/// Writes the JSON representation of the object
+	/// </summary>
+	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+	{
+		if (value is JiraUser user)
+		{
+			var outerObject = new JObject(new JProperty(
+				UserPrivacyEnabled ? "accountId" : "name",
+				user.InternalIdentifier));
+
+			outerObject.WriteTo(writer);
+		}
+	}
+}

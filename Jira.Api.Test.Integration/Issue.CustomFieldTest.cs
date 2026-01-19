@@ -1,12 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+using AwesomeAssertions;
+using Newtonsoft.Json;
 
 namespace Jira.Api.Test.Integration;
 
-public class IssueCustomFieldTest
+public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private readonly Random _random = new();
 
@@ -16,9 +13,10 @@ public class IssueCustomFieldTest
 	{
 		var options = new CustomFieldFetchOptions();
 		options.ProjectKeys.Add("FOO");
-		Exception ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await jira.Fields.GetCustomFieldsAsync(options, default));
+		var act = async () => await jira.Fields.GetCustomFieldsAsync(options, CancellationToken);
+		var ex = await act.Should().ThrowExactlyAsync<InvalidOperationException>();
 
-		Assert.Contains("Project with key 'FOO' was not found on the JiraClient server.", ex.Message);
+		ex.Which.Message.Should().Contain("Project with key 'FOO' was not found on the JiraClient server.");
 	}
 
 	[Theory]
@@ -27,8 +25,8 @@ public class IssueCustomFieldTest
 	{
 		var options = new CustomFieldFetchOptions();
 		options.ProjectKeys.Add("TST");
-		var results = await jira.Fields.GetCustomFieldsAsync(options, default);
-		Assert.Equal(21, results.Count());
+		var results = await jira.Fields.GetCustomFieldsAsync(options, CancellationToken);
+		results.Should().HaveCount(21);
 	}
 
 	/// <summary>
@@ -42,8 +40,8 @@ public class IssueCustomFieldTest
 		options.ProjectKeys.Add("TST");
 		options.IssueTypeNames.Add("Bug");
 
-		var results = await jira.Fields.GetCustomFieldsAsync(options, default);
-		Assert.Equal(19, results.Count());
+		var results = await jira.Fields.GetCustomFieldsAsync(options, CancellationToken);
+		results.Should().HaveCount(19);
 	}
 
 	/// <summary>
@@ -68,32 +66,33 @@ public class IssueCustomFieldTest
 		issue["Custom Text Field"] = "My new value";
 		issue["Custom Date Field"] = "2015-10-03";
 
-		var newIssue = await issue.SaveChangesAsync(default);
+		var newIssue = await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal("My new value", newIssue["Custom Text Field"]);
-		Assert.Equal("2015-10-03", newIssue["Custom Date Field"]);
-	}
+		newIssue["Custom Text Field"].Should().Be("My new value");
+		newIssue["Custom Date Field"].Should().Be("2015-10-03");
+		}
 
 	[Fact]
 	public async Task CanHandleCustomFieldWithoutSerializerThatIsArrayOfObjects()
 	{
 		var jira = JiraClient.CreateRestClient(new TraceReplayer("Trace_CustomFieldArrayOfObjects.txt"));
-		var issue = (await jira.Issues.GetIssuesFromJqlAsync("foo", 0, null, default)).Single();
-
-		Assert.True(issue["Watchers"].Value.Length > 0);
+		var issue = (await jira.Issues.GetIssuesFromJqlAsync("foo", 0, null, CancellationToken)).Single();
+		var watchers = issue["Watchers"];
+		watchers.Should().NotBeNull();
+		(watchers!.Value.Length > 0).Should().BeTrue();
 	}
 
 	[Fact]
-	public async Task CanHandleCustomFieldSetToEmptyArrayByDefaultFromServer()
+	public async Task CanHandleCustomFieldSetToEmptyArrayByCancellationTokenFromServer()
 	{
 		// See: https://bitbucket.org/farmas/atlassian.net-sdk/issues/372
 		var jira = JiraClient.CreateRestClient(new TraceReplayer("Trace_CustomFieldEmptyArray.txt"));
-		var issue = await jira.Issues.GetIssueAsync("GIT-103", default);
+		var issue = await jira.Issues.GetIssueAsync("GIT-103", CancellationToken);
 
 		issue.Summary = "Some change";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.NotNull(issue);
+		issue.Should().NotBeNull();
 	}
 
 	[Theory]
@@ -109,10 +108,10 @@ public class IssueCustomFieldTest
 		};
 
 		issue.CustomFields.AddById("customfield_10000", ["My Sample Text"]);
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
-		Assert.Equal("My Sample Text", newIssue.CustomFields.First(f => f.Id.Equals("customfield_10000")).Values.First());
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
+		newIssue.CustomFields.First(f => f.Id.Equals("customfield_10000")).Values.First().Should().Be("My Sample Text");
 	}
 
 	[Theory]
@@ -129,14 +128,15 @@ public class IssueCustomFieldTest
 
 		// Add cascading select with only parent set.
 		issue.CustomFields.AddCascadingSelectField("Custom Cascading Select Field", "Option3", null);
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 
 		var cascadingSelect = newIssue.CustomFields.GetCascadingSelectField("Custom Cascading Select Field");
-		Assert.Equal("Option3", cascadingSelect.ParentOption);
-		Assert.Null(cascadingSelect.ChildOption);
-		Assert.Equal("Custom Cascading Select Field", cascadingSelect.Name);
+		cascadingSelect.Should().NotBeNull();
+		cascadingSelect.ParentOption.Should().Be("Option3");
+		cascadingSelect.ChildOption.Should().BeNull();
+		cascadingSelect.Name.Should().Be("Custom Cascading Select Field");
 	}
 
 	[Theory]
@@ -151,11 +151,11 @@ public class IssueCustomFieldTest
 		};
 
 		issue["Custom Number Field"] = "10000000000";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
-		Assert.Equal("10000000000", newIssue["Custom Number Field"]);
-	}
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
+		newIssue["Custom Number Field"].Should().Be("10000000000");
+		}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
@@ -163,7 +163,7 @@ public class IssueCustomFieldTest
 	{
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
 		var dateTimeStr = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz");
-		dateTimeStr = dateTimeStr.Remove(dateTimeStr.LastIndexOf(":"), 1);
+		dateTimeStr = dateTimeStr.Remove(dateTimeStr.LastIndexOf(':'), 1);
 
 		var summaryValue = "Test issue with lots of custom fields (Created)" + _random.Next(int.MaxValue);
 		var issue = new Issue(jira, "TST")
@@ -191,38 +191,38 @@ public class IssueCustomFieldTest
 		issue.CustomFields.AddArray("Custom Multi Version Field", ["2.0", "3.0"]);
 		issue.CustomFields.AddCascadingSelectField("Custom Cascading Select Field", "Option2", "Option2.2");
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 
-		Assert.Equal("My new value", newIssue["Custom Text Field"]);
-		Assert.Equal("2015-10-03", newIssue["Custom Date Field"]);
-		Assert.Equal("admin", newIssue["Custom User Field"]);
-		Assert.Equal("Blue", newIssue["Custom Select Field"]);
-		Assert.Equal("jira-users", newIssue["Custom Group Field"]);
-		Assert.Equal("TST", newIssue["Custom Project Field"]);
-		Assert.Equal("1.0", newIssue["Custom Version Field"]);
-		Assert.Equal("option1", newIssue["Custom Radio Field"]);
-		Assert.Equal("12.34", newIssue["Custom Number Field"]);
-		Assert.Equal("admin@example.com", newIssue.CustomFields.GetAs<JiraUser>("Custom User Field").Email);
+		newIssue["Custom Text Field"].Should().Be("My new value");
+		newIssue["Custom Date Field"].Should().Be("2015-10-03");
+		newIssue["Custom User Field"].Should().Be("admin");
+		newIssue["Custom Select Field"].Should().Be("Blue");
+		newIssue["Custom Group Field"].Should().Be("jira-users");
+		newIssue["Custom Project Field"].Should().Be("TST");
+		newIssue["Custom Version Field"].Should().Be("1.0");
+		newIssue["Custom Radio Field"].Should().Be("option1");
+		newIssue["Custom Number Field"].Should().Be("12.34");
+		newIssue.CustomFields.GetAs<JiraUser>("Custom User Field").Email.Should().Be("admin@example.com");
 
 		var serverDate = DateTime.Parse(newIssue["Custom DateTime Field"].Value);
-		Assert.Equal(dateTime, serverDate);
+		serverDate.Should().Be(dateTime);
 
-		Assert.Equal(new string[2] { "label1", "label2" }, newIssue.CustomFields["Custom Labels Field"].Values);
-		Assert.Equal(new string[2] { "jira-developers", "jira-users" }, newIssue.CustomFields["Custom Multi Group Field"].Values);
-		Assert.Equal(new string[2] { "option1", "option2" }, newIssue.CustomFields["Custom Multi Select Field"].Values);
-		Assert.Equal(new string[2] { "admin", "test" }, newIssue.CustomFields["Custom Multi User Field"].Values);
-		Assert.Equal(new string[2] { "option1", "option2" }, newIssue.CustomFields["Custom Checkboxes Field"].Values);
-		Assert.Equal(new string[2] { "2.0", "3.0" }, newIssue.CustomFields["Custom Multi Version Field"].Values);
+		newIssue.CustomFields["Custom Labels Field"].Values.Should().BeEquivalentTo(new[] { "label1", "label2" });
+		newIssue.CustomFields["Custom Multi Group Field"].Values.Should().BeEquivalentTo(new[] { "jira-developers", "jira-users" });
+		newIssue.CustomFields["Custom Multi Select Field"].Values.Should().BeEquivalentTo(new[] { "option1", "option2" });
+		newIssue.CustomFields["Custom Multi User Field"].Values.Should().BeEquivalentTo(new[] { "admin", "test" });
+		newIssue.CustomFields["Custom Checkboxes Field"].Values.Should().BeEquivalentTo(new[] { "option1", "option2" });
+		newIssue.CustomFields["Custom Multi Version Field"].Values.Should().BeEquivalentTo(new[] { "2.0", "3.0" });
 
 		var users = newIssue.CustomFields.GetAs<JiraUser[]>("Custom Multi User Field");
-		Assert.Contains(users, u => u.Email == "test@qa.com");
+		users.Should().Contain(u => u.Email == "test@qa.com");
 
 		var cascadingSelect = newIssue.CustomFields.GetCascadingSelectField("Custom Cascading Select Field");
-		Assert.Equal("Option2", cascadingSelect.ParentOption);
-		Assert.Equal("Option2.2", cascadingSelect.ChildOption);
-		Assert.Equal("Custom Cascading Select Field", cascadingSelect.Name);
+		cascadingSelect.ParentOption.Should().Be("Option2");
+		cascadingSelect.ChildOption.Should().Be("Option2.2");
+		cascadingSelect.Name.Should().Be("Custom Cascading Select Field");
 	}
 
 	[Theory]
@@ -240,21 +240,21 @@ public class IssueCustomFieldTest
 		issue["Custom Text Field"] = "My new value";
 		issue["Custom Date Field"] = "2015-10-03";
 		issue["Custom Select Field"] = "Blue";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		Assert.Equal("My new value", newIssue["Custom Text Field"]);
 		Assert.Equal("2015-10-03", newIssue["Custom Date Field"]);
 		newIssue["Custom Text Field"] = null;
 		newIssue["Custom Date Field"] = null;
 		newIssue["Custom Select Field"] = null;
-		await newIssue.SaveChangesAsync(default);
+		await newIssue.SaveChangesAsync(CancellationToken);
 
-		var updatedIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var updatedIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 
-		Assert.Null(updatedIssue["Custom Text Field"]);
-		Assert.Null(updatedIssue["Custom Date Field"]);
-		Assert.Null(updatedIssue["Custom Select Field"]);
+		updatedIssue["Custom Text Field"].Should().BeNull();
+		updatedIssue["Custom Date Field"].Should().BeNull();
+		updatedIssue["Custom Select Field"].Should().BeNull();
 	}
 
 	[Theory]
@@ -263,7 +263,7 @@ public class IssueCustomFieldTest
 	{
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
 		var dateTimeStr = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz");
-		dateTimeStr = dateTimeStr.Remove(dateTimeStr.LastIndexOf(":"), 1);
+		dateTimeStr = dateTimeStr.Remove(dateTimeStr.LastIndexOf(':'), 1);
 		var summaryValue = "Test issue with lots of custom fields (Created)" + _random.Next(int.MaxValue);
 
 		// Create issue with no custom fields set
@@ -274,10 +274,10 @@ public class IssueCustomFieldTest
 			Assignee = "admin"
 		};
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		// Retrieve the issue, set all custom fields and save the changes.
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 
 		newIssue["Custom Text Field"] = "My new value";
 		newIssue["Custom Date Field"] = "2015-10-03";
@@ -297,10 +297,10 @@ public class IssueCustomFieldTest
 		newIssue.CustomFields.AddArray("Custom Multi Version Field", ["2.0", "3.0"]);
 		newIssue.CustomFields.AddCascadingSelectField("Custom Cascading Select Field", "Option2", "Option2.2");
 
-		await newIssue.SaveChangesAsync(default);
+		await newIssue.SaveChangesAsync(CancellationToken);
 
 		// Retrieve the issue again and verify fields
-		var updatedIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var updatedIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 
 		Assert.Equal("My new value", updatedIssue["Custom Text Field"]);
 		Assert.Equal("2015-10-03", updatedIssue["Custom Date Field"]);
@@ -313,7 +313,7 @@ public class IssueCustomFieldTest
 		Assert.Equal("1234", updatedIssue["Custom Number Field"]);
 
 		var serverDate = DateTime.Parse(updatedIssue["Custom DateTime Field"].Value);
-		Assert.Equal(dateTime, serverDate);
+		serverDate.Should().Be(dateTime);
 
 		Assert.Equal(new string[2] { "label1", "label2" }, updatedIssue.CustomFields["Custom Labels Field"].Values);
 		Assert.Equal(new string[2] { "jira-developers", "jira-users" }, updatedIssue.CustomFields["Custom Multi Group Field"].Values);
@@ -323,19 +323,19 @@ public class IssueCustomFieldTest
 		Assert.Equal(new string[2] { "2.0", "3.0" }, updatedIssue.CustomFields["Custom Multi Version Field"].Values);
 
 		var cascadingSelect = updatedIssue.CustomFields.GetCascadingSelectField("Custom Cascading Select Field");
-		Assert.Equal("Option2", cascadingSelect.ParentOption);
-		Assert.Equal("Option2.2", cascadingSelect.ChildOption);
-		Assert.Equal("Custom Cascading Select Field", cascadingSelect.Name);
+		cascadingSelect.ParentOption.Should().Be("Option2");
+		cascadingSelect.ChildOption.Should().Be("Option2.2");
+		cascadingSelect.Name.Should().Be("Custom Cascading Select Field");
 
 		// Update custom fields again and save
 		updatedIssue["Custom Text Field"] = "My newest value";
 		updatedIssue["Custom Date Field"] = "2019-10-03";
 		updatedIssue["Custom Number Field"] = "9999";
 		updatedIssue.CustomFields["Custom Labels Field"].Values = ["label3"];
-		await updatedIssue.SaveChangesAsync(default);
+		await updatedIssue.SaveChangesAsync(CancellationToken);
 
 		// Retrieve the issue one last time and verify custom fields.
-		var updatedIssue2 = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var updatedIssue2 = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		Assert.Equal("My newest value", updatedIssue["Custom Text Field"]);
 		Assert.Equal("2019-10-03", updatedIssue["Custom Date Field"]);
 		Assert.Equal("9999", updatedIssue2["Custom Number Field"]);
@@ -354,10 +354,10 @@ public class IssueCustomFieldTest
 		};
 		// Set the sprint by id
 		issue["Sprint"] = "1";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		// Get the sprint by name
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		Assert.Equal("Sprint 1", newIssue["Sprint"]);
 	}
 
@@ -371,15 +371,15 @@ public class IssueCustomFieldTest
 			Summary = "Test issue with sprint" + _random.Next(int.MaxValue),
 			Assignee = "admin"
 		};
-		await issue.SaveChangesAsync(default);
-		Assert.Null(issue["Sprint"]);
+		await issue.SaveChangesAsync(CancellationToken);
+		issue["Sprint"].Should().BeNull();
 
 		// Set the sprint by id
 		issue["Sprint"] = "1";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		// Get the sprint by name
-		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, default);
+		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		Assert.Equal("Sprint 1", newIssue["Sprint"]);
 	}
 
@@ -394,11 +394,11 @@ public class IssueCustomFieldTest
 			Assignee = "admin"
 		};
 		issue["Sprint"] = "1";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 		Assert.Equal("Sprint 1", issue["Sprint"]);
 
 		issue.Summary += " (Updated)";
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 		Assert.Equal("Sprint 1", issue["Sprint"]);
 	}
 
@@ -418,12 +418,12 @@ public class IssueCustomFieldTest
 
 		try
 		{
-			await issue.SaveChangesAsync(default);
+			await issue.SaveChangesAsync(CancellationToken);
 			throw new Exception("Method did not throw exception");
 		}
 		catch (AggregateException ex)
 		{
-			Assert.Contains("Number value expected as the Sprint id", ex.Flatten().InnerException.Message);
+			ex.Flatten().InnerException.Message.Should().Contain("Number value expected as the Sprint id");
 		}
 	}
 
@@ -439,3 +439,6 @@ public class IssueCustomFieldTest
 		public string Self { get; set; }
 	}
 }
+
+
+

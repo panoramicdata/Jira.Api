@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Jira.Api -> C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api\bin\Debug\net10.0\Jira.Api.dll
+  Jira.Api.Test -> C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\bin\Debug\net10.0\Jira.Api.Test.dll
+Test run for C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\bin\Debug\net10.0\Jira.Api.Test.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.62]     Jira.Api.Test.IssueTest+GetUpdatedFields.ReturnsCustomFieldsAdded [FAIL]
+  Failed Jira.Api.Test.IssueTest+GetUpdatedFields.ReturnsCustomFieldsAdded [64 ms]
+  Error Message:
+   System.InvalidOperationException : Could not find custom field with name 'My Custom Field' on the JIRA server.
+  Stack Trace:
+     at Jira.Api.Models.CustomFieldValueCollection.GetCustomFieldId(String fieldName) in C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api\Models\CustomFieldValueCollection.cs:line 183
+   at Jira.Api.Models.CustomFieldValueCollection.get_Item(String fieldName) in C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api\Models\CustomFieldValueCollection.cs:line 145
+   at Jira.Api.Models.Issue.set_Item(String customFieldName, ComparableString value) in C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api\Models\Issue.cs:line 317
+   at Jira.Api.Test.IssueTest.GetUpdatedFields.ReturnsCustomFieldsAdded() in C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\GetUpdatedFields.cs:line 26
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 81 ms - Jira.Api.Test.dll (net10.0)

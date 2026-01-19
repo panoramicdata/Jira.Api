@@ -1,7 +1,5 @@
-﻿using Jira.Api.Linq;
+using Jira.Api.Linq;
 using Jira.Api.OAuth;
-using Jira.Api.Remote;
-using System;
 using System.Globalization;
 
 namespace Jira.Api;
@@ -112,178 +110,97 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	/// <summary>
 	/// Gets an object to interact with the projects of jira.
 	/// </summary>
-	public IProjectService Projects
-	{
-		get
-		{
-			return Services.Get<IProjectService>();
-		}
-	}
+	public IProjectService Projects => Services.Get<IProjectService>();
 
 	/// <summary>
 	/// Gets an object to interact with the users of jira.
 	/// </summary>
-	public IJiraUserService Users
-	{
-		get
-		{
-			return Services.Get<IJiraUserService>();
-		}
-	}
+	public IJiraUserService Users => Services.Get<IJiraUserService>();
 
 	/// <summary>
 	/// Gets an object to interact with the user groups of jira.
 	/// </summary>
-	public IJiraGroupService Groups
-	{
-		get
-		{
-			return Services.Get<IJiraGroupService>();
-		}
-	}
+	public IJiraGroupService Groups => Services.Get<IJiraGroupService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue of jira.
 	/// </summary>
-	public IIssueService Issues
-	{
-		get
-		{
-			return Services.Get<IIssueService>();
-		}
-	}
+	public IIssueService Issues => Services.Get<IIssueService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue fields of jira.
 	/// </summary>
-	public IIssueFieldService Fields
-	{
-		get
-		{
-			return Services.Get<IIssueFieldService>();
-		}
-	}
+	public IIssueFieldService Fields => Services.Get<IIssueFieldService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue filters of jira.
 	/// </summary>
-	public IIssueFilterService Filters
-	{
-		get
-		{
-			return Services.Get<IIssueFilterService>();
-		}
-	}
+	public IIssueFilterService Filters => Services.Get<IIssueFilterService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue priorities of jira.
 	/// </summary>
-	public IIssuePriorityService Priorities
-	{
-		get
-		{
-			return Services.Get<IIssuePriorityService>();
-		}
-	}
+	public IIssuePriorityService Priorities => Services.Get<IIssuePriorityService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue resolutions of jira.
 	/// </summary>
-	public IIssueResolutionService Resolutions
-	{
-		get
-		{
-			return Services.Get<IIssueResolutionService>();
-		}
-	}
+	public IIssueResolutionService Resolutions => Services.Get<IIssueResolutionService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue statuses of jira.
 	/// </summary>
-	public IIssueStatusService Statuses
-	{
-		get
-		{
-			return Services.Get<IIssueStatusService>();
-		}
-	}
+	public IIssueStatusService Statuses => Services.Get<IIssueStatusService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue link types of jira.
 	/// </summary>
-	public IIssueLinkService Links
-	{
-		get
-		{
-			return Services.Get<IIssueLinkService>();
-		}
-	}
+	public IIssueLinkService Links => Services.Get<IIssueLinkService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue remote links of jira.
 	/// </summary>
-	public IIssueRemoteLinkService RemoteLinks
-	{
-		get
-		{
-			return Services.Get<IIssueRemoteLinkService>();
-		}
-	}
+	public IIssueRemoteLinkService RemoteLinks => Services.Get<IIssueRemoteLinkService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue types of jira.
 	/// </summary>
-	public IIssueTypeService IssueTypes
-	{
-		get
-		{
-			return Services.Get<IIssueTypeService>();
-		}
-	}
+	public IIssueTypeService IssueTypes => Services.Get<IIssueTypeService>();
 
 	/// <summary>
 	/// Gets an object to interact with the project versions of jira.
 	/// </summary>
-	public IProjectVersionService Versions
-	{
-		get
-		{
-			return Services.Get<IProjectVersionService>();
-		}
-	}
+	public IProjectVersionService Versions => Services.Get<IProjectVersionService>();
 
 	/// <summary>
 	/// Gets an object to interact with the project components of jira.
 	/// </summary>
-	public IProjectComponentService Components
-	{
-		get
-		{
-			return Services.Get<IProjectComponentService>();
-		}
-	}
+	public IProjectComponentService Components => Services.Get<IProjectComponentService>();
 
 	/// <summary>
 	/// Gets an object to interact with the Jira screens.
 	/// </summary>
-	public IScreenService Screens
-	{
-		get
-		{
-			return Services.Get<IScreenService>();
-		}
-	}
+	public IScreenService Screens => Services.Get<IScreenService>();
 
 	/// <summary>
 	/// Gets an object to interact with the server information.
 	/// </summary>
-	public IServerInfoService ServerInfo
-	{
-		get
-		{
-			return Services.Get<IServerInfoService>();
-		}
-	}
+	public IServerInfoService ServerInfo => Services.Get<IServerInfoService>();
+
+	/// <summary>
+	/// Gets an object to interact with the workflows of Jira.
+	/// </summary>
+	public IWorkflowService Workflows => Services.Get<IWorkflowService>();
+
+	/// <summary>
+	/// Gets an object to interact with the workflow schemes of Jira.
+	/// </summary>
+	public IWorkflowSchemeService WorkflowSchemes => Services.Get<IWorkflowSchemeService>();
+
+	/// <summary>
+	/// Gets an object to interact with the project statuses of Jira.
+	/// </summary>
+	public IProjectStatusService ProjectStatuses => Services.Get<IProjectStatusService>();
 
 	/// <summary>
 	/// Gets the cache for frequently retrieved server items from JIRA.
@@ -293,18 +210,12 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	/// <summary>
 	/// Gets a client configured to interact with JIRA's REST API.
 	/// </summary>
-	public IJiraRestClient RestClient
-	{
-		get
-		{
-			return Services.Get<IJiraRestClient>();
-		}
-	}
+	public IJiraRestClient RestClient => Services.Get<IJiraRestClient>();
 
 	/// <summary>
 	/// Whether to print the translated JQL to console
 	/// </summary>
-	public bool Debug { get; set; } = false;
+	public bool Debug { get; set; }
 
 	/// <summary>
 	/// Maximum number of issues per request
@@ -312,47 +223,26 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	[Obsolete("Use JiraClient.Issues.MaxIssuesPerRequest")]
 	public int MaxIssuesPerRequest
 	{
-		get
-		{
-			return Issues.MaxIssuesPerRequest;
-		}
-		set
-		{
-			Issues.MaxIssuesPerRequest = value;
-		}
+		get => Issues.MaxIssuesPerRequest;
+		set => Issues.MaxIssuesPerRequest = value;
 	}
 
 	/// <summary>
 	/// Url to the JIRA server
 	/// </summary>
-	public string Url
-	{
-		get { return RestClient.Url; }
-	}
+	public string Url => RestClient.Url;
 
-	internal IFileSystem FileSystem
-	{
-		get
-		{
-			return Services.Get<IFileSystem>();
-		}
-	}
+	internal IFileSystem FileSystem => Services.Get<IFileSystem>();
 
 	/// <summary>
 	/// Returns a new issue that when saved will be created on the remote JIRA server.
 	/// </summary>
-	public Issue CreateIssue(string project, string? parentIssueKey = null)
-	{
-		return new Issue(this, project, parentIssueKey);
-	}
+	public Issue CreateIssue(string project, string? parentIssueKey = null) => new(this, project, parentIssueKey);
 
 	/// <summary>
 	/// Returns a new issue that when saved will be created on the remote JIRA server.
 	/// </summary>
-	public Issue CreateIssue(CreateIssueFields fields)
-	{
-		return new Issue(this, fields);
-	}
+	public Issue CreateIssue(CreateIssueFields fields) => new(this, fields);
 
 	internal static string FormatDateTimeString(DateTime value)
 	{
@@ -382,6 +272,9 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		services.Register<IProjectService>(() => new ProjectService(jira));
 		services.Register<IScreenService>(() => new ScreenService(jira));
 		services.Register<IServerInfoService>(() => new ServerInfoService(jira));
+		services.Register<IWorkflowService>(() => new WorkflowService(jira));
+		services.Register<IWorkflowSchemeService>(() => new WorkflowSchemeService(jira));
+		services.Register<IProjectStatusService>(() => new ProjectStatusService(jira));
 		services.Register<IJqlExpressionVisitor>(() => new JqlExpressionVisitor());
 		services.Register<IFileSystem>(() => new FileSystem());
 		services.Register(() => restClient);

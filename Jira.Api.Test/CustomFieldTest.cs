@@ -1,11 +1,6 @@
-﻿using Jira.Api.Remote;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Jira.Api.Test;
 
@@ -33,7 +28,7 @@ public class CustomFieldTest
 		}.ToLocal(jira);
 
 		//assert
-		Assert.Equal("CustomField", issue.CustomFields[0].Name);
+		issue.CustomFields[0].Name.Should().Be("CustomField");
 	}
 
 	[Fact]
@@ -65,11 +60,14 @@ public class CustomFieldTest
 
 		// assert
 		var jObject = JObject.Parse(issueJson);
-		var remoteFieldValue = jObject["fields"]["remotefield_id"];
+		var fields = jObject["fields"];
+		fields.Should().NotBeNull();
+		var remoteFieldValue = fields["remotefield_id"];
+		remoteFieldValue.Should().NotBeNull();
 		var valueArray = remoteFieldValue.ToObject<string[]>();
-		Assert.Equal(2, valueArray.Length);
-		Assert.Contains("val1", valueArray);
-		Assert.Contains("val2", valueArray);
+		valueArray.Should().HaveCount(2);
+		valueArray.Should().Contain("val1");
+		valueArray.Should().Contain("val2");
 	}
 	private static readonly string[] _val1val2 = ["val1", "val2"];
 
@@ -97,12 +95,15 @@ public class CustomFieldTest
 		serializerSettings.Converters.Add(converter);
 
 		// act
-		var remoteIssue = JsonConvert.DeserializeObject<RemoteIssueWrapper>(jObject.ToString(), serializerSettings).RemoteIssue;
+		var remoteIssueWrapper = JsonConvert.DeserializeObject<RemoteIssueWrapper>(jObject.ToString(), serializerSettings);
+		remoteIssueWrapper.Should().NotBeNull();
+		var remoteIssue = remoteIssueWrapper.RemoteIssue;
 
 		// assert
 		var customFieldValues = remoteIssue.customFieldValues.First().values;
-		Assert.Equal(2, customFieldValues.Length);
-		Assert.Contains("val1", customFieldValues);
-		Assert.Contains("val2", customFieldValues);
+		customFieldValues.Should().HaveCount(2);
+		customFieldValues.Should().Contain("val1");
+		customFieldValues.Should().Contain("val2");
 	}
 }
+

@@ -1,0 +1,28 @@
+namespace Jira.Api.Models;
+
+/// <summary>
+/// Collection of project versions
+/// </summary>
+public class ProjectVersionCollection : JiraNamedEntityCollection<ProjectVersion>
+{
+	internal ProjectVersionCollection(string fieldName, JiraClient jira, string projectKey)
+		: this(fieldName, jira, projectKey, [])
+	{
+	}
+
+	internal ProjectVersionCollection(string fieldName, JiraClient jira, string projectKey, IList<ProjectVersion> list)
+		: base(fieldName, jira, projectKey, list)
+	{
+	}
+
+	/// <summary>
+	/// Add a version by name
+	/// </summary>
+	/// <param name="versionName">Version name</param>
+	/// <param name="cancellationToken">Cancellation token for this operation.</param>
+	public async Task AddAsync(string versionName, CancellationToken cancellationToken)
+	{
+		var version = (await _jira.Versions.GetVersionsAsync(_projectKey, cancellationToken)).FirstOrDefault(v => v.Name.Equals(versionName, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"Unable to find version with name '{versionName}'.");
+		Add(version);
+	}
+}

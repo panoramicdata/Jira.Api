@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Jira.Api.Linq;
 
@@ -42,13 +40,13 @@ internal static class ExpressionEvaluator
 	/// <summary>
 	/// Evaluates and replaces sub-trees when first candidate is reached (top-down)
 	/// </summary>
-	class SubtreeEvaluator : ExpressionVisitor
+	private class SubtreeEvaluator : ExpressionVisitor
 	{
-		HashSet<Expression> candidates;
+		HashSet<Expression> _candidates;
 
 		internal SubtreeEvaluator(HashSet<Expression> candidates)
 		{
-			this.candidates = candidates;
+			this._candidates = candidates;
 		}
 
 		internal Expression Eval(Expression exp)
@@ -63,7 +61,7 @@ internal static class ExpressionEvaluator
 				return null;
 			}
 
-			if (candidates.Contains(exp))
+			if (_candidates.Contains(exp))
 			{
 				return Evaluate(exp);
 			}
@@ -88,7 +86,7 @@ internal static class ExpressionEvaluator
 	/// Performs bottom-up analysis to determine which nodes can possibly
 	/// be part of an evaluated sub-tree.
 	/// </summary>
-	class Nominator : ExpressionVisitor
+	private class Nominator : ExpressionVisitor
 	{
 		Func<Expression, bool> fnCanBeEvaluated;
 		HashSet<Expression> candidates;

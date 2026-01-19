@@ -1,7 +1,6 @@
-﻿using Jira.Api.OAuth;
+using AwesomeAssertions;
+using Jira.Api.OAuth;
 using Newtonsoft.Json;
-using System;
-using Xunit;
 
 namespace Jira.Api.Test;
 
@@ -19,10 +18,12 @@ public class OAuthAccessTokenTest
 
 		// Act
 		var deserializedAccessToken = JsonConvert.DeserializeObject<OAuthAccessToken>(json);
+		deserializedAccessToken.Should().NotBeNull();
 
 		// Assert
-		Assert.Equal(accessToken.OAuthToken, deserializedAccessToken.OAuthToken);
-		Assert.Equal(accessToken.OAuthTokenSecret, deserializedAccessToken.OAuthTokenSecret);
-		Assert.Equal(accessToken.OAuthTokenExpiry, deserializedAccessToken.OAuthTokenExpiry);
+		deserializedAccessToken.OAuthToken.Should().Be(accessToken.OAuthToken);
+		deserializedAccessToken.OAuthTokenSecret.Should().Be(accessToken.OAuthTokenSecret);
+		deserializedAccessToken.OAuthTokenExpiry.Should().Be(accessToken.OAuthTokenExpiry);
 	}
 }
+

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test.Integration;
 
-public class IssueCreateTest
+public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private readonly Random _random = new();
 
@@ -21,9 +18,9 @@ public class IssueCreateTest
 		};
 
 		issue.Type.SearchByProjectOnly = true;
-		var newIssue = await issue.SaveChangesAsync(default);
+		var newIssue = await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal("Bug", newIssue.Type.Name);
+		newIssue.Type.Name.Should().Be("Bug");
 	}
 
 	[Theory]
@@ -42,8 +39,8 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		var newIssue = await issue.SaveChangesAsync(default);
-		Assert.Equal("1d", newIssue.TimeTrackingData.OriginalEstimate);
+		var newIssue = await issue.SaveChangesAsync(CancellationToken);
+		newIssue.TimeTrackingData.OriginalEstimate.Should().Be("1d");
 	}
 
 	[Theory]
@@ -58,10 +55,10 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		var newIssue = await issue.SaveChangesAsync(default);
-		Assert.Equal(summaryValue, newIssue.Summary);
-		Assert.Equal("TST", newIssue.Project);
-		Assert.Equal("1", newIssue.Type.Id);
+		var newIssue = await issue.SaveChangesAsync(CancellationToken);
+		newIssue.Summary.Should().Be(summaryValue);
+		newIssue.Project.Should().Be("TST");
+		newIssue.Type.Id.Should().Be("1");
 
 		// Create a subtask async.
 		var subTask = new Issue(jira, "TST", newIssue.Key.Value)
@@ -71,9 +68,9 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		var newSubTask = await subTask.SaveChangesAsync(default);
+		var newSubTask = await subTask.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal(newIssue.Key.Value, newSubTask.ParentIssueKey);
+		newSubTask.ParentIssueKey.Should().Be(newIssue.Key.Value);
 	}
 
 	[Theory]
@@ -89,17 +86,17 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		var issues = (from i in jira.Issues.Queryable
 					  where i.Key == issue.Key
 					  select i).ToArray();
 
-		Assert.Single(issues);
+		issues.Should().ContainSingle();
 
-		Assert.Equal(summaryValue, issues[0].Summary);
-		Assert.Equal("TST", issues[0].Project);
-		Assert.Equal("1", issues[0].Type.Id);
+		issues[0].Summary.Should().Be(summaryValue);
+		issues[0].Project.Should().Be("TST");
+		issues[0].Type.Id.Should().Be("1");
 	}
 
 	[Theory]
@@ -109,33 +106,33 @@ public class IssueCreateTest
 		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
 		var expectedDueDate = new DateTime(2011, 12, 12);
 		var issue = jira.CreateIssue("TST");
-		await issue.AffectsVersions.AddAsync("1.0", default);
+		await issue.AffectsVersions.AddAsync("1.0", CancellationToken);
 		issue.Assignee = "admin";
-		await issue.Components.AddAsync("Server", default);
+		await issue.Components.AddAsync("Server", CancellationToken);
 		issue["Custom Text Field"] = "Test Value";  // custom field
 		issue.Description = "Test Description";
 		issue.DueDate = expectedDueDate;
 		issue.Environment = "Test Environment";
-		await issue.FixVersions.AddAsync("2.0", default);
+		await issue.FixVersions.AddAsync("2.0", CancellationToken);
 		issue.Priority = "Major";
 		issue.Reporter = "admin";
 		issue.Summary = summaryValue;
 		issue.Type = "1";
 		issue.Labels.Add("testLabel");
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		var queriedIssue = (from i in jira.Issues.Queryable
 							where i.Key == issue.Key
 							select i).ToArray().First();
 
-		Assert.Equal(summaryValue, queriedIssue.Summary);
-		Assert.NotNull(queriedIssue.JiraIdentifier);
-		Assert.Equal(expectedDueDate, queriedIssue.DueDate.Value);
-		Assert.NotNull(queriedIssue.Priority.IconUrl);
-		Assert.NotNull(queriedIssue.Type.IconUrl);
-		Assert.NotNull(queriedIssue.Status.IconUrl);
-		Assert.Contains("testLabel", queriedIssue.Labels);
+		queriedIssue.Summary.Should().Be(summaryValue);
+		queriedIssue.JiraIdentifier.Should().NotBeNull();
+		queriedIssue.DueDate.Value.Should().Be(expectedDueDate);
+		queriedIssue.Priority.IconUrl.Should().NotBeNull();
+		queriedIssue.Type.IconUrl.Should().NotBeNull();
+		queriedIssue.Status.IconUrl.Should().NotBeNull();
+		queriedIssue.Labels.Should().Contain("testLabel");
 	}
 
 	[Theory]
@@ -145,22 +142,22 @@ public class IssueCreateTest
 		var parentTask = jira.CreateIssue("TST");
 		parentTask.Type = "1";
 		parentTask.Summary = "Test issue with SubTask" + _random.Next(int.MaxValue);
-		await parentTask.SaveChangesAsync(default);
+		await parentTask.SaveChangesAsync(CancellationToken);
 
 		var subTask = jira.CreateIssue("TST", parentTask.Key.Value);
 		subTask.Type = "5"; // SubTask issue type.
 		subTask.Summary = "Test SubTask" + _random.Next(int.MaxValue);
-		await subTask.SaveChangesAsync(default);
+		await subTask.SaveChangesAsync(CancellationToken);
 
-		Assert.False(parentTask.Type.IsSubTask);
-		Assert.True(subTask.Type.IsSubTask);
-		Assert.Equal(parentTask.Key.Value, subTask.ParentIssueKey);
+		parentTask.Type.IsSubTask.Should().BeFalse();
+		subTask.Type.IsSubTask.Should().BeTrue();
+		subTask.ParentIssueKey.Should().Be(parentTask.Key.Value);
 
 		// query the subtask again to make sure it loads everything from server.
-		subTask = await jira.Issues.GetIssueAsync(subTask.Key.Value, default);
-		Assert.False(parentTask.Type.IsSubTask);
-		Assert.True(subTask.Type.IsSubTask);
-		Assert.Equal(parentTask.Key.Value, subTask.ParentIssueKey);
+		subTask = await jira.Issues.GetIssueAsync(subTask.Key.Value, CancellationToken);
+		parentTask.Type.IsSubTask.Should().BeFalse();
+		subTask.Type.IsSubTask.Should().BeTrue();
+		subTask.ParentIssueKey.Should().Be(parentTask.Key.Value);
 	}
 
 	[Theory]
@@ -176,26 +173,26 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		await issue.AffectsVersions.AddAsync("1.0", default);
-		await issue.AffectsVersions.AddAsync("2.0", default);
+		await issue.AffectsVersions.AddAsync("1.0", CancellationToken);
+		await issue.AffectsVersions.AddAsync("2.0", CancellationToken);
 
-		await issue.FixVersions.AddAsync("3.0", default);
-		await issue.FixVersions.AddAsync("2.0", default);
+		await issue.FixVersions.AddAsync("3.0", CancellationToken);
+		await issue.FixVersions.AddAsync("2.0", CancellationToken);
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		var newIssue = (from i in jira.Issues.Queryable
 						where i.AffectsVersions == "1.0" && i.AffectsVersions == "2.0"
 								&& i.FixVersions == "2.0" && i.FixVersions == "3.0"
 						select i).First();
 
-		Assert.Equal(2, newIssue.AffectsVersions.Count);
-		Assert.Contains(newIssue.AffectsVersions, v => v.Name == "1.0");
-		Assert.Contains(newIssue.AffectsVersions, v => v.Name == "2.0");
+		newIssue.AffectsVersions.Should().HaveCount(2);
+		newIssue.AffectsVersions.Should().Contain(v => v.Name == "1.0");
+		newIssue.AffectsVersions.Should().Contain(v => v.Name == "2.0");
 
-		Assert.Equal(2, newIssue.FixVersions.Count);
-		Assert.Contains(newIssue.FixVersions, v => v.Name == "2.0");
-		Assert.Contains(newIssue.FixVersions, v => v.Name == "3.0");
+		newIssue.FixVersions.Should().HaveCount(2);
+		newIssue.FixVersions.Should().Contain(v => v.Name == "2.0");
+		newIssue.FixVersions.Should().Contain(v => v.Name == "3.0");
 	}
 
 	[Theory]
@@ -211,18 +208,18 @@ public class IssueCreateTest
 			Assignee = "admin"
 		};
 
-		await issue.Components.AddAsync("Server", default);
-		await issue.Components.AddAsync("Client", default);
+		await issue.Components.AddAsync("Server", CancellationToken);
+		await issue.Components.AddAsync("Client", CancellationToken);
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		var newIssue = (from i in jira.Issues.Queryable
 						where i.Summary == summaryValue && i.Components == "Server" && i.Components == "Client"
 						select i).First();
 
-		Assert.Equal(2, newIssue.Components.Count);
-		Assert.Contains(newIssue.Components, c => c.Name == "Server");
-		Assert.Contains(newIssue.Components, c => c.Name == "Client");
+		newIssue.Components.Should().HaveCount(2);
+		newIssue.Components.Should().Contain(c => c.Name == "Server");
+		newIssue.Components.Should().Contain(c => c.Name == "Client");
 	}
 
 	[Theory]
@@ -240,14 +237,14 @@ public class IssueCreateTest
 		issue["Custom Text Field"] = "My new value";
 		issue["Custom User Field"] = "admin";
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		var newIssue = (from i in jira.Issues.Queryable
 						where i.Summary == summaryValue && i["Custom Text Field"] == "My new value"
 						select i).First();
 
-		Assert.Equal("My new value", newIssue["Custom Text Field"]);
-		Assert.Equal("admin", newIssue["Custom User Field"]);
+		newIssue["Custom Text Field"].Should().Be("My new value");
+		newIssue["Custom User Field"].Should().Be("admin");
 	}
 
 	[Theory]
@@ -262,11 +259,13 @@ public class IssueCreateTest
 			Summary = summaryValue,
 			Assignee = "admin"
 		};
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
-		var subtasks = await jira.Issues.GetIssuesFromJqlAsync("project = TST and parent = TST-1", 0, null, default);
+		var subtasks = await jira.Issues.GetIssuesFromJqlAsync("project = TST and parent = TST-1", 0, null, CancellationToken);
 
-		Assert.True(subtasks.Any(s => s.Summary.Equals(summaryValue)),
-			$"'{summaryValue}' was not found as a sub-task of TST-1");
+		subtasks.Should().Contain(s => s.Summary.Equals(summaryValue), $"'{summaryValue}' was not found as a sub-task of TST-1");
 	}
 }
+
+
+

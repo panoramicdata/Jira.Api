@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test.Integration;
 
-public class JiraGroupTest
+public class JiraGroupTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private readonly Random _random = new();
 
@@ -14,22 +12,22 @@ public class JiraGroupTest
 	{
 		// Create the group.
 		var groupName = $"test-group-{_random.Next(int.MaxValue)}";
-		await jira.Groups.CreateGroupAsync(groupName, default);
+		await jira.Groups.CreateGroupAsync(groupName, CancellationToken);
 
 		// Add user to group
-		await jira.Groups.AddUserAsync(groupName, "admin", default);
+		await jira.Groups.AddUserAsync(groupName, "admin", CancellationToken);
 
 		// Get users from group.
-		var users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, default);
-		Assert.Contains(users, u => u.Username == "admin");
+		var users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, CancellationToken);
+		users.Should().Contain(u => u.Username == "admin");
 
 		// Delete user from group.
-		await jira.Groups.RemoveUserAsync(groupName, "admin", default);
-		users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, default);
-		Assert.Empty(users);
+		await jira.Groups.RemoveUserAsync(groupName, "admin", CancellationToken);
+		users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, CancellationToken);
+		users.Should().BeEmpty();
 
 		// Delete group
-		await jira.Groups.DeleteGroupAsync(groupName, null, default);
+		await jira.Groups.DeleteGroupAsync(groupName, null, CancellationToken);
 	}
 
 	[Theory]
@@ -38,21 +36,24 @@ public class JiraGroupTest
 	{
 		// Create the group.
 		var groupName = $"test-group-@@@@-{_random.Next(int.MaxValue)}";
-		await jira.Groups.CreateGroupAsync(groupName, default);
+		await jira.Groups.CreateGroupAsync(groupName, CancellationToken);
 
 		// Add user to group
-		await jira.Groups.AddUserAsync(groupName, "admin", default);
+		await jira.Groups.AddUserAsync(groupName, "admin", CancellationToken);
 
 		// Get users from group.
-		var users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, default);
-		Assert.Contains(users, u => u.Username == "admin");
+		var users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, CancellationToken);
+		users.Should().Contain(u => u.Username == "admin");
 
 		// Delete user from group.
-		await jira.Groups.RemoveUserAsync(groupName, "admin", default);
-		users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, default);
-		Assert.Empty(users);
+		await jira.Groups.RemoveUserAsync(groupName, "admin", CancellationToken);
+		users = await jira.Groups.GetUsersAsync(groupName, false, 0, 50, CancellationToken);
+		users.Should().BeEmpty();
 
 		// Delete group
-		await jira.Groups.DeleteGroupAsync(groupName, null, default);
+		await jira.Groups.DeleteGroupAsync(groupName, null, CancellationToken);
 	}
 }
+
+
+

@@ -1,9 +1,6 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Linq.Expressions;
-using System.Threading;
 using Jira.Api.Linq;
-using Jira.Api.Remote;
-using Moq;
 
 namespace Jira.Api.Test;
 
@@ -34,15 +31,15 @@ public class TestableJira : JiraClient
 		IssuePriorityService = new Mock<IIssuePriorityService>();
 		IssueResolutionService = new Mock<IIssueResolutionService>();
 
-		Services.Register<IIssueTypeService>(() => IssueTypeService.Object);
-		Services.Register<IIssueFieldService>(() => IssueFieldService.Object);
-		Services.Register<IIssueFilterService>(() => IssueFilterService.Object);
-		Services.Register<IIssueService>(() => IssueService.Object);
-		Services.Register<IJqlExpressionVisitor>(() => Translator.Object);
-		Services.Register<IFileSystem>(() => FileSystem.Object);
-		Services.Register<IJiraRestClient>(() => RestService.Object);
-		Services.Register<IIssuePriorityService>(() => IssuePriorityService.Object);
-		Services.Register<IIssueResolutionService>(() => IssueResolutionService.Object);
+		Services.Register(() => IssueTypeService.Object);
+		Services.Register(() => IssueFieldService.Object);
+		Services.Register(() => IssueFilterService.Object);
+		Services.Register(() => IssueService.Object);
+		Services.Register(() => Translator.Object);
+		Services.Register(() => FileSystem.Object);
+		Services.Register(() => RestService.Object);
+		Services.Register(() => IssuePriorityService.Object);
+		Services.Register(() => IssueResolutionService.Object);
 
 		Translator.Setup(t => t.Process(It.IsAny<Expression>())).Returns(new JqlData() { Expression = "dummy expression" });
 	}
@@ -61,3 +58,4 @@ public class TestableJira : JiraClient
 		IssueService.SetupIssues(this, remoteIssues);
 	}
 }
+

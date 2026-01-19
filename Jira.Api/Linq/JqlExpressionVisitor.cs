@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
 namespace Jira.Api.Linq;
 
+/// <summary>
+/// Visits LINQ expressions and translates them to JQL (Jira Query Language).
+/// </summary>
 public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 {
 	private StringBuilder _jqlWhere;
 	private StringBuilder _jqlOrderBy;
-	private int? _numberOfResults;
-	private int? _skipResults;
 	private List<Expression> _whereExpressions;
 
+	/// <summary>
+	/// Gets the generated JQL query string.
+	/// </summary>
 	public string Jql
 	{
 		get
@@ -22,33 +24,32 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		}
 	}
 
-	public int? NumberOfResults
-	{
-		get
-		{
-			return _numberOfResults;
-		}
-	}
+	/// <summary>
+	/// Gets the maximum number of results to return, or <see langword="null"/> if not specified.
+	/// </summary>
+	public int? NumberOfResults { get; private set; }
 
-	public int? SkipResults
-	{
-		get
-		{
-			return _skipResults;
-		}
-	}
+	/// <summary>
+	/// Gets the number of results to skip, or <see langword="null"/> if not specified.
+	/// </summary>
+	public int? SkipResults { get; private set; }
 
+	/// <summary>
+	/// Processes the specified expression and generates JQL data.
+	/// </summary>
+	/// <param name="expression">The LINQ expression to process.</param>
+	/// <returns>A <see cref="JqlData"/> object containing the generated JQL query and pagination information.</returns>
 	public JqlData Process(Expression expression)
 	{
 		expression = ExpressionEvaluator.PartialEval(expression);
 		_jqlWhere = new StringBuilder();
 		_jqlOrderBy = new StringBuilder();
 		_whereExpressions = [];
-		_numberOfResults = null;
-		_skipResults = null;
+		NumberOfResults = null;
+		SkipResults = null;
 
 		Visit(expression);
-		return new JqlData { Expression = Jql, NumberOfResults = _numberOfResults, SkipResults = _skipResults };
+		return new JqlData { Expression = Jql, NumberOfResults = NumberOfResults, SkipResults = SkipResults };
 	}
 
 	private static string GetFieldNameFromBinaryExpression(BinaryExpression expression)
@@ -242,6 +243,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		_jqlWhere.Append(')');
 	}
 
+	/// <inheritdoc/>
 	protected override Expression VisitMethodCall(MethodCallExpression node)
 	{
 		if (node.Method.Name == "OrderBy"
@@ -275,12 +277,12 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 
 	private void ProcessTake(MethodCallExpression node)
 	{
-		_numberOfResults = int.Parse(((ConstantExpression)node.Arguments[1]).Value.ToString());
+		NumberOfResults = int.Parse(((ConstantExpression)node.Arguments[1]).Value.ToString());
 	}
 
 	private void ProcessSkip(MethodCallExpression node)
 	{
-		_skipResults = int.Parse(((ConstantExpression)node.Arguments[1]).Value.ToString());
+		SkipResults = int.Parse(((ConstantExpression)node.Arguments[1]).Value.ToString());
 	}
 
 	private void ProcessOrderBy(MethodCallExpression node)
@@ -312,6 +314,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		}
 	}
 
+	/// <inheritdoc/>
 	protected override Expression VisitBinary(BinaryExpression node)
 	{
 		var isWhere = _whereExpressions.Contains(node);
@@ -321,6 +324,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			_jqlWhere.Append(" and ");
 			_whereExpressions.Remove(node);
 		}
+
 
 		switch (node.NodeType)
 		{

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Jira.Api.Remote;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test;
 
@@ -17,17 +12,18 @@ public class CustomFieldCollectionTest
 
 		var issue = new RemoteIssue()
 		{
-			project = "bar",
-			key = "foo",
-			customFieldValues = [
-								new(){
-									customfieldId = "123",
-									values = ["abc"]
-								}
-							]
+		project = "bar",
+		key = "foo",
+		customFieldValues = [
+			new(){
+			customfieldId = "123",
+			values = ["abc"]
+			}
+			]
 		}.ToLocal(jira);
 
-		Assert.Throws<InvalidOperationException>(() => issue["CustomField"]);
+		var act = () => issue["CustomField"];
+		act.Should().ThrowExactly<InvalidOperationException>();
 	}
 
 	[Fact]
@@ -37,7 +33,7 @@ public class CustomFieldCollectionTest
 		var jira = TestableJira.Create();
 		var customField = new CustomField(new RemoteField() { id = "123", name = "CustomField" });
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
-			.Returns(Task.FromResult(Enumerable.Repeat<CustomField>(customField, 1)));
+			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
 		var issue = new RemoteIssue()
 		{
@@ -52,11 +48,13 @@ public class CustomFieldCollectionTest
 		}.ToLocal(jira);
 
 		//assert
-		Assert.Equal("abc", issue["CustomField"]);
-		Assert.Equal("123", issue.CustomFields["CustomField"].Id);
+		issue["CustomField"].Should().Be("abc");
+		var customFieldX = issue.CustomFields["CustomField"];
+		customFieldX.Should().NotBeNull();
+		customFieldX.Id.Should().Be("123");
 
 		issue["customfield"] = "foobar";
-		Assert.Equal("foobar", issue["customfield"]);
+		issue["customfield"].Should().Be("foobar");
 	}
 
 	[Fact]
@@ -66,16 +64,18 @@ public class CustomFieldCollectionTest
 		var jira = TestableJira.Create();
 		var customField = new CustomField(new RemoteField() { id = "123", name = "CustomField" });
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
-			.Returns(Task.FromResult(Enumerable.Repeat<CustomField>(customField, 1)));
+			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
 		var issue = new RemoteIssue()
 		{
 			project = "projectKey",
 			key = "issueKey",
-			customFieldValues = null,
+			customFieldValues = [],
 		}.ToLocal(jira);
 
 		// Act / Assert
-		Assert.Throws<InvalidOperationException>(() => issue.CustomFields["NonExistantField"].Values[0]);
+		var act = () => issue.CustomFields["NonExistantField"]!.Values[0];
+		act.Should().ThrowExactly<InvalidOperationException>();
 	}
 }
+

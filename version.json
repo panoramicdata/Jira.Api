@@ -1,5 +1,5 @@
 {
-	"version": "9.0",
+	"version": "9.2-alpha",
 	"publicReleaseRefSpec": [
 		"^refs/heads/main$",
 		"^refs/heads/release/*"

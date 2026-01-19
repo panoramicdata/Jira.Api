@@ -1,6 +1,5 @@
-﻿using Jira.Api.Remote;
+using AwesomeAssertions;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace Jira.Api.Test;
 
@@ -19,7 +18,7 @@ public class GreenhopperSprintCustomFieldValueSerialiserTest
             ".Replace('\'', '\"'));
 
 		var expected = new[] { "Sprint1", "Sprint2" };
-		Assert.Equal(expected, actual);
+		actual.Should().BeEquivalentTo(expected);
 	}
 
 	[Fact]
@@ -34,6 +33,7 @@ public class GreenhopperSprintCustomFieldValueSerialiserTest
 			]);
 
 		var expected = (JToken)"Sprint1";
-		Assert.Equal(expected.ToString(), actual.ToString());
+		actual.ToString().Should().Be(expected.ToString());
 	}
 }
+

@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  Restored C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api\Jira.Api.csproj (in 188 ms).
+  Restored C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\Jira.Api.Test.csproj (in 194 ms).
+  Jira.Api -> C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api\bin\Debug\net10.0\Jira.Api.dll
+  Jira.Api.Test -> C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\bin\Debug\net10.0\Jira.Api.Test.dll
+Test run for C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\bin\Debug\net10.0\Jira.Api.Test.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.55]     Jira.Api.Test.IssueTest+WorkflowTransition.IfTransitionNotFound_ShouldThrowAnException [FAIL]
+  Failed Jira.Api.Test.IssueTest+WorkflowTransition.IfTransitionNotFound_ShouldThrowAnException [91 ms]
+  Error Message:
+   Expected type to be System.InvalidOperationException, but found System.NullReferenceException.
+  Stack Trace:
+     at AwesomeAssertions.Execution.LateBoundTestFramework.Throw(String message)
+   at AwesomeAssertions.Types.TypeAssertions.Be(Type expected, String because, Object[] becauseArgs)
+   at AwesomeAssertions.Primitives.ReferenceTypeAssertions`2.BeOfType(Type expectedType, String because, Object[] becauseArgs)
+   at AwesomeAssertions.Specialized.AsyncFunctionAssertions`2.ThrowExactlyAsync[TException](String because, Object[] becauseArgs)
+   at Jira.Api.Test.IssueTest.WorkflowTransition.IfTransitionNotFound_ShouldThrowAnException() in C:\Users\DavidBond\source\repos\panoramicdata\Jira.Api\Jira.Api.Test\IssueTest.cs:line 198
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 100 ms - Jira.Api.Test.dll (net10.0)

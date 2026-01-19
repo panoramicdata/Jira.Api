@@ -1,13 +1,8 @@
-﻿using Jira.Api.Remote;
-using Moq;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test;
 
-public class ServiceLocatorTest
+public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Fact]
 	public async Task UserCanProvideCustomProjectVersionService()
@@ -20,21 +15,21 @@ public class ServiceLocatorTest
 		var remoteProject = new RemoteProject() { id = "projId", key = "projKey", name = "my project" };
 		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(new Project(jira, remoteProject), 1)));
-		jira.Services.Register<IProjectService>(() => projects.Object);
+		jira.Services.Register(() => projects.Object);
 
 		var versionResource = new Mock<IProjectVersionService>();
 		var remoteVersion = new RemoteVersion() { id = "123", name = "my version" };
 		var version = new ProjectVersion(jira, remoteVersion);
-		versionResource.Setup(s => s.GetVersionsAsync("projKey", CancellationToken.None))
+		versionResource.Setup(s => s.GetVersionsAsync("projKey", It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(version, 1)));
 
 		jira.Services.Register(() => versionResource.Object);
 
 		// Act
-		var versions = await (await jira.Projects.GetProjectsAsync(default)).First().GetVersionsAsync(default);
+		var versions = await (await jira.Projects.GetProjectsAsync(CancellationToken)).First().GetVersionsAsync(CancellationToken);
 
 		// Assert
-		Assert.Equal("my version", versions.First().Name);
+		versions.First().Name.Should().Be("my version");
 	}
 
 	[Fact]
@@ -53,15 +48,16 @@ public class ServiceLocatorTest
 		var componentResource = new Mock<IProjectComponentService>();
 		var remoteComponent = new RemoteComponent() { id = "123", name = "my component" };
 		var component = new ProjectComponent(remoteComponent);
-		componentResource.Setup(s => s.GetComponentsAsync("projKey", CancellationToken.None))
+		componentResource.Setup(s => s.GetComponentsAsync("projKey", It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(component, 1)));
 
 		jira.Services.Register(() => componentResource.Object);
 
 		// Act
-		var components = await (await jira.Projects.GetProjectsAsync(default)).First().GetComponentsAsync(default);
+		var components = await (await jira.Projects.GetProjectsAsync(CancellationToken)).First().GetComponentsAsync(CancellationToken);
 
 		// Assert
-		Assert.Equal("my component", components.First().Name);
+		components.First().Name.Should().Be("my component");
 	}
 }
+

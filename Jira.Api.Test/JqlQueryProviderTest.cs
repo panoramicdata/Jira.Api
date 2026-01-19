@@ -1,7 +1,5 @@
-﻿using System.Linq;
+using AwesomeAssertions;
 using Jira.Api.Linq;
-using Jira.Api.Remote;
-using Xunit;
 
 namespace Jira.Api.Test;
 
@@ -16,7 +14,7 @@ public class JqlQueryProviderTest
 
 		jira.SetupIssues(new RemoteIssue());
 
-		Assert.Equal(1, queryable.Count());
+		queryable.Should().ContainSingle();
 	}
 
 	[Fact]
@@ -28,6 +26,7 @@ public class JqlQueryProviderTest
 
 		jira.SetupIssues(new RemoteIssue() { summary = "foo" }, new RemoteIssue());
 
-		Assert.Equal("foo", queryable.First().Summary);
+		queryable.First().Summary.Should().Be("foo");
 	}
 }
+

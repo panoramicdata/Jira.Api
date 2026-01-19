@@ -1,9 +1,4 @@
-﻿using Jira.Api.Remote;
-using RestSharp;
-using RestSharp.Authenticators;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using RestSharp.Authenticators;
 
 namespace Jira.Api.OAuth;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Jira.Api.OAuth;
+﻿namespace Jira.Api.OAuth;
 
 /// <summary>
 /// Access token information returned by Jira.

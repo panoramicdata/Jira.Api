@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test.Integration;
 
-public class IssuePropertiesTest
+public class IssuePropertiesTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
@@ -17,29 +15,29 @@ public class IssuePropertiesTest
 			Assignee = "admin"
 		};
 
-		issue = await issue.SaveChangesAsync(default);
+		issue = await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal("admin", issue.Reporter);
-		Assert.Equal("admin@example.com", issue.ReporterUser.Email);
-		Assert.Equal("admin", issue.Assignee);
-		Assert.Equal("admin@example.com", issue.AssigneeUser.Email);
+		issue.Reporter.Should().Be("admin");
+		issue.ReporterUser.Email.Should().Be("admin@example.com");
+		issue.Assignee.Should().Be("admin");
+		issue.AssigneeUser.Email.Should().Be("admin@example.com");
 
-		Assert.NotNull(issue.ReporterUser.AvatarUrls);
-		Assert.NotNull(issue.ReporterUser.AvatarUrls.XSmall);
-		Assert.NotNull(issue.ReporterUser.AvatarUrls.Small);
-		Assert.NotNull(issue.ReporterUser.AvatarUrls.Medium);
-		Assert.NotNull(issue.ReporterUser.AvatarUrls.Large);
+		issue.ReporterUser.AvatarUrls.Should().NotBeNull();
+		issue.ReporterUser.AvatarUrls.XSmall.Should().NotBeNull();
+		issue.ReporterUser.AvatarUrls.Small.Should().NotBeNull();
+		issue.ReporterUser.AvatarUrls.Medium.Should().NotBeNull();
+		issue.ReporterUser.AvatarUrls.Large.Should().NotBeNull();
 
-		Assert.NotNull(issue.AssigneeUser.AvatarUrls);
-		Assert.NotNull(issue.AssigneeUser.AvatarUrls.XSmall);
-		Assert.NotNull(issue.AssigneeUser.AvatarUrls.Small);
-		Assert.NotNull(issue.AssigneeUser.AvatarUrls.Medium);
-		Assert.NotNull(issue.AssigneeUser.AvatarUrls.Large);
+		issue.AssigneeUser.AvatarUrls.Should().NotBeNull();
+		issue.AssigneeUser.AvatarUrls.XSmall.Should().NotBeNull();
+		issue.AssigneeUser.AvatarUrls.Small.Should().NotBeNull();
+		issue.AssigneeUser.AvatarUrls.Medium.Should().NotBeNull();
+		issue.AssigneeUser.AvatarUrls.Large.Should().NotBeNull();
 
 		issue.Assignee = "test";
-		issue = await issue.SaveChangesAsync(default);
-		Assert.Equal("test", issue.Assignee);
-		Assert.Equal("test@qa.com", issue.AssigneeUser.Email);
+		issue = await issue.SaveChangesAsync(CancellationToken);
+		issue.Assignee.Should().Be("test");
+		issue.AssigneeUser.Email.Should().Be("test@qa.com");
 	}
 
 	[Theory]
@@ -53,15 +51,15 @@ public class IssuePropertiesTest
 			Assignee = "admin"
 		};
 
-		var newIssue = await issue.SaveChangesAsync(default);
+		var newIssue = await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.NotNull(newIssue.TimeTrackingData);
-		Assert.Null(newIssue.TimeTrackingData.OriginalEstimate);
+		newIssue.TimeTrackingData.Should().NotBeNull();
+		newIssue.TimeTrackingData.OriginalEstimate.Should().BeNull();
 
-		await newIssue.AddWorklogAsync("1d", WorklogStrategy.AutoAdjustRemainingEstimate, null, default);
+		await newIssue.AddWorklogAsync("1d", WorklogStrategy.AutoAdjustRemainingEstimate, null, CancellationToken);
 
-		var issuesFromQuery = await jira.Issues.GetIssuesFromJqlAsync($"id = {newIssue.Key.Value}", 0, null, default);
-		Assert.Equal("1d", issuesFromQuery.Single().TimeTrackingData.TimeSpent);
+		var issuesFromQuery = await jira.Issues.GetIssuesFromJqlAsync($"id = {newIssue.Key.Value}", 0, null, CancellationToken);
+		issuesFromQuery.Single().TimeTrackingData.TimeSpent.Should().Be("1d");
 	}
 
 	[Theory]
@@ -75,24 +73,27 @@ public class IssuePropertiesTest
 			Assignee = "admin"
 		};
 
-		await issue.SaveChangesAsync(default);
+		await issue.SaveChangesAsync(CancellationToken);
 
 		// verify no votes
 		Assert.Equal(0, issue.Votes.Value);
-		Assert.False(issue.HasUserVoted);
+		issue.HasUserVoted.Should().BeFalse();
 
 		// cast a vote with a second user.
 		var jiraTester = JiraClient.CreateRestClient(JiraProvider.HOST, "test", "test");
-		await jiraTester.RestClient.ExecuteRequestAsync(RestSharp.Method.Post, $"rest/api/2/issue/{issue.Key.Value}/votes", null, default);
+		await jiraTester.RestClient.ExecuteRequestAsync(RestSharp.Method.Post, $"rest/api/2/issue/{issue.Key.Value}/votes", null, CancellationToken);
 
 		// verify votes for first user
-		await issue.RefreshAsync(default);
+		await issue.RefreshAsync(CancellationToken);
 		Assert.Equal(1, issue.Votes.Value);
-		Assert.False(issue.HasUserVoted);
+		issue.HasUserVoted.Should().BeFalse();
 
 		// verify votes for second user
-		var issueTester = await jiraTester.Issues.GetIssueAsync(issue.Key.Value, default);
+		var issueTester = await jiraTester.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		Assert.Equal(1, issueTester.Votes.Value);
-		Assert.True(issueTester.HasUserVoted);
+		issueTester.HasUserVoted.Should().BeTrue();
 	}
 }
+
+
+

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+using AwesomeAssertions;
 
 namespace Jira.Api.Test.Integration;
 
-public class ProjectTest
+public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private readonly Random _random = new();
 
@@ -13,10 +10,10 @@ public class ProjectTest
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetIssueTypes(JiraClient jira)
 	{
-		var project = await jira.Projects.GetProjectAsync("TST", default);
-		var issueTypes = await project.GetIssueTypesAsync(default);
+		var project = await jira.Projects.GetProjectAsync("TST", CancellationToken);
+		var issueTypes = await project.GetIssueTypesAsync(CancellationToken);
 
-		Assert.True(issueTypes.Any());
+		issueTypes.Should().NotBeEmpty();
 	}
 
 	[Theory]
@@ -25,26 +22,28 @@ public class ProjectTest
 	{
 		var componentName = "New Component " + _random.Next(int.MaxValue);
 		var projectInfo = new ProjectComponentCreationInfo(componentName);
-		var project = (await jira.Projects.GetProjectsAsync(default)).First();
+		var project = (await jira.Projects.GetProjectsAsync(CancellationToken)).First();
 
 		// Add a project component.
-		var component = await project.AddComponentAsync(projectInfo, default);
-		Assert.Equal(componentName, component.Name);
+		var component = await project.AddComponentAsync(projectInfo, CancellationToken);
+		component.Name.Should().Be(componentName);
 
 		// Retrieve project components.
-		Assert.Contains(await project.GetComponentsAsync(default), p => p.Name == componentName);
+		var components = await project.GetComponentsAsync(CancellationToken);
+		components.Should().Contain(p => p.Name == componentName);
 
 		// Delete project component
-		await project.DeleteComponentAsync(component.Name, null, default);
-		Assert.DoesNotContain(await project.GetComponentsAsync(default), p => p.Name == componentName);
+		await project.DeleteComponentAsync(component.Name, null, CancellationToken);
+		components = await project.GetComponentsAsync(CancellationToken);
+		components.Should().NotContain(p => p.Name == componentName);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetProjectComponents(JiraClient jira)
 	{
-		var components = await jira.Components.GetComponentsAsync("TST", default);
-		Assert.Equal(2, components.Count());
+		var components = await jira.Components.GetComponentsAsync("TST", CancellationToken);
+		components.Should().HaveCount(2);
 	}
 
 	[Theory]
@@ -52,19 +51,19 @@ public class ProjectTest
 	public async Task GetAndUpdateProjectVersions(JiraClient jira)
 	{
 		var startDate = new DateTime(2000, 11, 1);
-		var versions = await jira.Versions.GetVersionsAsync("TST", default);
-		Assert.True(versions.Count() >= 3);
+		var versions = await jira.Versions.GetVersionsAsync("TST", CancellationToken);
+		(versions.Count() >= 3).Should().BeTrue();
 
 		var version = versions.First(v => v.Name == "1.0");
 		var newDescription = "1.0 Release " + _random.Next(int.MaxValue);
 		version.Description = newDescription;
 		version.StartDate = startDate;
-		await version.SaveChangesAsync(default);
+		await version.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal(newDescription, version.Description);
-		version = (await jira.Versions.GetVersionsAsync("TST", default)).First(v => v.Name == "1.0");
-		Assert.Equal(newDescription, version.Description);
-		Assert.Equal(version.StartDate, startDate);
+		version.Description.Should().Be(newDescription);
+		version = (await jira.Versions.GetVersionsAsync("TST", CancellationToken)).First(v => v.Name == "1.0");
+		version.Description.Should().Be(newDescription);
+		version.StartDate.Should().Be(startDate);
 	}
 
 	[Theory]
@@ -72,22 +71,27 @@ public class ProjectTest
 	public async Task AddAndRemoveProjectVersions(JiraClient jira)
 	{
 		var versionName = "New Version " + _random.Next(int.MaxValue);
-		var project = (await jira.Projects.GetProjectsAsync(default)).First();
+		var project = (await jira.Projects.GetProjectsAsync(CancellationToken)).First();
 		var projectInfo = new ProjectVersionCreationInfo(versionName)
 		{
 			StartDate = new DateTime(2000, 11, 1)
 		};
 
 		// Add a project version.
-		var version = await project.AddVersionAsync(projectInfo, default);
-		Assert.Equal(versionName, version.Name);
-		Assert.Equal(version.StartDate, projectInfo.StartDate);
+		var version = await project.AddVersionAsync(projectInfo, CancellationToken);
+		version.Name.Should().Be(versionName);
+		version.StartDate.Should().Be(projectInfo.StartDate);
 
 		// Retrieve project versions.
-		Assert.Contains(await project.GetPagedVersionsAsync(0, 50, default), p => p.Name == versionName);
+		var pagedVersions = await project.GetPagedVersionsAsync(0, 50, CancellationToken);
+		pagedVersions.Should().Contain(p => p.Name == versionName);
 
 		// Delete project version
-		await project.DeleteVersionAsync(version.Name, null, null, default);
-		Assert.DoesNotContain(await project.GetPagedVersionsAsync(0, 50, default), p => p.Name == versionName);
+		await project.DeleteVersionAsync(version.Name, null, null, CancellationToken);
+		pagedVersions = await project.GetPagedVersionsAsync(0, 50, CancellationToken);
+		pagedVersions.Should().NotContain(p => p.Name == versionName);
 	}
 }
+
+
+
