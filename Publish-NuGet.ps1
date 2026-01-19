@@ -1,5 +1,5 @@
 # Hardcoded publish script for Jira.Api
-# Expects nuget_key.txt (ignored by git) at repo root containing ONLY the API key.
+# Expects nuget-key.txt (ignored by git) at repo root containing ONLY the API key.
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -10,14 +10,14 @@ function Fail($msg) {
 }
 
 $RepoRoot   = $PSScriptRoot
-$ApiKeyFile = Join-Path $RepoRoot 'nuget_key.txt'
+$ApiKeyFile = Join-Path $RepoRoot 'nuget-key.txt'
 $Project    = Join-Path $RepoRoot 'Jira.Api/Jira.Api.csproj'
 $Configuration = 'Release'
 $OutputDir  = Join-Path $RepoRoot 'artifacts/nuget'
 
-if (-not (Test-Path -Path $ApiKeyFile -PathType Leaf)) { Fail "API key file 'nuget_key.txt' not found in repository root. Aborting." }
+if (-not (Test-Path -Path $ApiKeyFile -PathType Leaf)) { Fail "API key file 'nuget-key.txt' not found in repository root. Aborting." }
 $apiKey = (Get-Content -Path $ApiKeyFile -Raw).Trim()
-if ([string]::IsNullOrWhiteSpace($apiKey)) { Fail "API key file 'nuget_key.txt' is empty. Aborting." }
+if ([string]::IsNullOrWhiteSpace($apiKey)) { Fail "API key file 'nuget-key.txt' is empty. Aborting." }
 if (-not (Test-Path -Path $Project -PathType Leaf)) { Fail "Project file '$Project' not found. Aborting." }
 
 Write-Host "--- Restoring packages ---" -ForegroundColor Cyan
