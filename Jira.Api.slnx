@@ -23,6 +23,7 @@
     <File Path="docker-compose.yml" />
     <File Path="Jira.Api.dic" />
     <File Path="LICENSE.md" />
+    <File Path="nuget-key.txt" />
     <File Path="Publish-NuGet.ps1" />
     <File Path="README.md" />
     <File Path="version.json" />
