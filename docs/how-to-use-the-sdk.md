@@ -6,7 +6,8 @@ A LinqToJIRA provider allows to query a JIRA server using Linq syntax:
 
 ```csharp
 // create a connection to JIRA using the Rest client
-var jira = Jira.CreateRestClient("http://<your_jira_server>", "<user>", "<password>");
+var settings = new JiraRestClientSettings("MyApp/1.0");
+var jira = JiraClient.CreateRestClient("http://<your_jira_server>", "<user>", "<password>", settings);
 
 // use LINQ syntax to retrieve issues
 var issues = from i in jira.Issues.Queryable

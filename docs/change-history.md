@@ -1,5 +1,10 @@
 # Change History
 
+## Latest (Unreleased)
+
+- **User-Agent support**: `JiraRestClientSettings` now requires a `userAgent` string parameter. The parameterless constructor is marked `[Obsolete]` and will emit build warning CS0618. The User-Agent value is validated against RFC 9110 product token format and sent with every HTTP request.
+- Updated all documentation examples to use `JiraClient` instead of `Jira` and to include `UserAgent` configuration.
+
 ## Version 13.0.0 (03/12/2022)
 
 - [PR 85](https://bitbucket.org/farmas/atlassian.net-sdk/pull-requests/85) Allows to fetch a project issue types, and the statuses of each issue type.

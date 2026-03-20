@@ -6,10 +6,10 @@ When this setting is enabled, the SDK will trace all requests sent to your serve
 standard [.NET Tracing](https://msdn.microsoft.com/en-us/library/zs6s4h68(v=vs.110).aspx) mechanism.
 
 ```csharp
-var settings = new JiraRestClientSettings()
+var settings = new JiraRestClientSettings("MyApp/1.0")
 {
    EnableRequestTrace = true
 };
 
-var jira = Jira.CreateRestClient("<url>", "<username>", "<pwd>", settings);
+var jira = JiraClient.CreateRestClient("<url>", "<username>", "<pwd>", settings);
 ```

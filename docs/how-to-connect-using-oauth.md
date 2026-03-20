@@ -33,12 +33,14 @@ Once you finished configuring the AppLink, go back to the jira-oauth-cli command
 ## 6. Use the tokens and secret to create a new Jira rest client.
 
 ```csharp
-var jira = Jira.CreateOAuthRestClient(
+var settings = new JiraRestClientSettings("MyApp/1.0");
+var jira = JiraClient.CreateOAuthRestClient(
     YOUR_JIRA_URL,
     YOUR_CONSUMER_KEY,    // as was decided on step #2    
     YOUR_CONSUMER_SECRET, // as was printed by the cli tool.
     YOUR_ACCESS_TOKEN,    // as was printed by the cli tool.
-    YOUT_TOKEN_SECRET);   // as was printed by the cli tool.
+    YOUT_TOKEN_SECRET,    // as was printed by the cli tool.
+    settings: settings);
 ```
 
 * Note that the consumer secret is the private key generated in XML format and is a very long string. Keep it safe.

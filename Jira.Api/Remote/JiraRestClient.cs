@@ -64,15 +64,17 @@ public class JiraRestClient : IJiraRestClient
 		JiraRestClientSettings? settings = null)
 	{
 		url = url.EndsWith('/') ? url : url += "/";
+
+#pragma warning disable CS0618 // Intentional fallback to default settings within the library
 		_clientSettings = settings ?? new JiraRestClientSettings();
+#pragma warning restore CS0618
 
 		_restClient = new RestClient(new RestClientOptions(url)
 		{
 			Proxy = _clientSettings.Proxy,
 			Authenticator = authenticator,
-
+			UserAgent = _clientSettings.UserAgent,
 		}, configureSerialization: s => s.UseNewtonsoftJson());
-
 	}
 
 	public RestClient RestSharpClient => RestClient;
