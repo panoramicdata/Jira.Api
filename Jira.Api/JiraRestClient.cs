@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp.Authenticators;
 using RestSharp.Serializers.NewtonsoftJson;
@@ -63,15 +63,16 @@ public class JiraRestClient : IJiraRestClient
 		JiraRestClientSettings? settings = null)
 	{
 		url = url.EndsWith('/') ? url : url += "/";
+#pragma warning disable CS0618 // Intentional fallback to default settings within the library
 		Settings = settings ?? new JiraRestClientSettings();
+#pragma warning restore CS0618
 
 		RestClient = new RestClient(new RestClientOptions(url)
 		{
 			Proxy = Settings.Proxy,
 			Authenticator = authenticator,
-
+			UserAgent = Settings.UserAgent,
 		}, configureSerialization: s => s.UseNewtonsoftJson());
-
 	}
 
 	/// <inheritdoc/>

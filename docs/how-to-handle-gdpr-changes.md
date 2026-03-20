@@ -4,11 +4,13 @@ Atlassian announced changes to [Jira Cloud REST APIs to improve user privacy](ht
 
 Jira Cloud users that are affected by this change need to configure the library to enable user privacy mode:
 
-```
-var settings = new JiraRestClientSettings();
-settings.EnableUserPrivacyMode = true;
+```csharp
+var settings = new JiraRestClientSettings("MyApp/1.0")
+{
+    EnableUserPrivacyMode = true
+};
 
-var jira = Jira.CreateRestClient("jira-url", "username", "api-token", settings);
+var jira = JiraClient.CreateRestClient("jira-url", "username", "api-token", settings);
 ```
 
 ## Changes Included

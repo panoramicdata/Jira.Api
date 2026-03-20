@@ -1,13 +1,23 @@
 using Newtonsoft.Json;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Jira.Api.Models;
 
 /// <summary>
 /// Settings to configure the JIRA REST client.
 /// </summary>
-public class JiraRestClientSettings
+public partial class JiraRestClientSettings
 {
+	/// <summary>
+	/// The default User-Agent string used when none is explicitly provided.
+	/// </summary>
+	public const string DefaultUserAgent = "JiraApi_Application";
+
+	[GeneratedRegex(@"^[A-Za-z0-9][A-Za-z0-9.\-_~]*(\/[A-Za-z0-9][A-Za-z0-9.\-_~]*)?( [A-Za-z0-9][A-Za-z0-9.\-_~]*(\/[A-Za-z0-9][A-Za-z0-9.\-_~]*)?)*$")]
+	private static partial Regex UserAgentFormatRegex();
+
+
 	private static IEnumerable<JsonConverter> _defaultJsonConverters =
 		[
 			new JiraUserJsonConverter()
@@ -45,6 +55,11 @@ public class JiraRestClientSettings
 	public IWebProxy Proxy { get; set; }
 
 	/// <summary>
+	/// The User-Agent string sent with each HTTP request.
+	/// </summary>
+	public string UserAgent { get; }
+
+	/// <summary>
 	/// Whether to enable user privacy mode when interacting with Jira server (also known as GDPR mode).
 	/// </summary>
 	public bool EnableUserPrivacyMode
@@ -59,15 +74,42 @@ public class JiraRestClientSettings
 	}
 
 	/// <summary>
-	/// Create a new instance of the settings.
+	/// Create a new instance of the settings with the specified User-Agent string.
 	/// </summary>
-	public JiraRestClientSettings()
+	/// <param name="userAgent">The User-Agent product token to send with each request.
+	/// Must conform to the RFC 9110 product token format (e.g. "MyApp/1.0").</param>
+	/// <exception cref="ArgumentException">Thrown when <paramref name="userAgent"/> is null or whitespace.</exception>
+	/// <exception cref="FormatException">Thrown when <paramref name="userAgent"/> does not match the expected product token format.</exception>
+	public JiraRestClientSettings(string userAgent)
 	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(userAgent);
+
+		if (!UserAgentFormatRegex().IsMatch(userAgent))
+		{
+			throw new FormatException(
+				$"The UserAgent value '{userAgent}' is not a valid RFC 9110 product token. " +
+				"Expected format: 'ProductName' or 'ProductName/Version' (e.g. 'MyApp/1.0').");
+		}
+
+		UserAgent = userAgent;
 
 		JsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
 
 		AddCoreCustomFieldValueSerializers();
 		AddDefaultJsonConverters();
+	}
+
+	/// <summary>
+	/// Create a new instance of the settings with default values.
+	/// </summary>
+	/// <remarks>
+	/// This constructor uses a default User-Agent string. Provide an explicit User-Agent
+	/// via <see cref="JiraRestClientSettings(string)"/> to identify your application.
+	/// </remarks>
+	[Obsolete($"Use the constructor that accepts a userAgent parameter to identify your application (e.g. new JiraRestClientSettings(\"MyApp/1.0\")).")]
+	public JiraRestClientSettings()
+		: this(DefaultUserAgent)
+	{
 	}
 
 	private void UpdateSerializers()

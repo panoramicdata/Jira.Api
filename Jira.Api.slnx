@@ -7,6 +7,7 @@
   <Folder Name="/Documentation/">
     <File Path="docs/change-history.md" />
     <File Path="docs/how-to-configure-issue-fields-to-fetch.md" />
+    <File Path="docs/how-to-configure-user-agent.md" />
     <File Path="docs/how-to-connect-using-oauth.md" />
     <File Path="docs/how-to-debug-problems.md" />
     <File Path="docs/how-to-handle-gdpr-changes.md" />
@@ -24,6 +25,7 @@
     <File Path="Jira.Api.dic" />
     <File Path="LICENSE.md" />
     <File Path="nuget-key.txt" />
+    <File Path="nuget_key.txt" />
     <File Path="Publish-NuGet.ps1" />
     <File Path="README.md" />
     <File Path="version.json" />

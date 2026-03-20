@@ -27,7 +27,9 @@ class TraceReplayer : IJiraRestClient
 	{
 		get
 		{
+#pragma warning disable CS0618 // Test helper using default settings
 			return new JiraRestClientSettings();
+#pragma warning restore CS0618
 		}
 	}
 

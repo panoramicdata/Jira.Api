@@ -30,7 +30,9 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		string? password = null,
 		JiraRestClientSettings? settings = null)
 	{
+#pragma warning disable CS0618 // Intentional fallback to default settings within the library
 		settings ??= new JiraRestClientSettings();
+#pragma warning restore CS0618
 		var restClient = new JiraRestClient(url, username, password, settings);
 
 		return CreateRestClient(restClient, settings.Cache);
@@ -48,7 +50,9 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		string personalAccessToken,
 		JiraRestClientSettings? settings = null)
 	{
+#pragma warning disable CS0618 // Intentional fallback to default settings within the library
 		settings ??= new JiraRestClientSettings();
+#pragma warning restore CS0618
 		var restClient = new JiraRestClient(url, personalAccessToken, settings);
 
 		return CreateRestClient(restClient, settings.Cache);
@@ -74,7 +78,9 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		JiraOAuthSignatureMethod oAuthSignatureMethod = JiraOAuthSignatureMethod.RsaSha1,
 		JiraRestClientSettings? settings = null)
 	{
+#pragma warning disable CS0618 // Intentional fallback to default settings within the library
 		settings ??= new JiraRestClientSettings();
+#pragma warning restore CS0618
 		var restClient = new JiraOAuthRestClient(
 			url,
 			consumerKey,

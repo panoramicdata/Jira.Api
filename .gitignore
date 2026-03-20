@@ -54,3 +54,4 @@ packages/
 Jira.Api.Test.Integration/appsettings.json
 artifacts/
 nuget-key.txt
+nuget_key.txt
