@@ -38,7 +38,7 @@ public class DateFixupJsonConverter : JsonConverter
 		{
 			DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"
 		});
-		dateJson = dateJson.Remove(dateJson.LastIndexOf(":"), 1);
+		dateJson = dateJson.Remove(dateJson.LastIndexOf(':'), 1);
 
 		writer.WriteRawValue(dateJson);
 	}

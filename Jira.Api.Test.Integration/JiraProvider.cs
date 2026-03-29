@@ -99,7 +99,7 @@ internal class JiraProvider : IEnumerable<object[]>
 		}
 
 		var trimmedValue = value.Trim();
-		return trimmedValue.StartsWith("<") && trimmedValue.EndsWith(">") ? null : trimmedValue;
+		return trimmedValue.StartsWith('<') && trimmedValue.EndsWith('>') ? null : trimmedValue;
 	}
 }
 
