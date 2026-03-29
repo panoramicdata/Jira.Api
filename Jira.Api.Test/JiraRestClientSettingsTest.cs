@@ -1,6 +1,3 @@
-using System;
-using Xunit;
-
 namespace Jira.Api.Test;
 
 public class JiraRestClientSettingsTest
@@ -22,7 +19,7 @@ public class JiraRestClientSettingsTest
         {
             var settings = new JiraRestClientSettings(userAgent);
 
-            Assert.Equal(userAgent, settings.UserAgent);
+            settings.UserAgent.Should().Be(userAgent);
         }
 
         [Theory]
@@ -31,13 +28,15 @@ public class JiraRestClientSettingsTest
         [InlineData("\t")]
         public void ShouldThrowArgumentExceptionForWhitespaceUserAgent(string userAgent)
         {
-            Assert.Throws<ArgumentException>(() => new JiraRestClientSettings(userAgent));
+            var act = () => new JiraRestClientSettings(userAgent);
+            act.Should().ThrowExactly<ArgumentException>();
         }
 
         [Fact]
         public void ShouldThrowArgumentNullExceptionForNullUserAgent()
         {
-            Assert.Throws<ArgumentNullException>(() => new JiraRestClientSettings(null!));
+            var act = () => new JiraRestClientSettings(null!);
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Theory]
@@ -52,10 +51,11 @@ public class JiraRestClientSettingsTest
         [InlineData("My#App")]
         public void ShouldThrowFormatExceptionForInvalidUserAgent(string userAgent)
         {
-            var ex = Assert.Throws<FormatException>(() => new JiraRestClientSettings(userAgent));
+            var act = () => new JiraRestClientSettings(userAgent);
+            var ex = act.Should().ThrowExactly<FormatException>().Which;
 
-            Assert.Contains("not a valid RFC 9110 product token", ex.Message);
-            Assert.Contains(userAgent, ex.Message);
+            ex.Message.Should().Contain("not a valid RFC 9110 product token");
+            ex.Message.Should().Contain(userAgent);
         }
     }
 
@@ -67,7 +67,7 @@ public class JiraRestClientSettingsTest
         {
             var settings = new JiraRestClientSettings();
 
-            Assert.Equal(JiraRestClientSettings.DefaultUserAgent, settings.UserAgent);
+            settings.UserAgent.Should().Be(JiraRestClientSettings.DefaultUserAgent);
         }
 
         [Fact]
@@ -75,8 +75,8 @@ public class JiraRestClientSettingsTest
         {
             var settings = new JiraRestClientSettings();
 
-            Assert.NotNull(settings.JsonSerializerSettings);
-            Assert.Equal(Newtonsoft.Json.NullValueHandling.Ignore, settings.JsonSerializerSettings.NullValueHandling);
+            settings.JsonSerializerSettings.Should().NotBeNull();
+            settings.JsonSerializerSettings.NullValueHandling.Should().Be(Newtonsoft.Json.NullValueHandling.Ignore);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ public class JiraRestClientSettingsTest
         {
             var settings = new JiraRestClientSettings();
 
-            Assert.NotNull(settings.Cache);
+            settings.Cache.Should().NotBeNull();
         }
 
         [Fact]
@@ -92,7 +92,7 @@ public class JiraRestClientSettingsTest
         {
             var settings = new JiraRestClientSettings();
 
-            Assert.NotEmpty(settings.CustomFieldSerializers);
+            settings.CustomFieldSerializers.Should().NotBeEmpty();
         }
 #pragma warning restore CS0618
     }
@@ -104,7 +104,7 @@ public class JiraRestClientSettingsTest
         {
             var settings = new JiraRestClientSettings("MyCustomApp/2.5");
 
-            Assert.Equal("MyCustomApp/2.5", settings.UserAgent);
+            settings.UserAgent.Should().Be("MyCustomApp/2.5");
         }
 
         [Fact]
@@ -113,7 +113,7 @@ public class JiraRestClientSettingsTest
             // Verify the default user agent constant is itself a valid format
             var settings = new JiraRestClientSettings(JiraRestClientSettings.DefaultUserAgent);
 
-            Assert.Equal(JiraRestClientSettings.DefaultUserAgent, settings.UserAgent);
+            settings.UserAgent.Should().Be(JiraRestClientSettings.DefaultUserAgent);
         }
     }
 }

@@ -1,6 +1,3 @@
-using AwesomeAssertions;
-using Newtonsoft.Json.Linq;
-
 namespace Jira.Api.Test;
 
 public class GreenhopperSprintJsonCustomFieldValueSerialiserTest

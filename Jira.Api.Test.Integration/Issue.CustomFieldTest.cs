@@ -1,9 +1,6 @@
-using AwesomeAssertions;
-using Newtonsoft.Json;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 
@@ -52,6 +49,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 	/// </summary>
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task CanSetCustomFieldUsingSearchByProjectOnly(JiraClient jira)
 	{
 		var summaryValue = "Test issue with custom field by project" + RandomNumberGenerator.GetInt32(int.MaxValue);
@@ -97,6 +95,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task AddAndReadCustomFieldById(JiraClient jira)
 	{
 		var summaryValue = "Test issue with custom text" + RandomNumberGenerator.GetInt32(int.MaxValue);
@@ -116,6 +115,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+    [Trait("Category", "WritesToApi")]
 	public async Task CreateIssueWithCascadingSelectFieldWithOnlyParentOptionSet(JiraClient jira)
 	{
 		var summaryValue = "Test issue with cascading select" + RandomNumberGenerator.GetInt32(int.MaxValue);
@@ -141,6 +141,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task CreateAndQueryIssueWithLargeNumberCustomField(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
@@ -159,6 +160,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+    [Trait("Category", "WritesToApi")]
 	public async Task CreateAndQueryIssueWithComplexCustomFields(JiraClient jira)
 	{
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
@@ -227,6 +229,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+    [Trait("Category", "WritesToApi")]
 	public async Task CanClearValueOfCustomField(JiraClient jira)
 	{
 		var summaryValue = "Test issue " + RandomNumberGenerator.GetInt32(int.MaxValue);
@@ -243,8 +246,8 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		await issue.SaveChangesAsync(CancellationToken);
 
 		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
-		Assert.Equal("My new value", newIssue["Custom Text Field"]);
-		Assert.Equal("2015-10-03", newIssue["Custom Date Field"]);
+        newIssue["Custom Text Field"].Should().Be("My new value");
+		newIssue["Custom Date Field"].Should().Be("2015-10-03");
 		newIssue["Custom Text Field"] = null;
 		newIssue["Custom Date Field"] = null;
 		newIssue["Custom Select Field"] = null;
@@ -259,6 +262,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task CreateAndUpdateIssueWithComplexCustomFields(JiraClient jira)
 	{
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
@@ -302,25 +306,25 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		// Retrieve the issue again and verify fields
 		var updatedIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 
-		Assert.Equal("My new value", updatedIssue["Custom Text Field"]);
-		Assert.Equal("2015-10-03", updatedIssue["Custom Date Field"]);
-		Assert.Equal("admin", updatedIssue["Custom User Field"]);
-		Assert.Equal("Blue", updatedIssue["Custom Select Field"]);
-		Assert.Equal("jira-users", updatedIssue["Custom Group Field"]);
-		Assert.Equal("TST", updatedIssue["Custom Project Field"]);
-		Assert.Equal("1.0", updatedIssue["Custom Version Field"]);
-		Assert.Equal("option1", updatedIssue["Custom Radio Field"]);
-		Assert.Equal("1234", updatedIssue["Custom Number Field"]);
+        updatedIssue["Custom Text Field"].Should().Be("My new value");
+		updatedIssue["Custom Date Field"].Should().Be("2015-10-03");
+		updatedIssue["Custom User Field"].Should().Be("admin");
+		updatedIssue["Custom Select Field"].Should().Be("Blue");
+		updatedIssue["Custom Group Field"].Should().Be("jira-users");
+		updatedIssue["Custom Project Field"].Should().Be("TST");
+		updatedIssue["Custom Version Field"].Should().Be("1.0");
+		updatedIssue["Custom Radio Field"].Should().Be("option1");
+		updatedIssue["Custom Number Field"].Should().Be("1234");
 
 		var serverDate = DateTime.Parse(updatedIssue["Custom DateTime Field"].Value);
 		serverDate.Should().Be(dateTime);
 
-		Assert.Equal(new string[2] { "label1", "label2" }, updatedIssue.CustomFields["Custom Labels Field"].Values);
-		Assert.Equal(new string[2] { "jira-developers", "jira-users" }, updatedIssue.CustomFields["Custom Multi Group Field"].Values);
-		Assert.Equal(new string[2] { "option1", "option2" }, updatedIssue.CustomFields["Custom Multi Select Field"].Values);
-		Assert.Equal(new string[2] { "admin", "test" }, updatedIssue.CustomFields["Custom Multi User Field"].Values);
-		Assert.Equal(new string[2] { "option1", "option2" }, updatedIssue.CustomFields["Custom Checkboxes Field"].Values);
-		Assert.Equal(new string[2] { "2.0", "3.0" }, updatedIssue.CustomFields["Custom Multi Version Field"].Values);
+        updatedIssue.CustomFields["Custom Labels Field"].Values.Should().Equal("label1", "label2");
+		updatedIssue.CustomFields["Custom Multi Group Field"].Values.Should().Equal("jira-developers", "jira-users");
+		updatedIssue.CustomFields["Custom Multi Select Field"].Values.Should().Equal("option1", "option2");
+		updatedIssue.CustomFields["Custom Multi User Field"].Values.Should().Equal("admin", "test");
+		updatedIssue.CustomFields["Custom Checkboxes Field"].Values.Should().Equal("option1", "option2");
+		updatedIssue.CustomFields["Custom Multi Version Field"].Values.Should().Equal("2.0", "3.0");
 
 		var cascadingSelect = updatedIssue.CustomFields.GetCascadingSelectField("Custom Cascading Select Field");
 		cascadingSelect.ParentOption.Should().Be("Option2");
@@ -336,14 +340,15 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 		// Retrieve the issue one last time and verify custom fields.
 		var updatedIssue2 = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
-		Assert.Equal("My newest value", updatedIssue["Custom Text Field"]);
-		Assert.Equal("2019-10-03", updatedIssue["Custom Date Field"]);
-		Assert.Equal("9999", updatedIssue2["Custom Number Field"]);
-		Assert.Equal(new string[1] { "label3" }, updatedIssue.CustomFields["Custom Labels Field"].Values);
+     updatedIssue["Custom Text Field"].Should().Be("My newest value");
+		updatedIssue["Custom Date Field"].Should().Be("2019-10-03");
+		updatedIssue2["Custom Number Field"].Should().Be("9999");
+		updatedIssue.CustomFields["Custom Labels Field"].Values.Should().Equal("label3");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+  [Trait("Category", "WritesToApi")]
 	public async Task CreateAndQuerySprintName(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
@@ -363,6 +368,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+  [Trait("Category", "WritesToApi")]
 	public async Task UpdateAndQuerySprintName(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
@@ -385,6 +391,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+    [Trait("Category", "WritesToApi")]
 	public async Task CanUpdateIssueWithoutModifyingCustomFields(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")
@@ -404,6 +411,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+    [Trait("Category", "WritesToApi")]
 	public async Task ThrowsErrorWhenSettingSprintByName(JiraClient jira)
 	{
 		var issue = new Issue(jira, "SCRUM")

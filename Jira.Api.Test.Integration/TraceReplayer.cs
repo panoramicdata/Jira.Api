@@ -1,8 +1,3 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
-using System.IO;
-
 namespace Jira.Api.Test.Integration;
 
 class TraceReplayer : IJiraRestClient

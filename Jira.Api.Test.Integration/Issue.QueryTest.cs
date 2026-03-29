@@ -1,8 +1,6 @@
-using AwesomeAssertions;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -38,6 +36,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task GetIssueThatIncludesOnlyAllNonBasicFields(JiraClient jira)
 	{
 		// Arrange
@@ -91,6 +90,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task GetIssuesWithPagingMetadata(JiraClient jira)
 	{
 		// Arrange: Create 3 issues to query.
@@ -181,6 +181,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task QueryIssueWithLabel(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")
@@ -213,6 +214,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task QueryIssuesWithTakeExpression(JiraClient jira)
 	{
 		// create 2 issues with same summary
@@ -230,6 +232,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task MaximumNumberOfIssuesPerRequest(JiraClient jira)
 	{
 		// create 2 issues with same summary

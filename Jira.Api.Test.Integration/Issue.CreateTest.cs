@@ -1,8 +1,6 @@
-using AwesomeAssertions;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 

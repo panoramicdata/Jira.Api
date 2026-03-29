@@ -23,9 +23,10 @@ internal class JiraProvider : IEnumerable<object[]>
 	public static readonly string OAUTHCONSUMERSECRET;
 	public static readonly string OAUTHACCESSTOKEN;
 	public static readonly string OAUTHTOKENSECRET;
+	public static readonly bool HasOAuthConfiguration;
 
 	private static JiraClient _jiraWithCredentials = null!;
-	private static JiraClient _jiraWithOAuth = null!;
+   private static JiraClient? _jiraWithOAuth;
 
 	private readonly List<object[]> _data;
 
@@ -37,27 +38,37 @@ internal class JiraProvider : IEnumerable<object[]>
 		HOST = GetConfig(configuration, "Jira:Host", CancellationTokenHost);
 		USERNAME = GetConfig(configuration, "Jira:Username", CancellationTokenUsername);
 		PASSWORD = GetConfig(configuration, "Jira:Password", CancellationTokenPassword);
-		OAUTHCONSUMERKEY = GetConfig(configuration, "Jira:OAuth:ConsumerKey", CancellationTokenOAuthConsumerKey);
-		OAUTHCONSUMERSECRET = GetConfig(configuration, "Jira:OAuth:ConsumerSecret", CancellationTokenOAuthConsumerSecret);
-		OAUTHACCESSTOKEN = GetConfig(configuration, "Jira:OAuth:AccessToken", CancellationTokenOAuthAccessToken);
-		OAUTHTOKENSECRET = GetConfig(configuration, "Jira:OAuth:TokenSecret", CancellationTokenOAuthTokenSecret);
+       OAUTHCONSUMERKEY = GetOptionalConfig(configuration, "Jira:OAuth:ConsumerKey") ?? string.Empty;
+		OAUTHCONSUMERSECRET = GetOptionalConfig(configuration, "Jira:OAuth:ConsumerSecret") ?? string.Empty;
+		OAUTHACCESSTOKEN = GetOptionalConfig(configuration, "Jira:OAuth:AccessToken") ?? string.Empty;
+		OAUTHTOKENSECRET = GetOptionalConfig(configuration, "Jira:OAuth:TokenSecret") ?? string.Empty;
+		HasOAuthConfiguration =
+			!string.IsNullOrWhiteSpace(OAUTHCONSUMERKEY)
+			&& !string.IsNullOrWhiteSpace(OAUTHCONSUMERSECRET)
+			&& !string.IsNullOrWhiteSpace(OAUTHACCESSTOKEN)
+			&& !string.IsNullOrWhiteSpace(OAUTHTOKENSECRET);
 
 		_jiraWithCredentials = JiraClient.CreateRestClient(HOST, USERNAME, PASSWORD);
-		_jiraWithOAuth = JiraClient.CreateOAuthRestClient(
-			HOST,
-			OAUTHCONSUMERKEY,
-			OAUTHCONSUMERSECRET,
-			OAUTHACCESSTOKEN,
-			OAUTHTOKENSECRET);
+
+		if (HasOAuthConfiguration)
+		{
+			_jiraWithOAuth = JiraClient.CreateOAuthRestClient(
+				HOST,
+				OAUTHCONSUMERKEY,
+				OAUTHCONSUMERSECRET,
+				OAUTHACCESSTOKEN,
+				OAUTHTOKENSECRET);
+		}
 	}
 
 	public JiraProvider()
 	{
-		_data =
-			[
-				[_jiraWithCredentials],
-				[_jiraWithOAuth]
-			];
+     _data = [[_jiraWithCredentials]];
+
+		if (_jiraWithOAuth != null)
+		{
+			_data.Add([_jiraWithOAuth]);
+		}
 	}
 
 	public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
@@ -76,6 +87,19 @@ internal class JiraProvider : IEnumerable<object[]>
 	{
 		var value = config[key];
 		return string.IsNullOrWhiteSpace(value) ? fallback : value;
+	}
+
+	private static string? GetOptionalConfig(IConfiguration config, string key)
+	{
+		var value = config[key];
+
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			return null;
+		}
+
+		var trimmedValue = value.Trim();
+		return trimmedValue.StartsWith("<") && trimmedValue.EndsWith(">") ? null : trimmedValue;
 	}
 }
 

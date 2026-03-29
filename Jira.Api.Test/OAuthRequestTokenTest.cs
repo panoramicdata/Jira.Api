@@ -1,7 +1,3 @@
-using AwesomeAssertions;
-using Jira.Api.OAuth;
-using Newtonsoft.Json;
-
 namespace Jira.Api.Test;
 
 public class OAuthRequestTokenTest

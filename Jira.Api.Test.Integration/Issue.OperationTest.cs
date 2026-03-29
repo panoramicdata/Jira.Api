@@ -1,10 +1,6 @@
-using AwesomeAssertions;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 
@@ -257,11 +253,11 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		var allowedValues = resolution.AllowedValues.ToString();
 
 		// assert
-		Assert.Equal(3, fields.Count);
+      fields.Should().HaveCount(3);
 		resolution.Name.Should().Be("Resolution");
 		resolution.IsRequired.Should().BeTrue();
 		resolution.Operations.Should().ContainSingle();
-		Assert.Equal(IssueFieldEditMetadataOperation.SET, resolution.Operations.ElementAt(0));
+      resolution.Operations.ElementAt(0).Should().Be(IssueFieldEditMetadataOperation.SET);
 		allowedValues.Should().Contain("Fixed");
 		allowedValues.Should().Contain("Won't Fix");
 		allowedValues.Should().Contain("Duplicate");
@@ -404,7 +400,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// Act, Assert: returns date for saved resolved issue.
 		await issue.WorkflowTransitionAsync(WorkflowActions.Resolve, null, CancellationToken);
 		issue.ResolutionDate.Should().NotBeNull();
-		Assert.Equal(issue.ResolutionDate.Value.Year, currentDate.Year);
+        issue.ResolutionDate.Value.Year.Should().Be(currentDate.Year);
 	}
 
 	[Theory]
@@ -440,7 +436,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		attachment.AuthorUser.DisplayName.Should().Be("admin");
 		attachment.CreatedDate.Should().NotBeNull();
 		(attachment.FileSize > 0).Should().BeTrue();
-		Assert.NotEmpty(attachment.MimeType);
+       attachment.MimeType.Should().NotBeEmpty();
 
 		// download an attachment
 		var tempFile = Path.GetTempFileName();
@@ -511,7 +507,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// download attachment as byte array
 		var bytes = await attachments.Single().DownloadDataAsync(CancellationToken);
 
-		Assert.Equal(17, bytes.Length);
+     bytes.Length.Should().Be(17);
 	}
 
 	[Theory]
@@ -540,7 +536,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 		var comment = comments.First();
 		comment.Body.Should().Be("new comment");
-		Assert.Equal(DateTime.Now.Year, comment.CreatedDate.Value.Year);
+        comment.CreatedDate.Value.Year.Should().Be(DateTime.Now.Year);
 		comment.Visibility.Should().BeNull();
 		comment.RenderedBody.Should().Be("new comment");
 	}
@@ -697,7 +693,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		var logs = await issue.GetWorklogsAsync(CancellationToken);
 		logs.Should().HaveCount(4);
 		logs.ElementAt(3).Comment.Should().Be("comment");
-		Assert.Equal(new DateTime(2012, 1, 1), logs.ElementAt(3).StartDate);
+        logs.ElementAt(3).StartDate.Should().Be(new DateTime(2012, 1, 1));
 		logs.First().Author.Should().Be("admin");
 		logs.First().AuthorUser.DisplayName.Should().Be("admin");
 	}

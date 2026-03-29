@@ -1,8 +1,8 @@
-using AwesomeAssertions;
 using System.Text.RegularExpressions;
 
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssueFieldMetadataTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -60,7 +60,7 @@ public class IssueFieldMetadataTest(ITestOutputHelper outputHelper) : TestBase(o
 	private static void AssertCustomFieldOption(IssueCustomFieldTest.IssueFieldMetadataCustomFieldOption option, int id, string value, string selfRegex)
 	{
 		option.Should().NotBeNull();
-		Assert.Equal(id, option.Id);
+        option.Id.Should().Be(id);
 		option.Value.Should().Be(value);
 		Regex regex = new(selfRegex);
 		regex.Match(option.Self).Success.Should().BeTrue();

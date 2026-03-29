@@ -1,5 +1,3 @@
-using AwesomeAssertions;
-
 namespace Jira.Api.Test;
 
 public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)

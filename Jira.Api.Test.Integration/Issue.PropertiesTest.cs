@@ -1,7 +1,6 @@
-using AwesomeAssertions;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssuePropertiesTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -76,7 +75,7 @@ public class IssuePropertiesTest(ITestOutputHelper outputHelper) : TestBase(outp
 		await issue.SaveChangesAsync(CancellationToken);
 
 		// verify no votes
-		Assert.Equal(0, issue.Votes.Value);
+     issue.Votes.Value.Should().Be(0);
 		issue.HasUserVoted.Should().BeFalse();
 
 		// cast a vote with a second user.
@@ -85,12 +84,12 @@ public class IssuePropertiesTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 		// verify votes for first user
 		await issue.RefreshAsync(CancellationToken);
-		Assert.Equal(1, issue.Votes.Value);
+     issue.Votes.Value.Should().Be(1);
 		issue.HasUserVoted.Should().BeFalse();
 
 		// verify votes for second user
 		var issueTester = await jiraTester.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
-		Assert.Equal(1, issueTester.Votes.Value);
+       issueTester.Votes.Value.Should().Be(1);
 		issueTester.HasUserVoted.Should().BeTrue();
 	}
 }

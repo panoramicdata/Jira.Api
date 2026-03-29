@@ -1,10 +1,8 @@
-using AwesomeAssertions;
-using Jira.Api.OAuth;
 using LTAF;
-using UniTestAssert = Xunit.Assert;
 
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class OAuthTokenHelperTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Fact]

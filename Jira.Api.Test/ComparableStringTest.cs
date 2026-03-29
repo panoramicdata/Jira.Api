@@ -1,6 +1,4 @@
 #nullable enable
-using AwesomeAssertions;
-
 namespace Jira.Api.Test;
 
 public class ComparableStringTest

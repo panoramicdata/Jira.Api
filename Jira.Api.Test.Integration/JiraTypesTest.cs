@@ -1,8 +1,6 @@
-using AwesomeAssertions;
-using Jira.Api.Exceptions;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -169,11 +167,11 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 	{
 		// First request.
 		var result1 = await jira.Statuses.GetStatusesAsync(CancellationToken);
-		Assert.NotEmpty(result1);
+       result1.Should().NotBeEmpty();
 
 		// Cached
 		var result2 = await jira.Statuses.GetStatusesAsync(CancellationToken);
-		Assert.Equal(result1.Count(), result2.Count());
+     result2.Should().HaveCount(result1.Count());
 	}
 
 	[Theory]
@@ -182,11 +180,11 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 	{
 		// First request.
 		var result1 = await jira.IssueTypes.GetIssueTypesAsync(CancellationToken.None);
-		Assert.NotEmpty(result1);
+       result1.Should().NotBeEmpty();
 
 		// Cached
 		var result2 = await jira.IssueTypes.GetIssueTypesAsync(CancellationToken.None);
-		Assert.Equal(result1.Count(), result2.Count());
+     result2.Should().HaveCount(result1.Count());
 	}
 
 	[Theory]
@@ -195,11 +193,11 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 	{
 		// First request.
 		var result1 = await jira.Priorities.GetPrioritiesAsync(CancellationToken);
-		Assert.NotEmpty(result1);
+       result1.Should().NotBeEmpty();
 
 		// Cached
 		var result2 = await jira.Priorities.GetPrioritiesAsync(CancellationToken);
-		Assert.Equal(result1.Count(), result2.Count());
+     result2.Should().HaveCount(result1.Count());
 	}
 
 	[Theory]
@@ -208,11 +206,11 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 	{
 		// First request.
 		var result1 = await jira.Resolutions.GetResolutionsAsync(CancellationToken);
-		Assert.NotEmpty(result1);
+       result1.Should().NotBeEmpty();
 
 		// Cached
 		var result2 = await jira.Resolutions.GetResolutionsAsync(CancellationToken);
-		Assert.Equal(result1.Count(), result2.Count());
+     result2.Should().HaveCount(result1.Count());
 	}
 
 	[Theory]
@@ -220,7 +218,7 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 	public async Task GetFavouriteFiltersAsync(JiraClient jira)
 	{
 		var result1 = await jira.Filters.GetFavouritesAsync(CancellationToken);
-		Assert.NotEmpty(result1);
+       result1.Should().NotBeEmpty();
 	}
 }
 

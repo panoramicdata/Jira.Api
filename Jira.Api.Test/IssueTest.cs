@@ -1,5 +1,3 @@
-using AwesomeAssertions;
-
 namespace Jira.Api.Test;
 
 public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
@@ -193,6 +191,13 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 		{
 			var jira = TestableJira.Create();
 			var issue = (new RemoteIssue() { key = "key" }).ToLocal(jira);
+			jira.IssueService
+				.Setup(j => j.ExecuteWorkflowActionAsync(
+					It.IsAny<Issue>(),
+					"foo",
+					It.IsAny<WorkflowTransitionUpdates?>(),
+					It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("Workflow action with name 'foo' not found."));
 
 			var act = () => issue.WorkflowTransitionAsync("foo", null, default);
 			await act.Should().ThrowExactlyAsync<InvalidOperationException>();

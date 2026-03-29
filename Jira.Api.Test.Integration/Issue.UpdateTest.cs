@@ -1,9 +1,6 @@
-using AwesomeAssertions;
-using RestSharp;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 
@@ -124,7 +121,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		newServerIssue.Description.Should().Be("Updated Description");
 		newServerIssue.Environment.Should().Be("Updated Environment");
 		newServerIssue.Labels.Should().Contain("testLabel");
-		Assert.Equal(serverIssue.DueDate, newServerIssue.DueDate);
+      newServerIssue.DueDate.Should().Be(serverIssue.DueDate);
 	}
 
 	[Theory]
@@ -238,11 +235,11 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		await issue.FixVersions.AddAsync("3.0", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal(2, issue.FixVersions.Count);
+       issue.FixVersions.Should().HaveCount(2);
 		issue.FixVersions.Should().Contain(v => v.Name == "2.0");
 		issue.FixVersions.Should().Contain(v => v.Name == "3.0");
 
-		Assert.Equal(2, issue.AffectsVersions.Count);
+       issue.AffectsVersions.Should().HaveCount(2);
 		issue.AffectsVersions.Should().Contain(v => v.Name == "1.0");
 		issue.AffectsVersions.Should().Contain(v => v.Name == "2.0");
 	}
@@ -280,7 +277,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		await issue.Components.AddAsync("Client", CancellationToken);
 		await issue.Components.AddAsync("Server", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-		Assert.Equal(2, issue.Components.Count);
+        issue.Components.Should().HaveCount(2);
 		issue.Components.Should().Contain(c => c.Name == "Server");
 		issue.Components.Should().Contain(c => c.Name == "Client");
 	}
@@ -333,7 +330,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		issue["Custom Text Field"] = "My updated value";
 		await issue.SaveChangesAsync(CancellationToken);
 
-		Assert.Equal("My updated value", issue["Custom Text Field"]);
+       issue["Custom Text Field"].Should().Be("My updated value");
 	}
 
 	[Theory]

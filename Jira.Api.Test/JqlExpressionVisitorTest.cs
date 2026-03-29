@@ -1,4 +1,3 @@
-using AwesomeAssertions;
 using Jira.Api.Linq;
 using System.Globalization;
 

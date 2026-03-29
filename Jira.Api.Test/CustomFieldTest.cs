@@ -1,7 +1,3 @@
-using AwesomeAssertions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 namespace Jira.Api.Test;
 
 public class CustomFieldTest

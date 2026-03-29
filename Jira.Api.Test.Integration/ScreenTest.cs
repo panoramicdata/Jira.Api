@@ -1,10 +1,9 @@
-using AwesomeAssertions;
-
 namespace Jira.Api.Test.Integration;
 
 /// <remarks>
 /// Screen URL used in this test: http://localhost:8080/plugins/servlet/project-config/TST/screens/1
 /// </remarks>
+[Trait("Category", "WritesToApi")]
 public class ScreenTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private const string _sscreenId = "1";

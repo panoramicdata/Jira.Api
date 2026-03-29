@@ -1,10 +1,6 @@
-using AwesomeAssertions;
-using Jira.Api.Exceptions;
-using RestSharp;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class RestTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -19,6 +15,7 @@ public class RestTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task ExecuteRawRestRequest(JiraClient jira)
 	{
 		var issue = new Issue(jira, "TST")

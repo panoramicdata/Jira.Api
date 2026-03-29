@@ -1,6 +1,3 @@
-using AwesomeAssertions;
-using RestSharp;
-
 namespace Jira.Api.Test;
 
 public class ScreenServiceTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)

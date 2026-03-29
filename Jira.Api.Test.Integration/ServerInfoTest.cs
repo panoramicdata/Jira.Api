@@ -1,7 +1,6 @@
-using AwesomeAssertions;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class ServerInfoTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -24,7 +23,7 @@ public class ServerInfoTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 		serverInfo.DeploymentType.Should().Be("Server");
 		serverInfo.ServerTitle.Should().Be("Your Company JiraClient");
 		serverInfo.HealthChecks.Should().NotBeNull();
-		Assert.NotEmpty(serverInfo.HealthChecks);
+       serverInfo.HealthChecks.Should().NotBeEmpty();
 	}
 }
 

@@ -1,8 +1,6 @@
-using AwesomeAssertions;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	private JiraUserCreationInfo BuildUserInfo()
@@ -19,6 +17,7 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task CreateGetAndDeleteUsers(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
@@ -48,6 +47,7 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+    [Trait("Category", "WritesToApi")]
 	public async Task CreateGetAndDeleteUsersWithEmailAsUsername(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
@@ -93,6 +93,7 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+   [Trait("Category", "WritesToApi")]
 	public async Task SearchAssignableUsersForIssue(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
@@ -118,6 +119,7 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task SearchAssignableUsersForProject(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
@@ -143,6 +145,7 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+  [Trait("Category", "WritesToApi")]
 	public async Task SearchAssignableUsersForProjects(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();

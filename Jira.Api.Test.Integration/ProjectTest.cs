@@ -1,8 +1,6 @@
-using AwesomeAssertions;
-using System.Security.Cryptography;
-
 namespace Jira.Api.Test.Integration;
 
+[Trait("Category", "WritesToApi")]
 public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 
@@ -18,6 +16,7 @@ public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+  [Trait("Category", "WritesToApi")]
 	public async Task AddAndRemoveProjectComponent(JiraClient jira)
 	{
 		var componentName = "New Component " + RandomNumberGenerator.GetInt32(int.MaxValue);
@@ -48,6 +47,7 @@ public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task GetAndUpdateProjectVersions(JiraClient jira)
 	{
 		var startDate = new DateTime(2000, 11, 1);
@@ -68,6 +68,7 @@ public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+ [Trait("Category", "WritesToApi")]
 	public async Task AddAndRemoveProjectVersions(JiraClient jira)
 	{
 		var versionName = "New Version " + RandomNumberGenerator.GetInt32(int.MaxValue);
