@@ -1663,8 +1663,8 @@ namespace Jira.Api.Remote
 			}
 		}
 
-		[System.Xml.Serialization.SoapIgnore]
 		/// <remarks/>
+		[System.Xml.Serialization.SoapIgnore]
 		public string description
 		{
 			get

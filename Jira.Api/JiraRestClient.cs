@@ -230,49 +230,62 @@ public class JiraRestClient : IJiraRestClient
 			Trace.WriteLine($"[{request.Method}] Response for Url: {request.Resource}\n{content}");
 		}
 
+		ValidateResponse(response, content);
+
+		if (string.IsNullOrWhiteSpace(content))
+		{
+			return new JObject();
+		}
+
+		if (!content.StartsWith('{') && !content.StartsWith('['))
+		{
+			throw new InvalidOperationException($"Response was not recognized as JSON. Content: {content}");
+		}
+
+		return ParseJsonContent(content);
+	}
+
+	private static void ValidateResponse(RestResponse response, string content)
+	{
 		if (!string.IsNullOrEmpty(response.ErrorMessage))
 		{
 			throw new InvalidOperationException($"Error Message: {response.ErrorMessage}");
 		}
-		else if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Unauthorized)
+
+		if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Unauthorized)
 		{
 			throw new System.Security.Authentication.AuthenticationException($"Response Content: {content}");
 		}
-		else if (response.StatusCode == HttpStatusCode.NotFound)
+
+		if (response.StatusCode == HttpStatusCode.NotFound)
 		{
 			throw new ResourceNotFoundException($"Response Content: {content}");
 		}
-		else if ((int)response.StatusCode >= 400)
+
+		if ((int)response.StatusCode >= 400)
 		{
 			throw new InvalidOperationException($"Response Status Code: {(int)response.StatusCode}. Response Content: {content}");
 		}
-		else if (string.IsNullOrWhiteSpace(content))
-		{
-			return new JObject();
-		}
-		else if (!content.StartsWith('{') && !content.StartsWith('['))
-		{
-			throw new InvalidOperationException($"Response was not recognized as JSON. Content: {content}");
-		}
-		else
-		{
-			JToken parsedContent;
+	}
 
-			try
-			{
-				parsedContent = JToken.Parse(content);
-			}
-			catch (JsonReaderException ex)
-			{
-				throw new InvalidOperationException($"Failed to parse response as JSON. Content: {content}", ex);
-			}
+	private static JToken? ParseJsonContent(string content)
+	{
+		JToken parsedContent;
 
-			if (parsedContent != null && parsedContent.Type == JTokenType.Object && parsedContent["errorMessages"] != null)
-			{
-				throw new InvalidOperationException($"Response reported error(s) from JIRA: {parsedContent["errorMessages"]}");
-			}
-
-			return parsedContent;
+		try
+		{
+			parsedContent = JToken.Parse(content);
 		}
+		catch (JsonReaderException ex)
+		{
+			throw new InvalidOperationException($"Failed to parse response as JSON. Content: {content}", ex);
+		}
+
+		if (parsedContent != null && parsedContent.Type == JTokenType.Object && parsedContent["errorMessages"] != null)
+		{
+			throw new InvalidOperationException($"Response reported error(s) from JIRA: {parsedContent["errorMessages"]}");
+		}
+
+		return parsedContent;
 	}
 }

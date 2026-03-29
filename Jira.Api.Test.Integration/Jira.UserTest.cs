@@ -1,14 +1,13 @@
 using AwesomeAssertions;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
-
 	private JiraUserCreationInfo BuildUserInfo()
 	{
-		var rand = _random.Next(int.MaxValue);
+		var rand = RandomNumberGenerator.GetInt32(int.MaxValue);
 		return new JiraUserCreationInfo()
 		{
 			Username = "test" + rand,

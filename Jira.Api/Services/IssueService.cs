@@ -417,7 +417,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		}
 
 		var queryString = _jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username";
-		var resourceUrl = string.Format($"rest/api/2/issue/{issueKey}/watchers?{queryString}={Uri.EscapeUriString(username)}");
+		var resourceUrl = string.Format($"rest/api/2/issue/{issueKey}/watchers?{queryString}={Uri.EscapeDataString(username)}");
 		return _jira.RestClient.ExecuteRequestAsync(Method.Delete, resourceUrl, null, cancellationToken);
 	}
 

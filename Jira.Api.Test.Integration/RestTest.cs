@@ -1,13 +1,12 @@
 using AwesomeAssertions;
 using Jira.Api.Exceptions;
 using RestSharp;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class RestTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
-
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task ExecuteRestRequest(JiraClient jira)
@@ -25,7 +24,7 @@ public class RestTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
-			Summary = "Test Summary " + _random.Next(int.MaxValue),
+			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 

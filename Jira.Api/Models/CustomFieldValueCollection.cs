@@ -154,20 +154,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 
 		if (searchByProject)
 		{
-			// There are multiple custom fields with the same name, need to find it by the project.
-			var options = new CustomFieldFetchOptions();
-			options.ProjectKeys.Add(_issue.Project);
-
-			if (!string.IsNullOrEmpty(_issue.Type?.Id))
-			{
-				options.IssueTypeIds.Add(_issue.Type.Id);
-			}
-			else if (!string.IsNullOrEmpty(_issue.Type?.Name))
-			{
-				options.IssueTypeNames.Add(_issue.Type.Name);
-			}
-
-			customFields = _issue.Jira.Fields.GetCustomFieldsAsync(options, default).Result.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+			customFields = GetCustomFieldsByProject(fieldName);
 		}
 
 		if (!customFields.Any())
@@ -182,10 +169,25 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 
 			throw new InvalidOperationException(errorMessage);
 		}
-		else
+
+		return customFields.Single().Id;
+	}
+
+	private IEnumerable<CustomField> GetCustomFieldsByProject(string fieldName)
+	{
+		var options = new CustomFieldFetchOptions();
+		options.ProjectKeys.Add(_issue.Project);
+
+		if (!string.IsNullOrEmpty(_issue.Type?.Id))
 		{
-			return customFields.Single().Id;
+			options.IssueTypeIds.Add(_issue.Type.Id);
 		}
+		else if (!string.IsNullOrEmpty(_issue.Type?.Name))
+		{
+			options.IssueTypeNames.Add(_issue.Type.Name);
+		}
+
+		return _issue.Jira.Fields.GetCustomFieldsAsync(options, default).Result.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
 	}
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)

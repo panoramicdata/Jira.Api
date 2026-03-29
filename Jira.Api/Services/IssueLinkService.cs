@@ -45,12 +45,10 @@ internal class IssueLinkService(JiraClient jira) : IIssueLinkService
 		var issueLinksResult = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 		var issueLinksJson = issueLinksResult["fields"]["issuelinks"] ?? throw new InvalidOperationException("There is no 'issueLinks' field on the issue data, make sure issue linking is turned on in JIRA.");
 		var issueLinks = issueLinksJson.Cast<JObject>();
-		var filteredIssueLinks = issueLinks;
 
-		if (linkTypeNames != null)
-		{
-			filteredIssueLinks = issueLinks.Where(link => linkTypeNames.Contains(link["type"]["name"].ToString(), StringComparer.InvariantCultureIgnoreCase));
-		}
+		var filteredIssueLinks = linkTypeNames != null
+			? issueLinks.Where(link => linkTypeNames.Contains(link["type"]["name"].ToString(), StringComparer.InvariantCultureIgnoreCase))
+			: issueLinks;
 
 		var issuesToGet = filteredIssueLinks.Select(issueLink =>
 		{
@@ -64,19 +62,20 @@ internal class IssueLinkService(JiraClient jira) : IIssueLinkService
 			issuesMap.Add(issue.Key.ToString(), issue);
 		}
 
+		return filteredIssueLinks.Select(issueLink => CreateIssueLink(issueLink, issue, issuesMap, serializerSettings));
+	}
 
-		return filteredIssueLinks.Select(issueLink =>
-		{
-			var linkType = JsonConvert.DeserializeObject<IssueLinkType>(issueLink["type"].ToString(), serializerSettings);
-			var outwardIssue = issueLink["outwardIssue"];
-			var inwardIssue = issueLink["inwardIssue"];
-			var outwardIssueKey = outwardIssue != null ? (string)outwardIssue["key"] : null;
-			var inwardIssueKey = inwardIssue != null ? (string)inwardIssue["key"] : null;
-			return new IssueLink(
-				linkType,
-				outwardIssueKey == null ? issue : issuesMap[outwardIssueKey],
-				inwardIssueKey == null ? issue : issuesMap[inwardIssueKey]);
-		});
+	private static IssueLink CreateIssueLink(JObject issueLink, Issue currentIssue, IDictionary<string, Issue> issuesMap, JsonSerializerSettings serializerSettings)
+	{
+		var linkType = JsonConvert.DeserializeObject<IssueLinkType>(issueLink["type"].ToString(), serializerSettings);
+		var outwardIssue = issueLink["outwardIssue"];
+		var inwardIssue = issueLink["inwardIssue"];
+		var outwardIssueKey = outwardIssue != null ? (string)outwardIssue["key"] : null;
+		var inwardIssueKey = inwardIssue != null ? (string)inwardIssue["key"] : null;
+		return new IssueLink(
+			linkType,
+			outwardIssueKey == null ? currentIssue : issuesMap[outwardIssueKey],
+			inwardIssueKey == null ? currentIssue : issuesMap[inwardIssueKey]);
 	}
 
 	public async Task<IEnumerable<IssueLinkType>> GetLinkTypesAsync(CancellationToken cancellationToken)

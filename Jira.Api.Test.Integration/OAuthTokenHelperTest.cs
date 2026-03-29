@@ -24,10 +24,10 @@ public class OAuthTokenHelperTest(ITestOutputHelper outputHelper) : TestBase(out
 
 		// Attempt to get an access token before it has been authorized.
 		var oAuthAccessTokenSettings = new OAuthAccessTokenSettings(oAuthTokenSettings, oAuthRequestToken);
-		var accessToken = await OAuthTokenHelper.ObtainAccessTokenAsync(oAuthAccessTokenSettings, CancellationToken.None);
+		var accessTokenResult = await OAuthTokenHelper.ObtainOAuthAccessTokenAsync(oAuthAccessTokenSettings, CancellationToken.None);
 
 		// Verify no access token is granted.
-		accessToken.Should().BeNull();
+		accessTokenResult.Should().BeNull();
 
 		// Login to Jira
 		var page = new HtmlPage(new Uri(JiraProvider.HOST));
@@ -42,10 +42,10 @@ public class OAuthTokenHelperTest(ITestOutputHelper outputHelper) : TestBase(out
 		page.RootElement.ChildElements.Find("approve").Click();
 
 		// Re-Attempt to get an access token
-		accessToken = await OAuthTokenHelper.ObtainAccessTokenAsync(oAuthAccessTokenSettings, CancellationToken.None);
+		accessTokenResult = await OAuthTokenHelper.ObtainOAuthAccessTokenAsync(oAuthAccessTokenSettings, CancellationToken.None);
 
 		// Verify access token exists.
-		accessToken.Should().NotBeNull();
+		accessTokenResult.Should().NotBeNull();
 	}
 }
 

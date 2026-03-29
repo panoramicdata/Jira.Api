@@ -50,6 +50,16 @@ public class Issue : IRemoteIssueFieldProvider
 	{
 		OriginalRemoteIssue = remoteIssue;
 
+		InitializeScalarFields(remoteIssue);
+		InitializeNamedEntities(remoteIssue);
+		InitializeCollections(remoteIssue);
+
+		// additional fields
+		AdditionalFields = new IssueFields(OriginalRemoteIssue, Jira);
+	}
+
+	private void InitializeScalarFields(RemoteIssue remoteIssue)
+	{
 		Project = remoteIssue.project;
 		Key = remoteIssue.key;
 		Created = remoteIssue.created;
@@ -73,14 +83,30 @@ public class Issue : IRemoteIssueFieldProvider
 		{
 			ParentIssueKey = remoteIssue.parentKey;
 		}
+	}
 
-		// named entities
-		Status = remoteIssue.status == null ? null : new IssueStatus(remoteIssue.status);
-		Priority = remoteIssue.priority == null ? null : new IssuePriority(remoteIssue.priority);
-		Resolution = remoteIssue.resolution == null ? null : new IssueResolution(remoteIssue.resolution);
-		Type = remoteIssue.type == null ? null : new IssueType(remoteIssue.type);
+	private static IssueStatus? CreateIssueStatus(RemoteStatus? status)
+		=> status == null ? null : new IssueStatus(status);
 
-		// collections
+	private static IssuePriority? CreateIssuePriority(RemotePriority? priority)
+		=> priority == null ? null : new IssuePriority(priority);
+
+	private static IssueResolution? CreateIssueResolution(RemoteResolution? resolution)
+		=> resolution == null ? null : new IssueResolution(resolution);
+
+	private static IssueType? CreateIssueType(RemoteIssueType? type)
+		=> type == null ? null : new IssueType(type);
+
+	private void InitializeNamedEntities(RemoteIssue remoteIssue)
+	{
+		Status = CreateIssueStatus(remoteIssue.status);
+		Priority = CreateIssuePriority(remoteIssue.priority);
+		Resolution = CreateIssueResolution(remoteIssue.resolution);
+		Type = CreateIssueType(remoteIssue.type);
+	}
+
+	private void InitializeCollections(RemoteIssue remoteIssue)
+	{
 		CustomFields = OriginalRemoteIssue.customFieldValues == null ? new CustomFieldValueCollection(this)
 			: new CustomFieldValueCollection(this, [.. OriginalRemoteIssue.customFieldValues.Select(f => new CustomFieldValue(f.customfieldId, this) { Values = f.values, RawValue = f.rawValue })]);
 
@@ -107,9 +133,6 @@ public class Issue : IRemoteIssueFieldProvider
 			c.ProjectKey = OriginalRemoteIssue.project;
 			return new ProjectComponent(c);
 		})]);
-
-		// additional fields
-		AdditionalFields = new IssueFields(OriginalRemoteIssue, Jira);
 	}
 
 	internal RemoteIssue OriginalRemoteIssue { get; private set; }
@@ -1003,6 +1026,14 @@ public class Issue : IRemoteIssueFieldProvider
 			key = Key?.Value
 		};
 
+		await PopulateNamedEntitiesAsync(remote, cancellationToken).ConfigureAwait(false);
+		PopulateCollections(remote);
+
+		return remote;
+	}
+
+	private async Task PopulateNamedEntitiesAsync(RemoteIssue remote, CancellationToken cancellationToken)
+	{
 		if (Status != null)
 		{
 			await Status.LoadIdAndNameAsync(Jira, cancellationToken).ConfigureAwait(false);
@@ -1026,7 +1057,10 @@ public class Issue : IRemoteIssueFieldProvider
 			await Type.LoadIdAndNameAsync(Jira, cancellationToken).ConfigureAwait(false);
 			remote.type = new RemoteIssueType { id = Type.Id, name = Type.Name };
 		}
+	}
 
+	private void PopulateCollections(RemoteIssue remote)
+	{
 		if (AffectsVersions.Count > 0)
 		{
 			remote.affectsVersions = [.. AffectsVersions.Select(v => v.RemoteVersion)];
@@ -1056,8 +1090,6 @@ public class Issue : IRemoteIssueFieldProvider
 		{
 			remote.labels = [.. Labels];
 		}
-
-		return remote;
 	}
 
 	private async Task<string> GetStringValueForPropertyAsync(object container, PropertyInfo property, CancellationToken cancellationToken)
@@ -1069,28 +1101,28 @@ public class Issue : IRemoteIssueFieldProvider
 			var dateValue = (DateTime?)value;
 			return dateValue.HasValue ? dateValue.Value.ToString("d/MMM/yy") : null;
 		}
-		else if (typeof(JiraNamedEntity).IsAssignableFrom(property.PropertyType))
-		{
-			if (property.GetValue(container, null) is JiraNamedEntity jiraNamedEntity)
-			{
-				await jiraNamedEntity.LoadIdAndNameAsync(Jira, cancellationToken).ConfigureAwait(false);
-				return jiraNamedEntity.Id;
-			}
 
-			return null;
-		}
-		else if (typeof(AbstractNamedRemoteEntity).IsAssignableFrom(property.PropertyType))
+		if (typeof(JiraNamedEntity).IsAssignableFrom(property.PropertyType))
 		{
-			if (property.GetValue(container, null) is AbstractNamedRemoteEntity remoteEntity)
-			{
-				return remoteEntity.id;
-			}
+			return await GetJiraNamedEntityIdAsync(container, property, cancellationToken).ConfigureAwait(false);
+		}
 
-			return null;
-		}
-		else
+		if (typeof(AbstractNamedRemoteEntity).IsAssignableFrom(property.PropertyType))
 		{
-			return value?.ToString();
+			return (property.GetValue(container, null) as AbstractNamedRemoteEntity)?.id;
 		}
+
+		return value?.ToString();
+	}
+
+	private async Task<string> GetJiraNamedEntityIdAsync(object container, PropertyInfo property, CancellationToken cancellationToken)
+	{
+		if (property.GetValue(container, null) is JiraNamedEntity jiraNamedEntity)
+		{
+			await jiraNamedEntity.LoadIdAndNameAsync(Jira, cancellationToken).ConfigureAwait(false);
+			return jiraNamedEntity.Id;
+		}
+
+		return null;
 	}
 }

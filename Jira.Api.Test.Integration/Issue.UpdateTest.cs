@@ -1,17 +1,17 @@
 using AwesomeAssertions;
 using RestSharp;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateIssueAsync(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -33,7 +33,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	public async Task UpdateNamedEntities_ById(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "AutoLoadNamedEntities_ById " + _random.Next(int.MaxValue);
+		issue.Summary = "AutoLoadNamedEntities_ById " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "1";
 		issue.Priority = "5";
 		await issue.SaveChangesAsync(CancellationToken);
@@ -50,7 +50,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	public async Task UpdateNamedEntities_ByName(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "AutoLoadNamedEntities_Name " + _random.Next(int.MaxValue);
+		issue.Summary = "AutoLoadNamedEntities_Name " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		issue.Priority = "Trivial";
 		await issue.SaveChangesAsync(CancellationToken);
@@ -66,7 +66,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateIssueType(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -90,7 +90,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	public async Task UpdateWithAllFieldsSet(JiraClient jira)
 	{
 		// arrange, create an issue to test.
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Assignee = "admin",
@@ -131,7 +131,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateAssignee(JiraClient jira)
 	{
-		var summaryValue = "Test issue with assignee (Updated)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with assignee (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -155,7 +155,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateComment(JiraClient jira)
 	{
-		var summaryValue = "Test Summary with comments " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary with comments " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -197,7 +197,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveVersions(JiraClient jira)
 	{
-		var summaryValue = "Test issue with versions (Updated)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with versions (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -251,7 +251,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveComponents(JiraClient jira)
 	{
-		var summaryValue = "Test issue with components (Updated)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with components (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -289,7 +289,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveLabelsFromIssue(JiraClient jira)
 	{
-		var summaryValue = "Test issue with labels (Updated)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with labels (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -318,7 +318,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateIssueWithCustomField(JiraClient jira)
 	{
-		var summaryValue = "Test issue with custom field (Updated)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with custom field (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -343,7 +343,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "Bug",
-			Summary = "Test Summary " + _random.Next(int.MaxValue),
+			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 		await issue.SaveChangesAsync(CancellationToken);

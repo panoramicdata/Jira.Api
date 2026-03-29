@@ -1,10 +1,10 @@
 using AwesomeAssertions;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
@@ -20,7 +20,7 @@ public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveProjectComponent(JiraClient jira)
 	{
-		var componentName = "New Component " + _random.Next(int.MaxValue);
+		var componentName = "New Component " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var projectInfo = new ProjectComponentCreationInfo(componentName);
 		var project = (await jira.Projects.GetProjectsAsync(CancellationToken)).First();
 
@@ -55,7 +55,7 @@ public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper
 		(versions.Count() >= 3).Should().BeTrue();
 
 		var version = versions.First(v => v.Name == "1.0");
-		var newDescription = "1.0 Release " + _random.Next(int.MaxValue);
+		var newDescription = "1.0 Release " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		version.Description = newDescription;
 		version.StartDate = startDate;
 		await version.SaveChangesAsync(CancellationToken);
@@ -70,7 +70,7 @@ public class ProjectTest(ITestOutputHelper outputHelper) : TestBase(outputHelper
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveProjectVersions(JiraClient jira)
 	{
-		var versionName = "New Version " + _random.Next(int.MaxValue);
+		var versionName = "New Version " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var project = (await jira.Projects.GetProjectsAsync(CancellationToken)).First();
 		var projectInfo = new ProjectVersionCreationInfo(versionName)
 		{

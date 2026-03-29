@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 <PropertyGroup>
 <TargetFrameworks>net10.0</TargetFrameworks>
-<Nullable>enable</Nullable>
 <UserSecretsId>JiraApiIntegrationTests</UserSecretsId>
 </PropertyGroup>
 <ItemGroup>
@@ -10,26 +9,26 @@
 <None Remove="Properties**" />
 </ItemGroup>
 <ItemGroup>
-<PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-<PackageReference Include="AwesomeAssertions.Analyzers" Version="9.0.8">
+<PackageReference Include="AwesomeAssertions" />
+<PackageReference Include="AwesomeAssertions.Analyzers">
 <PrivateAssets>all</PrivateAssets>
 <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 </PackageReference>
-<PackageReference Include="coverlet.collector" Version="6.0.4">
+<PackageReference Include="coverlet.collector">
 <PrivateAssets>all</PrivateAssets>
 <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 </PackageReference>
-<PackageReference Include="LTAF.Navigator" Version="0.1.0" />
-<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
-<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.5" />
-<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.5" />
-<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
-<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-<PackageReference Include="RestSharp" Version="114.0.0" />
-<PackageReference Include="xunit.v3" Version="3.2.2" />
-<PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="10.0.2" />
-<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+<PackageReference Include="LTAF.Navigator" />
+<PackageReference Include="Microsoft.Extensions.Configuration" />
+<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+<PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+<PackageReference Include="Microsoft.NET.Test.Sdk" />
+<PackageReference Include="Newtonsoft.Json" />
+<PackageReference Include="RestSharp" />
+<PackageReference Include="xunit.v3" />
+<PackageReference Include="Xunit.Microsoft.DependencyInjection" />
+<PackageReference Include="xunit.runner.visualstudio">
 <PrivateAssets>all</PrivateAssets>
 <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 </PackageReference>

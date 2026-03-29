@@ -19,20 +19,20 @@ public class OAuthRequestToken(
 	/// <summary>
 	/// The URL to authorize the request token
 	/// </summary>
-	public readonly string AuthorizeUri = authorizeUri;
+	public string AuthorizeUri { get; } = authorizeUri;
 
 	/// <summary>
 	/// The OAuth request token
 	/// </summary>
-	public readonly string OAuthToken = oAuthToken;
+	public string OAuthToken { get; } = oAuthToken;
 
 	/// <summary>
 	/// The OAuth token secret
 	/// </summary>
-	public readonly string OAuthTokenSecret = oAuthTokenSecret;
+	public string OAuthTokenSecret { get; } = oAuthTokenSecret;
 
 	/// <summary>
 	/// The OAuth callback confirmation code
 	/// </summary>
-	public readonly string OAuthCallbackConfirmation = oAuthCallbackConfirmation;
+	public string OAuthCallbackConfirmation { get; } = oAuthCallbackConfirmation;
 }

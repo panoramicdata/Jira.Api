@@ -189,29 +189,28 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		}
 
 		// operator
-		var operatorString = string.Empty;
-		PropertyInfo propertyInfo = null;
-
-		if (value is LiteralMatch)
-		{
-			// If the right value is a LiteralMatch, ignore the custom attribute.
-			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
-		}
-		else if (TryGetPropertyInfoFromBinaryExpression(expression, out propertyInfo)
-			&& propertyInfo.GetCustomAttributes(typeof(JqlContainsEqualityAttribute), true).Length > 0)
-		{
-			// Use the equality comparer depending on the presence of custom attribute.
-			operatorString = equal ? JiraOperators.CONTAINS : JiraOperators.NOTCONTAINS;
-		}
-		else
-		{
-			operatorString = equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
-		}
+		var operatorString = GetEqualityOperator(expression, value, equal);
 
 		_jqlWhere.Append($" {operatorString} ");
 
 		// value
 		ProcessConstant(value);
+	}
+
+	private static string GetEqualityOperator(BinaryExpression expression, object value, bool equal)
+	{
+		if (value is LiteralMatch)
+		{
+			return equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
+		}
+
+		if (TryGetPropertyInfoFromBinaryExpression(expression, out var propertyInfo)
+			&& propertyInfo.GetCustomAttributes(typeof(JqlContainsEqualityAttribute), true).Length > 0)
+		{
+			return equal ? JiraOperators.CONTAINS : JiraOperators.NOTCONTAINS;
+		}
+
+		return equal ? JiraOperators.EQUALS : JiraOperators.NOTEQUALS;
 	}
 
 	private void ProcessConstant(object value)
@@ -317,15 +316,22 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 	/// <inheritdoc/>
 	protected override Expression VisitBinary(BinaryExpression node)
 	{
-		var isWhere = _whereExpressions.Contains(node);
-		var firstWhere = _jqlWhere.Length == 0;
-		if (isWhere && !firstWhere)
+		PrependWhereConjunction(node);
+		ProcessBinaryNode(node);
+		return node;
+	}
+
+	private void PrependWhereConjunction(BinaryExpression node)
+	{
+		if (_whereExpressions.Contains(node) && _jqlWhere.Length > 0)
 		{
 			_jqlWhere.Append(" and ");
 			_whereExpressions.Remove(node);
 		}
+	}
 
-
+	private void ProcessBinaryNode(BinaryExpression node)
+	{
 		switch (node.NodeType)
 		{
 			case ExpressionType.GreaterThan:
@@ -362,10 +368,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 
 			default:
 				throw new NotSupportedException($"Expression type '{node.NodeType}' is not supported.");
-
 		}
-
-		return node;
 	}
 
 }

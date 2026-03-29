@@ -1,10 +1,10 @@
 using AwesomeAssertions;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
@@ -13,7 +13,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "Bug",
-			Summary = "Test Summary " + _random.Next(int.MaxValue),
+			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 
@@ -35,7 +35,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		var issue = new Issue(jira, fields)
 		{
 			Type = "1",
-			Summary = "Test Summary " + _random.Next(int.MaxValue),
+			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 
@@ -47,7 +47,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateIssueAsync(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -77,7 +77,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithMinimumFieldsSet(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -103,7 +103,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithAllFieldsSet(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var expectedDueDate = new DateTime(2011, 12, 12);
 		var issue = jira.CreateIssue("TST");
 		await issue.AffectsVersions.AddAsync("1.0", CancellationToken);
@@ -141,12 +141,12 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	{
 		var parentTask = jira.CreateIssue("TST");
 		parentTask.Type = "1";
-		parentTask.Summary = "Test issue with SubTask" + _random.Next(int.MaxValue);
+		parentTask.Summary = "Test issue with SubTask" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		await parentTask.SaveChangesAsync(CancellationToken);
 
 		var subTask = jira.CreateIssue("TST", parentTask.Key.Value);
 		subTask.Type = "5"; // SubTask issue type.
-		subTask.Summary = "Test SubTask" + _random.Next(int.MaxValue);
+		subTask.Summary = "Test SubTask" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		await subTask.SaveChangesAsync(CancellationToken);
 
 		parentTask.Type.IsSubTask.Should().BeFalse();
@@ -164,7 +164,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithVersions(JiraClient jira)
 	{
-		var summaryValue = "Test issue with versions (Created)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with versions (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -199,7 +199,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithComponents(JiraClient jira)
 	{
-		var summaryValue = "Test issue with components (Created)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with components (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -226,7 +226,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithCustomField(JiraClient jira)
 	{
-		var summaryValue = "Test issue with custom field (Created)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with custom field (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -251,7 +251,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateIssueAsSubtask(JiraClient jira)
 	{
-		var summaryValue = "Test issue as subtask " + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue as subtask " + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST", "TST-1")
 		{

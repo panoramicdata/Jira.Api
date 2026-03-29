@@ -1,0 +1,12 @@
+<Project>
+	<PropertyGroup>
+		<Company>Panoramic Data Limited</Company>
+		<Authors>Panoramic Data Limited</Authors>
+		<Copyright>Copyright © $([System.DateTime]::Now.Year) Panoramic Data Limited</Copyright>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<Nullable>enable</Nullable>
+		<NuGetAuditMode>All</NuGetAuditMode>
+		<!-- Nullable warnings remain as warnings until the codebase is fully annotated -->
+		<WarningsNotAsErrors>CS8073;CS8597;CS8600;CS8601;CS8602;CS8603;CS8604;CS8613;CS8618;CS8619;CS8620;CS8625;CS8629;CS8765;CS8766;CS8767;CS9264</WarningsNotAsErrors>
+	</PropertyGroup>
+</Project>

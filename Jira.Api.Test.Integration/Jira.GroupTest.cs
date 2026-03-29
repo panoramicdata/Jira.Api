@@ -1,17 +1,17 @@
 using AwesomeAssertions;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class JiraGroupTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndRemoveGroupWithUser(JiraClient jira)
 	{
 		// Create the group.
-		var groupName = $"test-group-{_random.Next(int.MaxValue)}";
+		var groupName = $"test-group-{RandomNumberGenerator.GetInt32(int.MaxValue)}";
 		await jira.Groups.CreateGroupAsync(groupName, CancellationToken);
 
 		// Add user to group
@@ -35,7 +35,7 @@ public class JiraGroupTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 	public async Task CreateAndRemoveGroupWithSpecialCharacterAndUser(JiraClient jira)
 	{
 		// Create the group.
-		var groupName = $"test-group-@@@@-{_random.Next(int.MaxValue)}";
+		var groupName = $"test-group-@@@@-{RandomNumberGenerator.GetInt32(int.MaxValue)}";
 		await jira.Groups.CreateGroupAsync(groupName, CancellationToken);
 
 		// Add user to group

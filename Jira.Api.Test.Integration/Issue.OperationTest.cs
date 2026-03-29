@@ -1,12 +1,12 @@
 using AwesomeAssertions;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
@@ -14,7 +14,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
-		issue.Summary = "Test issue to assign" + _random.Next(int.MaxValue);
+		issue.Summary = "Test issue to assign" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		await issue.SaveChangesAsync(CancellationToken);
 		issue.Assignee.Should().Be("admin");
@@ -54,7 +54,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	{
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
-		issue.Summary = "Test issue with watchers" + _random.Next(int.MaxValue);
+		issue.Summary = "Test issue with watchers" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		await issue.SaveChangesAsync(CancellationToken);
 
 		await issue.AddWatcherAsync("test", CancellationToken);
@@ -77,11 +77,11 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// Create issue.
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
-		issue.Summary = "Test issue with watchers" + _random.Next(int.MaxValue);
+		issue.Summary = "Test issue with watchers" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		await issue.SaveChangesAsync(CancellationToken);
 
 		// Create user with e-mail as username.
-		var rand = _random.Next(int.MaxValue);
+		var rand = RandomNumberGenerator.GetInt32(int.MaxValue);
 		var userInfo = new JiraUserCreationInfo()
 		{
 			Username = $"test{rand}@user.com",
@@ -109,12 +109,12 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	{
 		var parentTask = jira.CreateIssue("TST");
 		parentTask.Type = "1";
-		parentTask.Summary = "Test issue with SubTask" + _random.Next(int.MaxValue);
+		parentTask.Summary = "Test issue with SubTask" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		await parentTask.SaveChangesAsync(CancellationToken);
 
 		var subTask = jira.CreateIssue("TST", parentTask.Key.Value);
 		subTask.Type = "5"; // SubTask issue type.
-		subTask.Summary = "Test SubTask" + _random.Next(int.MaxValue);
+		subTask.Summary = "Test SubTask" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		await subTask.SaveChangesAsync(CancellationToken);
 
 		var results = await parentTask.GetSubTasksAsync(0, null, CancellationToken);
@@ -127,7 +127,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task RetrieveEmptyIssueLinks(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue with no links " + _random.Next(int.MaxValue);
+		issue.Summary = "Issue with no links " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -139,17 +139,17 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task AddAndRetrieveIssueLinks(JiraClient jira)
 	{
 		var issue1 = jira.CreateIssue("TST");
-		issue1.Summary = "Issue to link from" + _random.Next(int.MaxValue);
+		issue1.Summary = "Issue to link from" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue1.Type = "Bug";
 		await issue1.SaveChangesAsync(CancellationToken);
 
 		var issue2 = jira.CreateIssue("TST");
-		issue2.Summary = "Issue to link to " + _random.Next(int.MaxValue);
+		issue2.Summary = "Issue to link to " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue2.Type = "Bug";
 		await issue2.SaveChangesAsync(CancellationToken);
 
 		var issue3 = jira.CreateIssue("TST");
-		issue3.Summary = "Issue to link to " + _random.Next(int.MaxValue);
+		issue3.Summary = "Issue to link to " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue3.Type = "Bug";
 		await issue3.SaveChangesAsync(CancellationToken);
 
@@ -195,7 +195,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task AddAndRetrieveRemoteLinks(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue to link from" + _random.Next(int.MaxValue);
+		issue.Summary = "Issue to link from" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -277,7 +277,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task TransitionIssueAsync(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue to resolve with async" + _random.Next(int.MaxValue);
+		issue.Summary = "Issue to resolve with async" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -294,7 +294,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task TransitionIssueByIdAsync(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue to resolve with async" + _random.Next(int.MaxValue);
+		issue.Summary = "Issue to resolve with async" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -312,7 +312,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task TransitionIssueAsyncWithCommentAndFields(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue to resolve with async" + _random.Next(int.MaxValue);
+		issue.Summary = "Issue to resolve with async" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -337,7 +337,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task Transition_ResolveIssue(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue to resolve " + _random.Next(int.MaxValue);
+		issue.Summary = "Issue to resolve " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -355,7 +355,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task Transition_ResolveIssue_AsWontFix(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue to resolve " + _random.Next(int.MaxValue);
+		issue.Summary = "Issue to resolve " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -371,7 +371,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task GetTimeTrackingDataForIssue(JiraClient jira)
 	{
 		var issue = jira.CreateIssue("TST");
-		issue.Summary = "Issue with timetracking " + _random.Next(int.MaxValue);
+		issue.Summary = "Issue with timetracking " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		issue.Type = "Bug";
 		await issue.SaveChangesAsync(CancellationToken);
 
@@ -411,7 +411,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddGetRemoveAttachmentsFromIssue(JiraClient jira)
 	{
-		var summaryValue = "Test Summary with attachment " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary with attachment " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -458,7 +458,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task DownloadAttachments(JiraClient jira)
 	{
 		// create an issue
-		var summaryValue = "Test Summary with attachment " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary with attachment " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -491,7 +491,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	public async Task DownloadAttachmentData(JiraClient jira)
 	{
 		// create an issue
-		var summaryValue = "Test Summary with attachment " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary with attachment " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -518,7 +518,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndGetComments(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -549,7 +549,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndUpdateComments(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -591,7 +591,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddGetAndDeleteCommentsAsync(JiraClient jira)
 	{
-		var summaryValue = "Test Summary with comments " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary with comments " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -629,7 +629,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task CanRetrievePagedCommentsAsync(JiraClient jira)
 	{
-		var summaryValue = "Test Summary with comments " + _random.Next(int.MaxValue);
+		var summaryValue = "Test Summary with comments " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -665,7 +665,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// Create issue and verify it is found in server.
 		var issue = jira.CreateIssue("TST");
 		issue.Type = "1";
-		issue.Summary = $"Issue to delete ({_random.Next(int.MaxValue)})";
+		issue.Summary = $"Issue to delete ({RandomNumberGenerator.GetInt32(int.MaxValue)})";
 		await issue.SaveChangesAsync(CancellationToken);
 		jira.Issues.Queryable.Where(i => i.Key == issue.Key).Any().Should().BeTrue("Expected issue in server");
 
@@ -679,7 +679,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndGetWorklogs(JiraClient jira)
 	{
-		var summaryValue = "Test issue with work logs" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with work logs" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		var issue = new Issue(jira, "TST")
 		{
@@ -706,7 +706,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[ClassData(typeof(JiraProvider))]
 	public async Task DeleteWorklog(JiraClient jira)
 	{
-		var summary = "Test issue with worklogs" + _random.Next(int.MaxValue);
+		var summary = "Test issue with worklogs" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",

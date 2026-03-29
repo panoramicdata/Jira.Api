@@ -1,11 +1,10 @@
 using AwesomeAssertions;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
-
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task GetIssueThatIncludesOnlyOneBasicField(JiraClient jira)
@@ -217,7 +216,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 	public async Task QueryIssuesWithTakeExpression(JiraClient jira)
 	{
 		// create 2 issues with same summary
-		var randomNumber = _random.Next(int.MaxValue);
+		var randomNumber = RandomNumberGenerator.GetInt32(int.MaxValue);
 		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
 		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
 
@@ -234,7 +233,7 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 	public async Task MaximumNumberOfIssuesPerRequest(JiraClient jira)
 	{
 		// create 2 issues with same summary
-		var randomNumber = _random.Next(int.MaxValue);
+		var randomNumber = RandomNumberGenerator.GetInt32(int.MaxValue);
 		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
 		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
 

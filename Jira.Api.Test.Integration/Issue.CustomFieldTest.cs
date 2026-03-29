@@ -1,11 +1,11 @@
 using AwesomeAssertions;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace Jira.Api.Test.Integration;
 
 public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private readonly Random _random = new();
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
@@ -54,7 +54,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 	[ClassData(typeof(JiraProvider))]
 	public async Task CanSetCustomFieldUsingSearchByProjectOnly(JiraClient jira)
 	{
-		var summaryValue = "Test issue with custom field by project" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with custom field by project" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -99,7 +99,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndReadCustomFieldById(JiraClient jira)
 	{
-		var summaryValue = "Test issue with custom text" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with custom text" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -118,7 +118,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateIssueWithCascadingSelectFieldWithOnlyParentOptionSet(JiraClient jira)
 	{
-		var summaryValue = "Test issue with cascading select" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with cascading select" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -146,7 +146,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
-			Summary = "Test issue with large custom field number" + _random.Next(int.MaxValue),
+			Summary = "Test issue with large custom field number" + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 
@@ -165,7 +165,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var dateTimeStr = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz");
 		dateTimeStr = dateTimeStr.Remove(dateTimeStr.LastIndexOf(':'), 1);
 
-		var summaryValue = "Test issue with lots of custom fields (Created)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with lots of custom fields (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -229,7 +229,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 	[ClassData(typeof(JiraProvider))]
 	public async Task CanClearValueOfCustomField(JiraClient jira)
 	{
-		var summaryValue = "Test issue " + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue " + RandomNumberGenerator.GetInt32(int.MaxValue);
 		var issue = new Issue(jira, "TST")
 		{
 			Type = "1",
@@ -264,7 +264,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var dateTime = new DateTime(2016, 11, 11, 11, 11, 0);
 		var dateTimeStr = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz");
 		dateTimeStr = dateTimeStr.Remove(dateTimeStr.LastIndexOf(':'), 1);
-		var summaryValue = "Test issue with lots of custom fields (Created)" + _random.Next(int.MaxValue);
+		var summaryValue = "Test issue with lots of custom fields (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
 
 		// Create issue with no custom fields set
 		var issue = new Issue(jira, "TST")
@@ -349,7 +349,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var issue = new Issue(jira, "SCRUM")
 		{
 			Type = "Bug",
-			Summary = "Test issue with sprint" + _random.Next(int.MaxValue),
+			Summary = "Test issue with sprint" + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 		// Set the sprint by id
@@ -368,7 +368,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var issue = new Issue(jira, "SCRUM")
 		{
 			Type = "Bug",
-			Summary = "Test issue with sprint" + _random.Next(int.MaxValue),
+			Summary = "Test issue with sprint" + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 		await issue.SaveChangesAsync(CancellationToken);
@@ -390,7 +390,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var issue = new Issue(jira, "SCRUM")
 		{
 			Type = "Bug",
-			Summary = "Test issue with sprint" + _random.Next(int.MaxValue),
+			Summary = "Test issue with sprint" + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 		issue["Sprint"] = "1";
@@ -409,7 +409,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		var issue = new Issue(jira, "SCRUM")
 		{
 			Type = "Bug",
-			Summary = "Test issue with sprint" + _random.Next(int.MaxValue),
+			Summary = "Test issue with sprint" + RandomNumberGenerator.GetInt32(int.MaxValue),
 			Assignee = "admin"
 		};
 

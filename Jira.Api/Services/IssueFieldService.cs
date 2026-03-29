@@ -24,37 +24,16 @@ internal class IssueFieldService(JiraClient jira) : IIssueFieldService
 	public async Task<IEnumerable<CustomField>> GetCustomFieldsAsync(CustomFieldFetchOptions options, CancellationToken cancellationToken)
 	{
 		var cache = _jira.Cache;
-		var projectKey = options.ProjectKeys.FirstOrDefault();
-		var issueTypeId = options.IssueTypeIds.FirstOrDefault();
-		var issueTypeName = options.IssueTypeNames.FirstOrDefault();
+		var projectKey = GetCacheKey(options);
 
-		if (!string.IsNullOrEmpty(issueTypeId) || !string.IsNullOrEmpty(issueTypeName))
-		{
-			projectKey = $"{projectKey}::{issueTypeId}::{issueTypeName}";
-		}
-		else if (string.IsNullOrEmpty(projectKey))
+		if (string.IsNullOrEmpty(projectKey))
 		{
 			return await GetCustomFieldsAsync(cancellationToken);
 		}
 
 		if (!cache.ProjectCustomFields.TryGetValue(projectKey, out JiraEntityDictionary<CustomField> fields))
 		{
-			var resource = $"rest/api/2/issue/createmeta?expand=projects.issuetypes.fields";
-
-			if (options.ProjectKeys.Any())
-			{
-				resource += $"&projectKeys={string.Join(",", options.ProjectKeys)}";
-			}
-
-			if (options.IssueTypeIds.Any())
-			{
-				resource += $"&issuetypeIds={string.Join(",", options.IssueTypeIds)}";
-			}
-
-			if (options.IssueTypeNames.Any())
-			{
-				resource += $"&issuetypeNames={string.Join(",", options.IssueTypeNames)}";
-			}
+			var resource = BuildCreateMetaResource(options);
 
 			var jObject = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 			var jProject = jObject["projects"].FirstOrDefault() ?? throw new InvalidOperationException($"Project with key '{projectKey}' was not found on the JiraClient server.");
@@ -66,6 +45,42 @@ internal class IssueFieldService(JiraClient jira) : IIssueFieldService
 		}
 
 		return cache.ProjectCustomFields[projectKey].Values;
+	}
+
+	private static string? GetCacheKey(CustomFieldFetchOptions options)
+	{
+		var projectKey = options.ProjectKeys.FirstOrDefault();
+		var issueTypeId = options.IssueTypeIds.FirstOrDefault();
+		var issueTypeName = options.IssueTypeNames.FirstOrDefault();
+
+		if (!string.IsNullOrEmpty(issueTypeId) || !string.IsNullOrEmpty(issueTypeName))
+		{
+			return $"{projectKey}::{issueTypeId}::{issueTypeName}";
+		}
+
+		return projectKey;
+	}
+
+	private static string BuildCreateMetaResource(CustomFieldFetchOptions options)
+	{
+		var resource = $"rest/api/2/issue/createmeta?expand=projects.issuetypes.fields";
+
+		if (options.ProjectKeys.Any())
+		{
+			resource += $"&projectKeys={string.Join(",", options.ProjectKeys)}";
+		}
+
+		if (options.IssueTypeIds.Any())
+		{
+			resource += $"&issuetypeIds={string.Join(",", options.IssueTypeIds)}";
+		}
+
+		if (options.IssueTypeNames.Any())
+		{
+			resource += $"&issuetypeNames={string.Join(",", options.IssueTypeNames)}";
+		}
+
+		return resource;
 	}
 
 	public Task<IEnumerable<CustomField>> GetCustomFieldsForProjectAsync(string projectKey, CancellationToken cancellationToken)
