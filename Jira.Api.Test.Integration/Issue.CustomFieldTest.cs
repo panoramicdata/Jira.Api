@@ -363,7 +363,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 		// Get the sprint by name
 		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
-		Assert.Equal("Sprint 1", newIssue["Sprint"]);
+       newIssue["Sprint"].Should().Be("Sprint 1");
 	}
 
 	[Theory]
@@ -386,7 +386,7 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 
 		// Get the sprint by name
 		var newIssue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
-		Assert.Equal("Sprint 1", newIssue["Sprint"]);
+       newIssue["Sprint"].Should().Be("Sprint 1");
 	}
 
 	[Theory]
@@ -402,11 +402,11 @@ public class IssueCustomFieldTest(ITestOutputHelper outputHelper) : TestBase(out
 		};
 		issue["Sprint"] = "1";
 		await issue.SaveChangesAsync(CancellationToken);
-		Assert.Equal("Sprint 1", issue["Sprint"]);
+      issue["Sprint"].Should().Be("Sprint 1");
 
 		issue.Summary += " (Updated)";
 		await issue.SaveChangesAsync(CancellationToken);
-		Assert.Equal("Sprint 1", issue["Sprint"]);
+      issue["Sprint"].Should().Be("Sprint 1");
 	}
 
 	[Theory]

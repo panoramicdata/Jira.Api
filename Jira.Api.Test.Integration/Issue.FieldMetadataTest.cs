@@ -39,7 +39,7 @@ public class IssueFieldMetadataTest(ITestOutputHelper outputHelper) : TestBase(o
 		customRadioField.Operations.Should().ContainSingle();
 		customRadioField.Schema.Type.Should().Be("option");
 		customRadioField.Schema.Custom.Should().Be("com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons");
-		Assert.Equal(10307, customRadioField.Schema.CustomId);
+      customRadioField.Schema.CustomId.Should().Be(10307);
 
 		// assert: allowed values
 		// warning : AllowedValues on IssueFieldEditMetadata could be various kind of objects. One can determine the kind of object

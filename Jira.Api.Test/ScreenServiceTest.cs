@@ -120,7 +120,7 @@ public class ScreenServiceTest(ITestOutputHelper outputHelper) : TestBase(output
 		var tabs = await jira.Screens.GetScreenTabsAsync("1", "PRJ", CancellationToken);
 
 		// Assert
-		tabs.Should().HaveCount(1);
+		tabs.Should().ContainSingle();
 	}
 
 	[Fact]

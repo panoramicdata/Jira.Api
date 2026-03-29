@@ -171,7 +171,7 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 
 		// Cached
 		var result2 = await jira.Statuses.GetStatusesAsync(CancellationToken);
-     result2.Should().HaveCount(result1.Count());
+     result2.Should().HaveSameCount(result1);
 	}
 
 	[Theory]
@@ -184,7 +184,7 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 
 		// Cached
 		var result2 = await jira.IssueTypes.GetIssueTypesAsync(CancellationToken.None);
-     result2.Should().HaveCount(result1.Count());
+     result2.Should().HaveSameCount(result1);
 	}
 
 	[Theory]
@@ -197,7 +197,7 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 
 		// Cached
 		var result2 = await jira.Priorities.GetPrioritiesAsync(CancellationToken);
-     result2.Should().HaveCount(result1.Count());
+     result2.Should().HaveSameCount(result1);
 	}
 
 	[Theory]
@@ -210,7 +210,7 @@ public class JiraTypesTest(ITestOutputHelper outputHelper) : TestBase(outputHelp
 
 		// Cached
 		var result2 = await jira.Resolutions.GetResolutionsAsync(CancellationToken);
-     result2.Should().HaveCount(result1.Count());
+     result2.Should().HaveSameCount(result1);
 	}
 
 	[Theory]
