@@ -14,6 +14,7 @@ $ApiKeyFile = Join-Path $RepoRoot 'nuget-key.txt'
 $Project    = Join-Path $RepoRoot 'Jira.Api/Jira.Api.csproj'
 $Configuration = 'Release'
 $OutputDir  = Join-Path $RepoRoot 'artifacts/nuget'
+$packageId = 'Jira.Api'
 
 if (-not (Test-Path -Path $ApiKeyFile -PathType Leaf)) { Fail "API key file 'nuget-key.txt' not found in repository root. Aborting." }
 $apiKey = (Get-Content -Path $ApiKeyFile -Raw).Trim()
@@ -28,10 +29,12 @@ Write-Host "--- Building ($Configuration) ---" -ForegroundColor Cyan
 
 Write-Host "--- Packing ($Configuration) ---" -ForegroundColor Cyan
 New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
+Get-ChildItem -Path $OutputDir -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -like "${packageId}.*.nupkg" -or $_.Name -like "${packageId}.*.snupkg" } |
+    Remove-Item -Force
 & dotnet pack $Project -c $Configuration -o $OutputDir --no-build
 if ($LASTEXITCODE -ne 0) { Fail "dotnet pack failed." }
 
-$packageId = 'Jira.Api'
 $primaryPackages = Get-ChildItem -Path $OutputDir -Filter "${packageId}.*.nupkg" | Where-Object { $_.Name -notmatch '\.symbols\.nupkg$' -and $_.Name -notmatch '\.snupkg$' }
 $symbolPackages  = @(Get-ChildItem -Path $OutputDir -Filter "${packageId}.*.snupkg" -ErrorAction SilentlyContinue) + @(Get-ChildItem -Path $OutputDir -Filter "${packageId}.*.symbols.nupkg" -ErrorAction SilentlyContinue)
 if (-not $primaryPackages) { Fail "No primary package (.nupkg) found in '$OutputDir'." }
