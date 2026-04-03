@@ -6,7 +6,7 @@
 		<PackageVersion Include="AwesomeAssertions" Version="9.3.0" />
 		<PackageVersion Include="AwesomeAssertions.Analyzers" Version="9.0.8" />
 		<PackageVersion Include="Castle.Core" Version="5.2.1" />
-		<PackageVersion Include="coverlet.collector" Version="6.0.4" />
+		<PackageVersion Include="coverlet.collector" Version="8.0.1" />
 		<PackageVersion Include="LTAF.Navigator" Version="0.1.0" />
 		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
 		<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.5" />
