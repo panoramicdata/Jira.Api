@@ -36,7 +36,7 @@ jobs:
       run: dotnet pack Jira.Api/Jira.Api.csproj --configuration Release --no-build --output artifacts/nuget
 
     - name: Upload NuGet artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: nuget-packages
         path: artifacts/nuget
