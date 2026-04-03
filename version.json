@@ -2,6 +2,7 @@
 	"version": "9.2",
 	"publicReleaseRefSpec": [
 		"^refs/heads/main$",
-		"^refs/heads/release/*"
+		"^refs/heads/release/*",
+		"^refs/tags/\\d+\\.\\d+\\.\\d+$"
 	]
 }
