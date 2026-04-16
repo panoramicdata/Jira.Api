@@ -1,28 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageVersion Include="AwesomeAssertions" Version="9.3.0" />
+		<PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
 		<PackageVersion Include="AwesomeAssertions.Analyzers" Version="9.0.8" />
 		<PackageVersion Include="Castle.Core" Version="5.2.1" />
-		<PackageVersion Include="coverlet.collector" Version="6.0.4" />
+		<PackageVersion Include="coverlet.collector" Version="8.0.1" />
 		<PackageVersion Include="LTAF.Navigator" Version="0.1.0" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
-		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.6" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
 		<PackageVersion Include="Moq" Version="4.20.72" />
 		<PackageVersion Include="Nerdbank.GitVersioning" Version="3.9.50" />
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageVersion Include="RestSharp" Version="114.0.0" />
 		<PackageVersion Include="RestSharp.Serializers.NewtonsoftJson" Version="114.0.0" />
-		<PackageVersion Include="Selenium.Support" Version="4.41.0" />
-		<PackageVersion Include="Selenium.WebDriver" Version="4.41.0" />
-		<PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="146.0.7680.15300" />
+		<PackageVersion Include="Selenium.Support" Version="4.43.0" />
+		<PackageVersion Include="Selenium.WebDriver" Version="4.43.0" />
+		<PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="147.0.7727.5700" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
 		<PackageVersion Include="xunit.v3" Version="3.2.2" />
-		<PackageVersion Include="Xunit.Microsoft.DependencyInjection" Version="10.0.2" />
+		<PackageVersion Include="Xunit.Microsoft.DependencyInjection" Version="10.0.4" />
 	</ItemGroup>
 </Project>
