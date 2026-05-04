@@ -194,6 +194,11 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	public IServerInfoService ServerInfo => Services.Get<IServerInfoService>();
 
 	/// <summary>
+	/// Gets an object to interact with the Jira indexing endpoints.
+	/// </summary>
+	public IIndexingService Indexing => Services.Get<IIndexingService>();
+
+	/// <summary>
 	/// Gets an object to interact with the workflows of Jira.
 	/// </summary>
 	public IWorkflowService Workflows => Services.Get<IWorkflowService>();
@@ -278,6 +283,7 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		services.Register<IProjectService>(() => new ProjectService(jira));
 		services.Register<IScreenService>(() => new ScreenService(jira));
 		services.Register<IServerInfoService>(() => new ServerInfoService(jira));
+		services.Register<IIndexingService>(() => new IndexingService(jira));
 		services.Register<IWorkflowService>(() => new WorkflowService(jira));
 		services.Register<IWorkflowSchemeService>(() => new WorkflowSchemeService(jira));
 		services.Register<IProjectStatusService>(() => new ProjectStatusService(jira));

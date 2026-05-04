@@ -2342,4 +2342,31 @@ namespace Jira.Api.Remote
 		[JsonProperty("description")]
 		public string? Description { get; set; }
 	}
+
+	/// <summary>
+	/// Remote representation of the Jira index summary.
+	/// </summary>
+	public class RemoteIndexSummary
+	{
+		public long issueCountInDatabase { get; set; }
+		public long issueCountInIndex { get; set; }
+		public string currentIndexingStatus { get; set; }
+		public DateTimeOffset? lastIssueUpdateTime { get; set; }
+		public bool indexReadable { get; set; }
+		public bool indexWriteable { get; set; }
+	}
+
+	/// <summary>
+	/// Remote representation of the Jira reindex status.
+	/// </summary>
+	public class RemoteReindexStatus
+	{
+		public int progressPercent { get; set; }
+		public string currentSubTask { get; set; }
+		public DateTimeOffset? submittedTime { get; set; }
+		public DateTimeOffset? startTime { get; set; }
+		public DateTimeOffset? finishTime { get; set; }
+		public bool success { get; set; }
+		public bool failed { get; set; }
+	}
 }
