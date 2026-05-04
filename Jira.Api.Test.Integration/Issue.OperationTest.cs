@@ -218,6 +218,32 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+	public async Task ReorderIssueWithinSprintToItsExistingPosition(JiraClient jira)
+	{
+		var sprintIssuesJql = "project = SCRUM AND sprint = 1 ORDER BY Rank ASC";
+		var rankedIssuesBefore = (await jira.Issues.GetIssuesFromJqlAsync(sprintIssuesJql, 0, 2, CancellationToken)).ToList();
+
+		rankedIssuesBefore.Count.Should().BeGreaterOrEqualTo(2, "the SCRUM project sprint 1 must contain at least two ranked issues");
+
+		var issueToKeepInPlace = rankedIssuesBefore[0].Key.Value;
+		var issueImmediatelyAfter = rankedIssuesBefore[1].Key.Value;
+
+		await jira.RestClient.ExecuteRequestAsync(
+			Method.Put,
+			"rest/agile/1.0/issue/rank",
+			new
+			{
+				issues = new[] { issueToKeepInPlace },
+				rankBeforeIssue = issueImmediatelyAfter
+			},
+			CancellationToken);
+
+		var rankedIssuesAfter = (await jira.Issues.GetIssuesFromJqlAsync(sprintIssuesJql, 0, 2, CancellationToken)).ToList();
+		rankedIssuesAfter.Select(i => i.Key.Value).Should().Equal(issueToKeepInPlace, issueImmediatelyAfter);
+	}
+
+	[Theory]
+	[ClassData(typeof(JiraProvider))]
 	public async Task GetActionsAsync(JiraClient jira)
 	{
 		var issue = await jira.Issues.GetIssueAsync("TST-1", CancellationToken);
