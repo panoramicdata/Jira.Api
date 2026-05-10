@@ -218,27 +218,22 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task ReorderIssueWithinSprintToItsExistingPosition(JiraClient jira)
+	public async Task ReorderIssueWithinOperationsBacklogToItsExistingPosition(JiraClient jira)
 	{
-		var sprintIssuesJql = "project = SCRUM AND sprint = 1 ORDER BY Rank ASC";
-		var rankedIssuesBefore = (await jira.Issues.GetIssuesFromJqlAsync(sprintIssuesJql, 0, 2, CancellationToken)).ToList();
+		var backlogIssuesJql = "project = OPS AND sprint is EMPTY ORDER BY Rank ASC";
+		var rankedIssuesBefore = (await jira.Issues.GetIssuesFromJqlAsync(backlogIssuesJql, 0, 2, CancellationToken)).ToList();
 
-		rankedIssuesBefore.Count.Should().BeGreaterThanOrEqualTo(2, "the SCRUM project sprint 1 must contain at least two ranked issues");
+		rankedIssuesBefore.Count.Should().BeGreaterThanOrEqualTo(2, "the OPS project backlog must contain at least two ranked issues");
 
 		var issueToKeepInPlace = rankedIssuesBefore[0].Key.Value;
 		var issueImmediatelyAfter = rankedIssuesBefore[1].Key.Value;
 
-		await jira.RestClient.ExecuteRequestAsync(
-			Method.Put,
-			"rest/agile/1.0/issue/rank",
-			new
-			{
-				issues = new[] { issueToKeepInPlace },
-				rankBeforeIssue = issueImmediatelyAfter
-			},
-			CancellationToken);
+		await jira.Issues.ReRankAsync(
+			new[] { issueToKeepInPlace },
+			rankBeforeIssue: issueImmediatelyAfter,
+			cancellationToken: CancellationToken);
 
-		var rankedIssuesAfter = (await jira.Issues.GetIssuesFromJqlAsync(sprintIssuesJql, 0, 2, CancellationToken)).ToList();
+		var rankedIssuesAfter = (await jira.Issues.GetIssuesFromJqlAsync(backlogIssuesJql, 0, 2, CancellationToken)).ToList();
 		rankedIssuesAfter.Select(i => i.Key.Value).Should().Equal(issueToKeepInPlace, issueImmediatelyAfter);
 	}
 

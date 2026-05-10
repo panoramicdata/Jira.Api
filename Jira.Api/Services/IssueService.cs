@@ -688,4 +688,43 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 			// No-op. The resource that we are trying to delete doesn't exist anyway.
 		}
 	}
+
+	/// <summary>
+	/// Re-ranks one or more issues within a sprint or backlog using the Jira Agile API.
+	/// </summary>
+	/// <param name="issueKeys">The keys of the issues to reorder. Must not be null or empty.</param>
+	/// <param name="rankBeforeIssue">Optional. The key of the issue to rank these issues before.</param>
+	/// <param name="rankAfterIssue">Optional. The key of the issue to rank these issues after.</param>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	/// <remarks>
+	/// Invokes Jira Agile REST API (PUT rest/agile/1.0/issue/rank).
+	/// Exactly one of rankBeforeIssue or rankAfterIssue must be provided.
+	/// </remarks>
+	public Task ReRankAsync(IEnumerable<string> issueKeys, string? rankBeforeIssue = null, string? rankAfterIssue = null, CancellationToken cancellationToken = default)
+	{
+		if (issueKeys == null || !issueKeys.Any())
+		{
+			throw new ArgumentNullException(nameof(issueKeys), "At least one issue key must be provided.");
+		}
+
+		if (!string.IsNullOrEmpty(rankBeforeIssue) && !string.IsNullOrEmpty(rankAfterIssue))
+		{
+			throw new InvalidOperationException("Only one of rankBeforeIssue or rankAfterIssue can be specified, not both.");
+		}
+
+		if (string.IsNullOrEmpty(rankBeforeIssue) && string.IsNullOrEmpty(rankAfterIssue))
+		{
+			throw new InvalidOperationException("Either rankBeforeIssue or rankAfterIssue must be specified.");
+		}
+
+		var resource = "rest/agile/1.0/issue/rank";
+		var requestBody = new
+		{
+			issues = issueKeys.ToArray(),
+			rankBeforeIssue,
+			rankAfterIssue
+		};
+
+		return _jira.RestClient.ExecuteRequestAsync(Method.Put, resource, requestBody, cancellationToken);
+	}
 }

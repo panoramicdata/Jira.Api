@@ -4,6 +4,10 @@
 
 - **User-Agent support**: `JiraRestClientSettings` now requires a `userAgent` string parameter. The parameterless constructor is marked `[Obsolete]` and will emit build warning CS0618. The User-Agent value is validated against RFC 9110 product token format and sent with every HTTP request.
 - Updated all documentation examples to use `JiraClient` instead of `Jira` and to include `UserAgent` configuration.
+- **Issue reranking API**: Added `IIssueService.ReRankAsync(...)` and `IssueService.ReRankAsync(...)` to support Jira Agile rank operations through `PUT rest/agile/1.0/issue/rank`.
+	- Supports moving one or more issues relative to `rankBeforeIssue` or `rankAfterIssue`.
+	- Includes parameter validation to ensure exactly one anchor (`rankBeforeIssue` or `rankAfterIssue`) is provided.
+	- Covered by integration testing against Jira 9.12.2 (operations backlog rank-order scenario).
 
 ## Version 13.0.0 (03/12/2022)
 

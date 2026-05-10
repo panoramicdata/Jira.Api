@@ -216,4 +216,31 @@ public interface IIssueService
 	/// Removes the entity property from the specified issue.
 	/// </summary>
 	Task DeletePropertyAsync(string issueKey, string propertyKey, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Re-ranks one or more issues within a sprint or backlog using the Jira Agile API.
+	/// </summary>
+	/// <param name="issueKeys">The keys of the issues to reorder. Must not be null or empty.</param>
+	/// <param name="rankBeforeIssue">Optional. The key of the issue to rank these issues before. If specified, the issues will be positioned immediately before this issue. Only one of rankBeforeIssue or rankAfterIssue should be specified.</param>
+	/// <param name="rankAfterIssue">Optional. The key of the issue to rank these issues after. If specified, the issues will be positioned immediately after this issue. Only one of rankBeforeIssue or rankAfterIssue should be specified.</param>
+	/// <param name="cancellationToken">Optional. Cancellation token for the async operation.</param>
+	/// <returns>Task representing the asynchronous operation.</returns>
+	/// <remarks>
+	/// This method invokes the Jira Agile REST API endpoint (PUT rest/agile/1.0/issue/rank) to change the order of issues within their containing sprint or backlog.
+	/// 
+	/// The issues are moved as a group to a new position relative to the specified rankBeforeIssue or rankAfterIssue. If neither is provided, behavior is undefined.
+	/// 
+	/// Usage examples:
+	/// - Move issue OPS-123 before OPS-456: await issues.ReRankAsync(new[] { "OPS-123" }, rankBeforeIssue: "OPS-456");
+	/// - Move issues OPS-100 and OPS-101 after OPS-200: await issues.ReRankAsync(new[] { "OPS-100", "OPS-101" }, rankAfterIssue: "OPS-200");
+	/// 
+	/// Requirements:
+	/// - The account must have permission to edit issues (typically requires Agile Board write access).
+	/// - All issues must exist in the same sprint or backlog.
+	/// - This operation requires the Jira Agile (Software) plugin to be installed and enabled.
+	/// - The rankBeforeIssue or rankAfterIssue must also exist in the same sprint or backlog.
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">Thrown if issueKeys is null or empty.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if both rankBeforeIssue and rankAfterIssue are specified.</exception>
+	Task ReRankAsync(IEnumerable<string> issueKeys, string? rankBeforeIssue = null, string? rankAfterIssue = null, CancellationToken cancellationToken = default);
 }
