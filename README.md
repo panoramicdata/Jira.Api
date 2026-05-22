@@ -53,6 +53,19 @@ Caveats - this project is still very new.  We may make further breaking changes 
 
 ## New Features
 
+### Get Attachment by ID
+
+```csharp
+// Fetch a single attachment's metadata directly by ID
+var attachment = await jira.Issues.GetAttachmentAsync("10001", cancellationToken);
+
+// Download it as a byte array
+var bytes = await attachment.DownloadDataAsync(cancellationToken);
+
+// Or save to disk
+await attachment.DownloadAsync("C:\\downloads\\report.pdf", cancellationToken);
+```
+
 ### Workflow Management
 
 ```csharp

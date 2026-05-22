@@ -32,6 +32,26 @@ public partial class IssueTest
 			attachments.First().FileName.Should().Be("attach.txt");
 		}
 	}
+
+	public class GetAttachmentById(ITestOutputHelper outputHelper) : TestBase(outputHelper)
+	{
+		[Fact]
+		public async Task WhenValidId_ShouldReturnAttachment()
+		{
+			//arrange
+			var jira = TestableJira.Create();
+			var remoteAttachment = new RemoteAttachment() { id = "10001", filename = "report.pdf" };
+			jira.IssueService.Setup(j => j.GetAttachmentAsync("10001", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Attachment(jira, remoteAttachment));
+
+			//act
+			var attachment = await jira.Issues.GetAttachmentAsync("10001", CancellationToken);
+
+			//assert
+			attachment.Id.Should().Be("10001");
+			attachment.FileName.Should().Be("report.pdf");
+		}
+	}
 }
 
 

@@ -472,6 +472,36 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
+	public async Task GetAttachmentById(JiraClient jira)
+	{
+		// create an issue
+		var summaryValue = "Test Summary with attachment " + RandomNumberGenerator.GetInt32(int.MaxValue);
+		var issue = new Issue(jira, "TST")
+		{
+			Type = "1",
+			Summary = summaryValue,
+			Assignee = "admin"
+		};
+		await issue.SaveChangesAsync(CancellationToken);
+
+		// upload an attachment
+		File.WriteAllText("testfile1.txt", "Test File Content 1");
+		await issue.AddAttachmentAsync(new FileInfo[] { new("testfile1.txt") }, CancellationToken);
+
+		// get the attachment id from the issue
+		var attachments = await issue.GetAttachmentsAsync(CancellationToken);
+		var attachmentId = attachments.Single().Id;
+
+		// fetch the same attachment directly by id
+		var attachment = await jira.Issues.GetAttachmentAsync(attachmentId, CancellationToken);
+		attachment.Id.Should().Be(attachmentId);
+		attachment.FileName.Should().Be("testfile1.txt");
+		attachment.FileSize.Should().BeGreaterThan(0);
+		attachment.MimeType.Should().NotBeEmpty();
+	}
+
+	[Theory]
+	[ClassData(typeof(JiraProvider))]
 	public async Task DownloadAttachments(JiraClient jira)
 	{
 		// create an issue

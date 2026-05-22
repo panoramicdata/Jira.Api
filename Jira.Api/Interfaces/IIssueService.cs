@@ -168,6 +168,11 @@ public interface IIssueService
 	Task AddAttachmentsAsync(string issueKey, UploadAttachmentInfo[] attachments, CancellationToken cancellationToken = default);
 
 	/// <summary>
+	/// Gets the attachment with the given identifier.
+	/// </summary>
+	Task<Attachment> GetAttachmentAsync(string attachmentId, CancellationToken cancellationToken = default);
+
+	/// <summary>
 	/// Removes an attachment from an issue.
 	/// </summary>
 	Task DeleteAttachmentAsync(string issueKey, string attachmentId, CancellationToken cancellationToken = default);

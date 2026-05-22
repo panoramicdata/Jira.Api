@@ -458,6 +458,16 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		return _jira.RestClient.ExecuteRequestAsync(request, cancellationToken);
 	}
 
+	public async Task<Attachment> GetAttachmentAsync(string attachmentId, CancellationToken cancellationToken)
+	{
+		var resource = $"rest/api/2/attachment/{attachmentId}";
+		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
+		var result = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
+		var remoteAttachment = JsonConvert.DeserializeObject<RemoteAttachment>(result.ToString(), serializerSettings);
+
+		return new Attachment(_jira, remoteAttachment);
+	}
+
 	public Task DeleteAttachmentAsync(string issueKey, string attachmentId, CancellationToken cancellationToken)
 	{
 		var resource = $"rest/api/2/attachment/{attachmentId}";
