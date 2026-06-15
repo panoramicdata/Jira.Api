@@ -26,7 +26,7 @@ if ($behind -gt 0) {
 # version to be populated (a plain -getProperty evaluation returns the static
 # version.json value without the Git height).
 $project = Join-Path $PSScriptRoot 'Jira.Api/Jira.Api.csproj'
-$buildOutput = dotnet build $project -t:GetBuildVersion --getProperty:NuGetPackageVersion -nologo -v:quiet
+$buildOutput = dotnet build $project -t:GetBuildVersion --getProperty:NuGetPackageVersion -nologo -v:quiet -p:TreatWarningsAsErrors=false
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to determine version from Nerdbank.GitVersioning.`n$buildOutput"
     exit 1
