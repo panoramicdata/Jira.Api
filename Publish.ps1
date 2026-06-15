@@ -20,9 +20,22 @@ if ($behind -gt 0) {
     exit 1
 }
 
-# Get version from Nerdbank.GitVersioning
-$versionJson = nbgv get-version -f json | ConvertFrom-Json
-$version = $versionJson.NuGetPackageVersion
+# Get version from Nerdbank.GitVersioning via the project's MSBuild targets (the
+# referenced NuGet package), so this does not depend on the global 'nbgv' CLI tool
+# being installed or on PATH. The GetBuildVersion target must run for the computed
+# version to be populated (a plain -getProperty evaluation returns the static
+# version.json value without the Git height).
+$project = Join-Path $PSScriptRoot 'Jira.Api/Jira.Api.csproj'
+$buildOutput = dotnet build $project -t:GetBuildVersion --getProperty:NuGetPackageVersion -nologo -v:quiet
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to determine version from Nerdbank.GitVersioning.`n$buildOutput"
+    exit 1
+}
+$version = ($buildOutput | Select-Object -Last 1).ToString().Trim()
+if (-not $version) {
+    Write-Error "Failed to determine version from Nerdbank.GitVersioning."
+    exit 1
+}
 Write-Host "Version: $version"
 
 # Check if tag already exists
