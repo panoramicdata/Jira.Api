@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using RestSharp.Authenticators;
 using RestSharp.Serializers.NewtonsoftJson;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 
 namespace Jira.Api;
