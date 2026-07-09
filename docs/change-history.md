@@ -1,6 +1,6 @@
 # Change History
 
-## Version 9.3.2 (09/07/2026)
+## Version 9.3.3 (09/07/2026)
 
 - **Dashboards service**: Added `IDashboardService` (available as `JiraClient.Dashboards`) with:
   - `GetDashboardsAsync(skip, take)` — page through dashboards visible to the current user via `GET /rest/api/2/dashboard`.
