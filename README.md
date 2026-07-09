@@ -53,6 +53,29 @@ Caveats - this project is still very new.  We may make further breaking changes 
 
 ## New Features
 
+### Dashboards
+
+```csharp
+// Get a page of dashboards visible to the current user
+var page = await jira.Dashboards.GetDashboardsAsync(0, 50, cancellationToken);
+
+// Get a dashboard by ID (public REST API: id, name, view URL)
+var dashboard = await jira.Dashboards.GetDashboardAsync("13521", cancellationToken);
+
+// Get a dashboard's gadgets and their configuration.
+// NOTE: this uses the JIRA Server internal endpoint (rest/dashboards/1.0/{id});
+// it is not part of the public REST API and may not be available on JIRA Cloud.
+var detail = await jira.Dashboards.GetDashboardDetailAsync("13521", cancellationToken);
+
+foreach (var gadget in detail.Gadgets.Where(gadget => gadget.IsFilterResults))
+{
+    // Filter Results gadgets expose their saved filter and column configuration
+    var filter = await jira.Filters.GetFilterAsync(gadget.FilterId!, cancellationToken);
+    Console.WriteLine($"{filter.Name}: {filter.Jql}");
+    Console.WriteLine($"  Columns: {string.Join(", ", gadget.ColumnNames)}, page size: {gadget.NumberToShow}");
+}
+```
+
 ### Get Attachment by ID
 
 ```csharp
