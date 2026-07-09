@@ -144,6 +144,11 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	public IIssueFilterService Filters => Services.Get<IIssueFilterService>();
 
 	/// <summary>
+	/// Gets an object to interact with the dashboards of jira.
+	/// </summary>
+	public IDashboardService Dashboards => Services.Get<IDashboardService>();
+
+	/// <summary>
 	/// Gets an object to interact with the issue priorities of jira.
 	/// </summary>
 	public IIssuePriorityService Priorities => Services.Get<IIssuePriorityService>();
@@ -276,6 +281,7 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		services.Register<IIssueRemoteLinkService>(() => new IssueRemoteLinkService(jira));
 		services.Register<IIssueTypeService>(() => new IssueTypeService(jira));
 		services.Register<IIssueFilterService>(() => new IssueFilterService(jira));
+		services.Register<IDashboardService>(() => new DashboardService(jira));
 		services.Register<IIssueFieldService>(() => new IssueFieldService(jira));
 		services.Register<IIssueService>(() => new IssueService(jira, restClient.Settings));
 		services.Register<IJiraUserService>(() => new JiraUserService(jira));

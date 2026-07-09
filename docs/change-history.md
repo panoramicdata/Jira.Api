@@ -1,5 +1,14 @@
 # Change History
 
+## Version 9.3 (09/07/2026) - Unreleased
+
+- **Dashboards service**: Added `IDashboardService` (available as `JiraClient.Dashboards`) with:
+  - `GetDashboardsAsync(skip, take)` — page through dashboards visible to the current user via `GET /rest/api/2/dashboard`.
+  - `GetDashboardAsync(dashboardId)` — get a dashboard's id, name and view URL via `GET /rest/api/2/dashboard/{id}`.
+  - `GetDashboardDetailAsync(dashboardId)` — get a dashboard's gadgets and their user preferences via `GET /rest/dashboards/1.0/{id}`. Note: this is a JIRA Server internal endpoint (the one the JIRA web UI itself uses); it is not part of the public REST API and may not be available on JIRA Cloud.
+  - `JiraDashboardGadget` exposes convenience accessors for Filter Results gadgets: `IsFilterResults`, `FilterId`, `ColumnNames`, `NumberToShow` and `RefreshMinutes`, all parsed tolerantly from the gadget's user preferences.
+- Covered by unit tests and read-only integration tests (`--filter "Category=ReadOnly"`), verified against JIRA Server 9.12.2.
+
 ## Version 9.2.25 (22/05/2026) - Unreleased
 
 - **Get attachment by ID**: Added `IIssueService.GetAttachmentAsync(attachmentId)` to retrieve a single attachment's metadata directly by ID via `GET /rest/api/2/attachment/{id}`, without needing to fetch all attachments for an issue first. Resolves [Issue #4](https://github.com/panoramicdata/Jira.Api/issues/4).
