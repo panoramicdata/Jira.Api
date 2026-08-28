@@ -19,8 +19,8 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="RestSharp" Version="114.0.0" />
     <PackageVersion Include="RestSharp.Serializers.NewtonsoftJson" Version="114.0.0" />
-    <PackageVersion Include="Selenium.Support" Version="4.47.0" />
-    <PackageVersion Include="Selenium.WebDriver" Version="4.47.0" />
+    <PackageVersion Include="Selenium.Support" Version="4.48.0" />
+    <PackageVersion Include="Selenium.WebDriver" Version="4.48.0" />
     <PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="152.0.7977.6400" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.0" />
