@@ -8,5 +8,5 @@ public class IssueUpdateOptions
 	/// <summary>
 	/// Suppresses email notification (supported on Jira server 7.1+).
 	/// </summary>
-	public bool SuppressEmailNotification { get; set; } = false;
+	public bool SuppressEmailNotification { get; set; }
 }

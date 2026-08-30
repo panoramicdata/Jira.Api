@@ -26,7 +26,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes == 5
 					  select i).ToArray();
 
@@ -38,7 +38,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Summary == "Foo"
 					  select i).ToArray();
 
@@ -50,7 +50,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Assignee == "Foo"
 					  select i).ToArray();
 
@@ -62,7 +62,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes != 5
 					  select i).ToArray();
 
@@ -74,7 +74,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Summary != "Foo"
 					  select i).ToArray();
 
@@ -86,7 +86,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Assignee != "Foo"
 					  select i).ToArray();
 
@@ -98,7 +98,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes > 5
 					  select i).ToArray();
 
@@ -110,7 +110,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes >= 5
 					  select i).ToArray();
 
@@ -122,7 +122,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes < 5
 					  select i).ToArray();
 
@@ -134,7 +134,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes <= 5
 					  select i).ToArray();
 
@@ -146,7 +146,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes > 5 && i.Votes < 10
 					  select i).ToArray();
 
@@ -158,7 +158,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes > 5 || i.Votes < 10
 					  select i).ToArray();
 
@@ -170,7 +170,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Votes > 5 && (i.Votes < 10 || i.Votes == 20)
 					  select i).ToArray();
 
@@ -182,7 +182,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Summary == ""
 					  select i).ToArray();
 
@@ -194,7 +194,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Summary != ""
 					  select i).ToArray();
 
@@ -206,7 +206,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Summary == null
 					  select i).ToArray();
 
@@ -218,7 +218,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Priority > "foo"
 					  select i).ToArray();
 
@@ -230,7 +230,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Priority == "foo"
 					  select i).ToArray();
 
@@ -242,7 +242,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Priority == "1"
 					  orderby i.Created
 					  select i).ToArray();
@@ -255,7 +255,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Priority == "1"
 					  orderby i.Created descending
 					  select i).ToArray();
@@ -268,7 +268,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Priority == "1"
 					  orderby i.Created, i.DueDate
 					  select i).ToArray();
@@ -281,7 +281,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Priority == "1"
 					  orderby i.Created, i.DueDate descending
 					  select i).ToArray();
@@ -294,7 +294,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Created > new DateTime(2011, 1, 1)
 					  select i).ToArray();
 
@@ -306,7 +306,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Created > new DateTime(2011, 1, 1) && i.Created < new DateTime(2012, 1, 1)
 					  select i).ToArray();
 
@@ -319,7 +319,7 @@ public class JqlExpressionTranslatorTest
 		var queryable = CreateQueryable();
 		var user = "farmas";
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Assignee == user
 					  select i).ToArray();
 
@@ -332,7 +332,7 @@ public class JqlExpressionTranslatorTest
 		var queryable = CreateQueryable();
 		var date = new DateTime(2011, 1, 1);
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Created > date
 					  select i).ToArray();
 
@@ -345,7 +345,7 @@ public class JqlExpressionTranslatorTest
 		var queryable = CreateQueryable();
 		var date = new DateTime(2011, 1, 1);
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Created > new LiteralDateTime(date.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture))
 					  select i).ToArray();
 
@@ -364,7 +364,7 @@ public class JqlExpressionTranslatorTest
 			var queryable = CreateQueryable();
 			var date = new DateTime(2011, 1, 1);
 
-			var issues = (from i in queryable
+			_ = (from i in queryable
 						  where i.Created > date
 						  select i).ToArray();
 
@@ -381,7 +381,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Created > DateTime.Now.Date
 					  select i).ToArray();
 
@@ -393,7 +393,7 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Created > DateTime.Now
 					  select i).ToArray();
 
@@ -405,7 +405,7 @@ public class JqlExpressionTranslatorTest
 	{
 	var queryable = CreateQueryable();
 
-	var issues = (from i in queryable
+	_ = (from i in queryable
 		where i.Assignee == "foo"
 		select i).Take(50).ToArray();
 
@@ -417,7 +417,7 @@ public class JqlExpressionTranslatorTest
 	{
 	var queryable = CreateQueryable();
 
-	var issues = (from i in queryable
+	_ = (from i in queryable
 		where i.Assignee == "foo"
 		select i).Skip(25).Take(50).ToArray();
 
@@ -429,11 +429,11 @@ public class JqlExpressionTranslatorTest
 	{
 		var queryable = CreateQueryable();
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Assignee == "foo"
 					  select i).Skip(25).Take(50).ToArray();
 
-		var issues2 = (from i in queryable
+		_ = (from i in queryable
 					   where i.Assignee == "foo"
 					   select i).ToArray();
 
@@ -447,7 +447,7 @@ public class JqlExpressionTranslatorTest
 		var queryable = CreateQueryable();
 		var take = 100;
 
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Assignee == "foo"
 					  select i).Take(take).ToArray();
 
@@ -458,7 +458,7 @@ public class JqlExpressionTranslatorTest
 	public void VersionsEqual()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.FixVersions == "1.0" && i.AffectsVersions == "2.0"
 					  select i).ToArray();
 
@@ -469,7 +469,7 @@ public class JqlExpressionTranslatorTest
 	public void ComponentEqual()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Components == "foo"
 					  select i).ToArray();
 
@@ -480,7 +480,7 @@ public class JqlExpressionTranslatorTest
 	public void VersionsNotEqual()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.FixVersions != "1.0" && i.AffectsVersions != "2.0"
 					  select i).ToArray();
 
@@ -491,7 +491,7 @@ public class JqlExpressionTranslatorTest
 	public void ComponentNotEqual()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Components != "foo"
 					  select i).ToArray();
 
@@ -502,7 +502,7 @@ public class JqlExpressionTranslatorTest
 	public void CanUseLiteralMatchOnMemberProperties()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i.Summary == new LiteralMatch("Literal Summary") && i.Description == new LiteralMatch("Literal Description")
 					  select i).ToArray();
 
@@ -513,7 +513,7 @@ public class JqlExpressionTranslatorTest
 	public void CustomFieldEqual()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i["Foo"]! == "foo" && i["Bar"]! == new DateTime(2012, 1, 1) && i["Baz"]! == new LiteralMatch("baz")
 					  select i).ToArray();
 
@@ -524,7 +524,7 @@ public class JqlExpressionTranslatorTest
 	public void CustomFieldNotEqual()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i["Foo"]! != "foo" && i["Bar"]! != new DateTime(2012, 1, 1) && i["Baz"]! != new LiteralMatch("baz")
 					  select i).ToArray();
 
@@ -535,7 +535,7 @@ public class JqlExpressionTranslatorTest
 	public void CustomFieldGreaterThan()
 	{
 		var queryable = CreateQueryable();
-		var issues = (from i in queryable
+		_ = (from i in queryable
 					  where i["Foo"]! > "foo" && i["Bar"]! > new DateTime(2012, 1, 1)
 					  select i).ToArray();
 
@@ -559,7 +559,7 @@ public class JqlExpressionTranslatorTest
 				 where i.Priority == "1"
 				 select i;
 
-		var issuesArray = issues.ToArray();
+		_ = issues.ToArray();
 
 		_translator.Jql.Should().Be("Votes = 5 and (Status = \"Open\" and Assignee = \"admin\") and Priority = \"1\"");
 	}

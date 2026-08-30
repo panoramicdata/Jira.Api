@@ -31,7 +31,7 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 		[Fact]
 		public void FromRemote_ShouldPopulateFields()
 		{
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
 				affectsVersions = [new() { id = "remoteVersion" }],
 				assignee = "assignee",
@@ -43,15 +43,15 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 				environment = "environment",
 				fixVersions = [new() { id = "remoteFixVersion" }],
 				key = "key",
-				priority = new RemotePriority() { id = "priority" },
+				priority = new RemotePriority { id = "priority" },
 				project = "project",
 				reporter = "reporter",
-				resolution = new RemoteResolution() { id = "resolution" },
-				status = new RemoteStatus() { id = "status" },
+				resolution = new RemoteResolution { id = "resolution" },
+				status = new RemoteStatus { id = "status" },
 				summary = "summary",
-				type = new RemoteIssueType() { id = "type" },
+				type = new RemoteIssueType { id = "type" },
 				updated = new DateTime(2011, 2, 2),
-				votesData = new RemoteVotes() { votes = 1, hasVoted = true }
+				votesData = new RemoteVotes { votes = 1, hasVoted = true }
 			};
 
 			var issue = remoteIssue.ToLocal(TestableJira.Create());
@@ -112,8 +112,8 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 		{
 			var jira = TestableJira.Create();
 			var issue = jira.CreateIssue("ProjectKey");
-			var version = new RemoteVersion() { id = "1" }.ToLocal(issue.Jira);
-			var component = new RemoteComponent() { id = "1" }.ToLocal();
+			var version = new RemoteVersion { id = "1" }.ToLocal(issue.Jira);
+			var component = new RemoteComponent { id = "1" }.ToLocal();
 
 			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(CancellationToken.None))
 				.Returns(Task.FromResult(Enumerable.Repeat(new IssueType("4", "issuetype"), 1)));
@@ -161,7 +161,7 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 		{
 			var jira = TestableJira.Create();
 			var issue = jira.CreateIssue("ProjectKey");
-			var issueType = new IssueType(new RemoteIssueType() { id = "1", name = "Bug" });
+			var issueType = new IssueType(new RemoteIssueType { id = "1", name = "Bug" });
 			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(CancellationToken.None))
 				.Returns(Task.FromResult(Enumerable.Repeat(issueType, 1)));
 
@@ -190,7 +190,7 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 		public async Task IfTransitionNotFound_ShouldThrowAnException()
 		{
 			var jira = TestableJira.Create();
-			var issue = (new RemoteIssue() { key = "key" }).ToLocal(jira);
+			var issue = (new RemoteIssue { key = "key" }).ToLocal(jira);
 			jira.IssueService
 				.Setup(j => j.ExecuteWorkflowActionAsync(
 					It.IsAny<Issue>(),
@@ -221,8 +221,8 @@ public partial class IssueTest(ITestOutputHelper outputHelper) : TestBase(output
 			//arrange
 			var jira = TestableJira.Create();
 			jira.IssueService.Setup(j => j.GetCommentsAsync("issueKey", It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(new Comment() { Body = "the comment" }, 1)));
-			var issue = (new RemoteIssue() { key = "issueKey" }).ToLocal(jira);
+				.Returns(Task.FromResult(Enumerable.Repeat(new Comment { Body = "the comment" }, 1)));
+			var issue = (new RemoteIssue { key = "issueKey" }).ToLocal(jira);
 
 			//act
 			var comments = await issue.GetCommentsAsync(CancellationToken);

@@ -89,9 +89,9 @@ public class JiraUser
 	/// <summary>
 	/// Determines whether the specified object is equal to this instance
 	/// </summary>
-	public override bool Equals(object other)
+	public override bool Equals(object obj)
 	{
-		return other is JiraUser otherAsThisType && InternalIdentifier.Equals(otherAsThisType.InternalIdentifier);
+		return obj is JiraUser otherAsThisType && InternalIdentifier.Equals(otherAsThisType.InternalIdentifier);
 	}
 
 	/// <summary>

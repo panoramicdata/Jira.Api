@@ -32,7 +32,7 @@ public class JiraEntityDictionary<T> : ConcurrentDictionary<string, T>
 	/// <param name="id">Identifier of the entity.</param>
 	public bool TryRemove(string id)
 	{
-		return TryRemove(id, out T removedEntity);
+		return TryRemove(id, out _);
 	}
 
 	/// <summary>

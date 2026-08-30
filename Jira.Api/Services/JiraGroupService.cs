@@ -10,14 +10,14 @@ internal class JiraGroupService(JiraClient jira) : IJiraGroupService
 
 	public Task AddUserAsync(
 		string groupName,
-		string username,
+		string usernameOrAccountId,
 		CancellationToken cancellationToken)
 	{
 		var resource = $"rest/api/2/group/user?groupName={WebUtility.UrlEncode(groupName)}";
-		object body = new { name = username };
+		object body = new { name = usernameOrAccountId };
 		if (_jira.RestClient.Settings.EnableUserPrivacyMode)
 		{
-			body = new { accountId = username };
+			body = new { accountId = usernameOrAccountId };
 		}
 
 		var requestBody = JToken.FromObject(body);
@@ -71,9 +71,9 @@ internal class JiraGroupService(JiraClient jira) : IJiraGroupService
 		return PagedQueryResult<JiraUser>.FromJson((JObject)response, users);
 	}
 
-	public Task RemoveUserAsync(string groupName, string username, CancellationToken cancellationToken)
+	public Task RemoveUserAsync(string groupName, string usernameOrAccountId, CancellationToken cancellationToken)
 	{
-		var resource = $"rest/api/2/group/user?groupName={WebUtility.UrlEncode(groupName)}&{(_jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username")}={WebUtility.UrlEncode(username)}";
+		var resource = $"rest/api/2/group/user?groupName={WebUtility.UrlEncode(groupName)}&{(_jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username")}={WebUtility.UrlEncode(usernameOrAccountId)}";
 
 		return _jira.RestClient.ExecuteRequestAsync(Method.Delete, resource, null, cancellationToken);
 

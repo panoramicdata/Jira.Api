@@ -14,11 +14,11 @@ internal class IssueFilterService(JiraClient jira) : IIssueFilterService
 		return _jira.RestClient.ExecuteRequestAsync<JiraFilter>(Method.Get, $"rest/api/2/filter/{filterId}", null, cancellationToken);
 	}
 
-	public async Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteAsync(string filterName, int skip, int? maxIssues, CancellationToken cancellationToken)
+	public async Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteAsync(string filterName, int skip, int? take, CancellationToken cancellationToken)
 	{
 		var jql = await GetFilterJqlByNameAsync(filterName, cancellationToken).ConfigureAwait(false);
 
-		return await _jira.Issues.GetIssuesFromJqlAsync(jql, skip, maxIssues, cancellationToken).ConfigureAwait(false);
+		return await _jira.Issues.GetIssuesFromJqlAsync(jql, skip, take, cancellationToken).ConfigureAwait(false);
 	}
 
 	public async Task<IPagedQueryResult<Issue>> GetIssuesFromFavoriteWithFieldsAsync(

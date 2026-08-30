@@ -3,7 +3,7 @@
 /// <summary>
 /// Container for the supported JIRA operator strings.
 /// </summary>
-public class JiraOperators
+public static class JiraOperators
 {
 	/// <summary>
 	/// Equality operator

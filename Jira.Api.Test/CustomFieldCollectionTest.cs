@@ -6,9 +6,9 @@ public class CustomFieldCollectionTest
 	public void IndexByName_ShouldThrowIfUnableToFindRemoteValue()
 	{
 		var jira = TestableJira.Create();
-		jira.SetupIssues(new RemoteIssue() { key = "123" });
+		jira.SetupIssues(new RemoteIssue { key = "123" });
 
-		var issue = new RemoteIssue()
+		var issue = new RemoteIssue
 		{
 		project = "bar",
 		key = "foo",
@@ -29,11 +29,11 @@ public class CustomFieldCollectionTest
 	{
 		//arrange
 		var jira = TestableJira.Create();
-		var customField = new CustomField(new RemoteField() { id = "123", name = "CustomField" });
+		var customField = new CustomField(new RemoteField { id = "123", name = "CustomField" });
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
 			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
-		var issue = new RemoteIssue()
+		var issue = new RemoteIssue
 		{
 			project = "projectKey",
 			key = "issueKey",
@@ -60,11 +60,11 @@ public class CustomFieldCollectionTest
 	{
 		// Arrange
 		var jira = TestableJira.Create();
-		var customField = new CustomField(new RemoteField() { id = "123", name = "CustomField" });
+		var customField = new CustomField(new RemoteField { id = "123", name = "CustomField" });
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
 			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
-		var issue = new RemoteIssue()
+		var issue = new RemoteIssue
 		{
 			project = "projectKey",
 			key = "issueKey",

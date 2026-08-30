@@ -78,7 +78,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 		// Create user with e-mail as username.
 		var rand = RandomNumberGenerator.GetInt32(int.MaxValue);
-		var userInfo = new JiraUserCreationInfo()
+		var userInfo = new JiraUserCreationInfo
 		{
 			Username = $"test{rand}@user.com",
 			DisplayName = $"Test User {rand}",
@@ -334,7 +334,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		await issue.SaveChangesAsync(CancellationToken);
 
 		issue.ResolutionDate.Should().BeNull();
-		var updates = new WorkflowTransitionUpdates() { Comment = "Comment with transition" };
+		var updates = new WorkflowTransitionUpdates { Comment = "Comment with transition" };
 		await issue.FixVersions.AddAsync("2.0", CancellationToken);
 
 		await issue.WorkflowTransitionAsync(WorkflowActions.Resolve, updates, CancellationToken.None);
@@ -443,7 +443,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// upload multiple attachments
 		File.WriteAllText("testfile1.txt", "Test File Content 1");
 		File.WriteAllText("testfile2.txt", "Test File Content 2");
-		await issue.AddAttachmentAsync(new FileInfo[] { new("testfile1.txt"), new("testfile2.txt") }, CancellationToken);
+		await issue.AddAttachmentAsync([new FileInfo("testfile1.txt"), new FileInfo("testfile2.txt")], CancellationToken);
 
 		// verify all attachments can be retrieved.
 		var attachments = await issue.GetAttachmentsAsync(CancellationToken);
@@ -486,7 +486,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 		// upload an attachment
 		File.WriteAllText("testfile1.txt", "Test File Content 1");
-		await issue.AddAttachmentAsync(new FileInfo[] { new("testfile1.txt") }, CancellationToken);
+		await issue.AddAttachmentAsync([new FileInfo("testfile1.txt")], CancellationToken);
 
 		// get the attachment id from the issue
 		var attachments = await issue.GetAttachmentsAsync(CancellationToken);
@@ -517,7 +517,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// upload multiple attachments
 		File.WriteAllText("testfile1.txt", "Test File Content 1");
 		File.WriteAllText("testfile2.txt", "Test File Content 2");
-		await issue.AddAttachmentAsync(new FileInfo[] { new("testfile1.txt"), new("testfile2.txt") }, CancellationToken);
+		await issue.AddAttachmentAsync([new FileInfo("testfile1.txt"), new FileInfo("testfile2.txt")], CancellationToken);
 
 		// Get attachment metadata
 		var attachments = await issue.GetAttachmentsAsync(CancellationToken.None);
@@ -607,7 +607,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		await issue.SaveChangesAsync(CancellationToken);
 
 		// Add a comment
-		var comment = new Comment()
+		var comment = new Comment
 		{
 			Author = (await jira.Users.GetMyselfAsync(CancellationToken)).Username,
 			Body = "New comment",
@@ -798,7 +798,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// Verify the property key returns the exact value
 		var issueProperties = await issue.GetPropertiesAsync([keyString, "non-existent-property"], CancellationToken);
 
-		var truth = new Dictionary<string, JToken>()
+		var truth = new Dictionary<string, JToken>
 			{
 				{ keyString, keyValue },
 			};
@@ -855,7 +855,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 		// Verify the property key returns the exact value
 		var issueProperties = await issue.GetPropertiesAsync([keyString], CancellationToken);
-		var truth = new Dictionary<string, JToken>()
+		var truth = new Dictionary<string, JToken>
 			{
                 // WARN; JToken of null is effectively returned as null.
                 // This probably depends on the serializersettings!
@@ -892,7 +892,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// Verify the property key returns the exact value
 		var issueProperties = await issue.GetPropertiesAsync([keyString], CancellationToken);
 
-		var truth = new Dictionary<string, JToken>()
+		var truth = new Dictionary<string, JToken>
 			{
 				{ keyString, keyValue },
 			};
@@ -923,7 +923,7 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 		// Verify the property key returns the exact value
 		var issueProperties = await issue.GetPropertiesAsync([keyString], CancellationToken);
 
-		var truth = new Dictionary<string, JToken>()
+		var truth = new Dictionary<string, JToken>
 			{
 				{ keyString, keyValue },
 			};
@@ -948,14 +948,14 @@ public class IssueOperationsTest(ITestOutputHelper outputHelper) : TestBase(outp
 
 		// Set new property on issue
 		var keyString = "test-property-list";
-		var valueObject = new List<string>() { "One", "Two", "Three" };
+		var valueObject = new List<string> { "One", "Two", "Three" };
 		JToken keyValue = JToken.FromObject(valueObject);
 		await issue.SetPropertyAsync(keyString, keyValue, CancellationToken);
 
 		// Verify the property key returns the exact value
 		var issueProperties = await issue.GetPropertiesAsync([keyString], CancellationToken);
 
-		var truth = new Dictionary<string, JToken>()
+		var truth = new Dictionary<string, JToken>
 			{
 				{ keyString, keyValue },
 			};

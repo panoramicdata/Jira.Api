@@ -52,7 +52,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 	/// <param name="childOption">The value of the child option.</param>
 	public CustomFieldValueCollection AddCascadingSelectField(string fieldName, string parentOption, string? childOption)
 	{
-		var options = new List<string>() { parentOption };
+		var options = new List<string> { parentOption };
 
 		if (!string.IsNullOrEmpty(childOption))
 		{
@@ -190,7 +190,7 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 		return _issue.Jira.Fields.GetCustomFieldsAsync(options, default).Result.Where(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
 	}
 
-	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken token)
+	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
 		var fieldValues = Items
 			.Where(IsCustomFieldNewOrUpdated)

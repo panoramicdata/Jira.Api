@@ -61,7 +61,7 @@ public class JiraRestClient : IJiraRestClient
 		IAuthenticator? authenticator,
 		JiraRestClientSettings? settings = null)
 	{
-		url = url.EndsWith('/') ? url : url += "/";
+		url = url.EndsWith('/') ? url : url + "/";
 #pragma warning disable CS0618 // Intentional fallback to default settings within the library
 		Settings = settings ?? new JiraRestClientSettings();
 #pragma warning restore CS0618
@@ -211,7 +211,7 @@ public class JiraRestClient : IJiraRestClient
 
 			if (body != null)
 			{
-				Trace.WriteLine($"[{request.Method}] Request Data: {JsonConvert.SerializeObject(body, new JsonSerializerSettings()
+				Trace.WriteLine($"[{request.Method}] Request Data: {JsonConvert.SerializeObject(body, new JsonSerializerSettings
 				{
 					Formatting = Formatting.Indented,
 					NullValueHandling = NullValueHandling.Ignore

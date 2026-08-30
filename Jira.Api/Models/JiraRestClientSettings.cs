@@ -25,7 +25,7 @@ public partial class JiraRestClientSettings
 
 	private static IEnumerable<JsonConverter> _gdprJsonConverters =
 		[
-			new JiraUserJsonConverter() { UserPrivacyEnabled = true },
+			new JiraUserJsonConverter { UserPrivacyEnabled = true },
 		];
 
 	/// <summary>

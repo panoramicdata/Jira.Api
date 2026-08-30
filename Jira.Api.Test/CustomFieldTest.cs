@@ -7,11 +7,11 @@ public class CustomFieldTest
 	{
 		//arrange
 		var jira = TestableJira.Create();
-		var customField = new CustomField(new RemoteField() { id = "123", name = "CustomField" });
+		var customField = new CustomField(new RemoteField { id = "123", name = "CustomField" });
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
 			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
 
-		var issue = new RemoteIssue()
+		var issue = new RemoteIssue
 		{
 			project = "projectKey",
 			key = "issueKey",
@@ -32,9 +32,9 @@ public class CustomFieldTest
 	{
 		// arrange issue
 		var jira = TestableJira.Create();
-		var remoteField = new RemoteField() { id = "remotefield_id", Schema = new RemoteFieldSchema() { Custom = "remotefield_type" }, IsCustomField = true, name = "Custom Field" };
+		var remoteField = new RemoteField { id = "remotefield_id", Schema = new RemoteFieldSchema { Custom = "remotefield_type" }, IsCustomField = true, name = "Custom Field" };
 		var customField = new CustomField(remoteField);
-		var issue = new RemoteIssue() { project = "projectKey", key = "issueKey" }.ToLocal(jira);
+		var issue = new RemoteIssue { project = "projectKey", key = "issueKey" }.ToLocal(jira);
 
 		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
 			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
@@ -71,7 +71,7 @@ public class CustomFieldTest
 	public void CanDeserializeArrayOfStrings_WhenCustomFieldValueIsArrayAndNoSerializerIsRegistered()
 	{
 		// arrange issue
-		var remoteField = new RemoteField() { id = "customfield_id", Schema = new RemoteFieldSchema() { Custom = "customfield_type" }, IsCustomField = true, name = "Custom Field" };
+		var remoteField = new RemoteField { id = "customfield_id", Schema = new RemoteFieldSchema { Custom = "customfield_type" }, IsCustomField = true, name = "Custom Field" };
 		var jObject = JObject.FromObject(new
 		{
 			fields = new

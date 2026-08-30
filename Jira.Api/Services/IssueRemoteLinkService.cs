@@ -35,7 +35,6 @@ internal class IssueRemoteLinkService(JiraClient jira) : IIssueRemoteLinkService
 
 	public async Task<IEnumerable<IssueRemoteLink>> GetRemoteLinksForIssueAsync(string issueKey, CancellationToken cancellationToken)
 	{
-		var serializerSettings = _jira.RestClient.Settings.JsonSerializerSettings;
 		var resource = $"rest/api/2/issue/{issueKey}/remotelink";
 		var remoteLinksJson = await _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ConfigureAwait(false);
 

@@ -81,9 +81,9 @@ public class Worklog
 
 	internal RemoteWorklog ToRemote()
 	{
-		return new RemoteWorklog()
+		return new RemoteWorklog
 		{
-			authorUser = Author == null ? null : new JiraUser() { InternalIdentifier = Author },
+			authorUser = Author == null ? null : new JiraUser { InternalIdentifier = Author },
 			comment = Comment,
 			startDate = StartDate,
 			timeSpent = TimeSpent

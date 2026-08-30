@@ -37,7 +37,7 @@ public class IssueResolution : JiraNamedEntity
 	{
 		if (name != null)
 		{
-			if (int.TryParse(name, out int id))
+			if (int.TryParse(name, out _))
 			{
 				return new IssueResolution(name /*as id*/);
 			}

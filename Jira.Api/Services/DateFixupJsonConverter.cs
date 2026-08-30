@@ -34,7 +34,7 @@ public class DateFixupJsonConverter : JsonConverter
 		//
 		//  By default JSON.NET serializes dates as: "2015-07-16T23:02:56.153121-07:00"
 		//  But JIRA expects them as: "2015-07-16T22:57:45.846-07:00"
-		var dateJson = JsonConvert.SerializeObject(value, new JsonSerializerSettings()
+		var dateJson = JsonConvert.SerializeObject(value, new JsonSerializerSettings
 		{
 			DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"
 		});

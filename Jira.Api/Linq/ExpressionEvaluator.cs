@@ -42,11 +42,11 @@ internal static class ExpressionEvaluator
 	/// </summary>
 	private class SubtreeEvaluator : ExpressionVisitor
 	{
-		HashSet<Expression> _candidates;
+		private readonly HashSet<Expression> _candidates;
 
 		internal SubtreeEvaluator(HashSet<Expression> candidates)
 		{
-			this._candidates = candidates;
+			_candidates = candidates;
 		}
 
 		internal Expression Eval(Expression exp)
@@ -54,19 +54,19 @@ internal static class ExpressionEvaluator
 			return Visit(exp);
 		}
 
-		public override Expression Visit(Expression exp)
+		public override Expression Visit(Expression node)
 		{
-			if (exp == null)
+			if (node == null)
 			{
 				return null;
 			}
 
-			if (_candidates.Contains(exp))
+			if (_candidates.Contains(node))
 			{
-				return Evaluate(exp);
+				return Evaluate(node);
 			}
 
-			return base.Visit(exp);
+			return base.Visit(node);
 		}
 
 		private static Expression Evaluate(Expression e)
@@ -88,7 +88,7 @@ internal static class ExpressionEvaluator
 	/// </summary>
 	private class Nominator : ExpressionVisitor
 	{
-		Func<Expression, bool> fnCanBeEvaluated;
+		private readonly Func<Expression, bool> fnCanBeEvaluated;
 		HashSet<Expression> candidates;
 		bool cannotBeEvaluated;
 
@@ -104,18 +104,18 @@ internal static class ExpressionEvaluator
 			return candidates;
 		}
 
-		public override Expression Visit(Expression expression)
+		public override Expression Visit(Expression node)
 		{
-			if (expression != null)
+			if (node != null)
 			{
 				bool saveCannotBeEvaluated = cannotBeEvaluated;
 				cannotBeEvaluated = false;
-				base.Visit(expression);
+				base.Visit(node);
 				if (!cannotBeEvaluated)
 				{
-					if (fnCanBeEvaluated(expression))
+					if (fnCanBeEvaluated(node))
 					{
-						candidates.Add(expression);
+						candidates.Add(node);
 					}
 					else
 					{
@@ -126,7 +126,7 @@ internal static class ExpressionEvaluator
 				cannotBeEvaluated |= saveCannotBeEvaluated;
 			}
 
-			return expression;
+			return node;
 		}
 	}
 }

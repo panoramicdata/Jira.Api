@@ -79,7 +79,7 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 
 		if (_originalList.Count != Items.Count || _originalList.Except(Items).Any())
 		{
-			var field = new RemoteFieldValue()
+			var field = new RemoteFieldValue
 			{
 				id = _fieldName,
 				values = [.. Items.Select(e => e.Id)]

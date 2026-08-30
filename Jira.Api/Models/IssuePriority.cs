@@ -37,7 +37,7 @@ public class IssuePriority : JiraNamedConstant
 	{
 		if (name != null)
 		{
-			if (int.TryParse(name, out int id))
+			if (int.TryParse(name, out _))
 			{
 				return new IssuePriority(name /*as id*/);
 			}

@@ -76,8 +76,8 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 		var issue = issueWrapper.RemoteIssue;
 
 		// prepare the JiraUser identifiers
-		issue.assigneeJiraUser = string.IsNullOrEmpty(issue.assignee) ? null : new JiraUser() { InternalIdentifier = issue.assignee };
-		issue.reporterJiraUser = string.IsNullOrEmpty(issue.reporter) ? null : new JiraUser() { InternalIdentifier = issue.reporter };
+		issue.assigneeJiraUser = string.IsNullOrEmpty(issue.assignee) ? null : new JiraUser { InternalIdentifier = issue.assignee };
+		issue.reporterJiraUser = string.IsNullOrEmpty(issue.reporter) ? null : new JiraUser { InternalIdentifier = issue.reporter };
 
 		// Round trip the remote issue to get a JObject that has all the fields in the proper format.
 		var issueJsonBuilder = new StringBuilder();
@@ -151,7 +151,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 			.Select(field =>
 			{
 				var customFieldType = GetCustomFieldType(field.Name);
-				var remoteCustomFieldValue = new RemoteCustomFieldValue()
+				var remoteCustomFieldValue = new RemoteCustomFieldValue
 				{
 					customfieldId = field.Name,
 					rawValue = field.Value

@@ -18,11 +18,11 @@ public partial class IssueTest
 		{
 			//arrange
 			var jira = TestableJira.Create();
-			var remoteAttachment = new RemoteAttachment() { filename = "attach.txt" };
+			var remoteAttachment = new RemoteAttachment { filename = "attach.txt" };
 			jira.IssueService.Setup(j => j.GetAttachmentsAsync("issueKey", It.IsAny<CancellationToken>()))
 				.Returns(Task.FromResult(Enumerable.Repeat(new Attachment(jira, remoteAttachment), 1)));
 
-			var issue = (new RemoteIssue() { key = "issueKey" }).ToLocal(jira);
+			var issue = (new RemoteIssue { key = "issueKey" }).ToLocal(jira);
 
 			//act
 			var attachments = await issue.GetAttachmentsAsync(CancellationToken);
@@ -40,7 +40,7 @@ public partial class IssueTest
 		{
 			//arrange
 			var jira = TestableJira.Create();
-			var remoteAttachment = new RemoteAttachment() { id = "10001", filename = "report.pdf" };
+			var remoteAttachment = new RemoteAttachment { id = "10001", filename = "report.pdf" };
 			jira.IssueService.Setup(j => j.GetAttachmentAsync("10001", It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new Attachment(jira, remoteAttachment));
 

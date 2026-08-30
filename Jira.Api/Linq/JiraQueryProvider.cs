@@ -49,18 +49,18 @@ public class JiraQueryProvider(IJqlExpressionVisitor translator, IIssueService i
 		var jql = _translator.Process(expression);
 
 		var temp = _issues.GetIssuesFromJqlAsync(jql.Expression, jql.SkipResults ?? 0, jql.NumberOfResults, default).GetAwaiter().GetResult();
-		IQueryable<Issue> issues = temp.AsQueryable();
+		IQueryable<Issue> queryableIssues = temp.AsQueryable();
 
 		if (isEnumerable)
 		{
-			return issues;
+			return queryableIssues;
 		}
 		else
 		{
-			var treeCopier = new ExpressionTreeModifier(issues);
+			var treeCopier = new ExpressionTreeModifier(queryableIssues);
 			Expression newExpressionTree = treeCopier.Visit(expression);
 
-			return issues.Provider.Execute(newExpressionTree);
+			return queryableIssues.Provider.Execute(newExpressionTree);
 		}
 	}
 }

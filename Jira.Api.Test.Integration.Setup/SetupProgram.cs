@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Jira.Api.Test.Integration.Setup;
 
-public class SetupProgram
+public static class SetupProgram
 {
 	public const string URL = "http://localhost:8080";
 
@@ -42,8 +42,6 @@ public class SetupProgram
 				webDriver.Quit();
 			}
 		}
-
-		;
 	}
 
 	private static async Task WaitForJira()

@@ -14,7 +14,7 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 {
 	internal const string DEFAULT_DATE_FORMAT = "yyyy/MM/dd";
 	internal const string DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " HH:mm";
-	internal static CultureInfo DefaultCultureInfo = CultureInfo.GetCultureInfo("en-us");
+	internal static readonly CultureInfo DefaultCultureInfo = CultureInfo.GetCultureInfo("en-us");
 
 	/// <summary>
 	/// Creates a JIRA rest client.

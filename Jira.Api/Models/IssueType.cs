@@ -70,7 +70,7 @@ public class IssueType : JiraNamedConstant
 	{
 		if (name != null)
 		{
-			if (int.TryParse(name, out int id))
+			if (int.TryParse(name, out _))
 			{
 				return new IssueType(name /*as id*/);
 			}
