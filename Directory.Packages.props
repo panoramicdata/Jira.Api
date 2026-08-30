@@ -23,7 +23,7 @@
     <PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="152.0.7977.6400" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.0" />
-    <PackageVersion Include="Xunit.Microsoft.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Include="Xunit.Microsoft.DependencyInjection" Version="10.1.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.10.0" />
   </ItemGroup>
 </Project>
