@@ -10,13 +10,13 @@ public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outpu
 		var client = new Mock<IJiraRestClient>();
 		var jira = JiraClient.CreateRestClient(client.Object);
 
-		var remoteProject = new RemoteProject() { id = "projId", key = "projKey", name = "my project" };
+		var remoteProject = new RemoteProject { id = "projId", key = "projKey", name = "my project" };
 		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(new Project(jira, remoteProject), 1)));
 		jira.Services.Register(() => projects.Object);
 
 		var versionResource = new Mock<IProjectVersionService>();
-		var remoteVersion = new RemoteVersion() { id = "123", name = "my version" };
+		var remoteVersion = new RemoteVersion { id = "123", name = "my version" };
 		var version = new ProjectVersion(jira, remoteVersion);
 		versionResource.Setup(s => s.GetVersionsAsync("projKey", It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(version, 1)));
@@ -38,13 +38,13 @@ public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outpu
 		var client = new Mock<IJiraRestClient>();
 		var jira = JiraClient.CreateRestClient(client.Object);
 
-		var remoteProject = new RemoteProject() { id = "projId", key = "projKey", name = "my project" };
+		var remoteProject = new RemoteProject { id = "projId", key = "projKey", name = "my project" };
 		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(new Project(jira, remoteProject), 1)));
 		jira.Services.Register(() => projects.Object);
 
 		var componentResource = new Mock<IProjectComponentService>();
-		var remoteComponent = new RemoteComponent() { id = "123", name = "my component" };
+		var remoteComponent = new RemoteComponent { id = "123", name = "my component" };
 		var component = new ProjectComponent(remoteComponent);
 		componentResource.Setup(s => s.GetComponentsAsync("projKey", It.IsAny<CancellationToken>()))
 			.Returns(Task.FromResult(Enumerable.Repeat(component, 1)));

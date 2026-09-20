@@ -57,7 +57,7 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 
 		if (_originalLabels.Count != this.Count || this.Except(_originalLabels).Any())
 		{
-			fieldValues.Add(new RemoteFieldValue()
+			fieldValues.Add(new RemoteFieldValue
 			{
 				id = "labels",
 				values = ToArray()

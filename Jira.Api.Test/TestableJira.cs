@@ -6,15 +6,15 @@ namespace Jira.Api.Test;
 
 public class TestableJira : JiraClient
 {
-	public Mock<IJqlExpressionVisitor> Translator;
-	public Mock<IJiraRestClient> RestService;
-	public Mock<IFileSystem> FileSystem;
-	public Mock<IIssueTypeService> IssueTypeService;
-	public Mock<IIssueFieldService> IssueFieldService;
-	public Mock<IIssueFilterService> IssueFilterService;
-	public Mock<IIssueService> IssueService;
-	public Mock<IIssuePriorityService> IssuePriorityService;
-	public Mock<IIssueResolutionService> IssueResolutionService;
+	public Mock<IJqlExpressionVisitor> Translator { get; private set; }
+	public Mock<IJiraRestClient> RestService { get; private set; }
+	public Mock<IFileSystem> FileSystem { get; private set; }
+	public Mock<IIssueTypeService> IssueTypeService { get; private set; }
+	public Mock<IIssueFieldService> IssueFieldService { get; private set; }
+	public Mock<IIssueFilterService> IssueFilterService { get; private set; }
+	public Mock<IIssueService> IssueService { get; private set; }
+	public Mock<IIssuePriorityService> IssuePriorityService { get; private set; }
+	public Mock<IIssueResolutionService> IssueResolutionService { get; private set; }
 
 	internal static readonly CultureInfo TestCulture = CultureInfo.InvariantCulture;
 
@@ -41,7 +41,7 @@ public class TestableJira : JiraClient
 		Services.Register(() => IssuePriorityService.Object);
 		Services.Register(() => IssueResolutionService.Object);
 
-		Translator.Setup(t => t.Process(It.IsAny<Expression>())).Returns(new JqlData() { Expression = "dummy expression" });
+		Translator.Setup(t => t.Process(It.IsAny<Expression>())).Returns(new JqlData { Expression = "dummy expression" });
 	}
 
 	public static TestableJira Create()

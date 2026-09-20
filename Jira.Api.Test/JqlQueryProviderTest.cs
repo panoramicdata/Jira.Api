@@ -23,7 +23,7 @@ public class JqlQueryProviderTest
 		var provider = new JiraQueryProvider(jira.Translator.Object, jira.IssueService.Object);
 		var queryable = new JiraQueryable<Issue>(provider);
 
-		jira.SetupIssues(new RemoteIssue() { summary = "foo" }, new RemoteIssue());
+		jira.SetupIssues(new RemoteIssue { summary = "foo" }, new RemoteIssue());
 
 		queryable.First().Summary.Should().Be("foo");
 	}

@@ -64,7 +64,7 @@ public class ComparableString(string value)
 	/// </summary>
 	public static bool operator >(ComparableString field, string value)
 	{
-		return field.Value.CompareTo(value) > 0;
+		return string.CompareOrdinal(field.Value, value) > 0;
 	}
 
 	/// <summary>
@@ -72,7 +72,7 @@ public class ComparableString(string value)
 	/// </summary>
 	public static bool operator <(ComparableString field, string value)
 	{
-		return field.Value.CompareTo(value) < 0;
+		return string.CompareOrdinal(field.Value, value) < 0;
 	}
 
 	/// <summary>
@@ -80,7 +80,7 @@ public class ComparableString(string value)
 	/// </summary>
 	public static bool operator <=(ComparableString field, string value)
 	{
-		return field.Value.CompareTo(value) <= 0;
+		return string.CompareOrdinal(field.Value, value) <= 0;
 	}
 
 	/// <summary>
@@ -88,7 +88,7 @@ public class ComparableString(string value)
 	/// </summary>
 	public static bool operator >=(ComparableString field, string value)
 	{
-		return field.Value.CompareTo(value) >= 0;
+		return string.CompareOrdinal(field.Value, value) >= 0;
 	}
 
 	/// <summary>
@@ -175,7 +175,7 @@ public class ComparableString(string value)
 			return Value.Equals(obString);
 		}
 
-		return base.Equals(obj);
+		return false;
 	}
 
 	/// <summary>

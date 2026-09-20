@@ -6,7 +6,7 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 	private JiraUserCreationInfo BuildUserInfo()
 	{
 		var rand = RandomNumberGenerator.GetInt32(int.MaxValue);
-		return new JiraUserCreationInfo()
+		return new JiraUserCreationInfo
 		{
 			Username = "test" + rand,
 			DisplayName = "Test User " + rand,

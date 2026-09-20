@@ -124,24 +124,11 @@ internal class IssueFieldService(JiraClient jira) : IIssueFieldService
 
 			foreach (var field in values)
 			{
-				var fieldId = field.Value<string>("fieldId") ?? string.Empty;
-				if (!fieldId.StartsWith("customfield_", StringComparison.OrdinalIgnoreCase))
+				var customField = ToCustomField(field, serializerSettings);
+				if (customField is not null)
 				{
-					continue;
+					fields.Add(customField);
 				}
-
-				var remoteField = JsonConvert.DeserializeObject<RemoteField>(field.ToString(), serializerSettings);
-				if (remoteField is null)
-				{
-					continue;
-				}
-
-				if (string.IsNullOrEmpty(remoteField.id))
-				{
-					remoteField.id = fieldId;
-				}
-
-				fields.Add(new CustomField(remoteField));
 			}
 
 			startAt += values.Count;
@@ -153,6 +140,32 @@ internal class IssueFieldService(JiraClient jira) : IIssueFieldService
 		}
 
 		return fields;
+	}
+
+	/// <summary>
+	/// Converts a createmeta field entry into a <see cref="CustomField"/>, or returns
+	/// <see langword="null"/> if the entry is not a custom field or cannot be deserialized.
+	/// </summary>
+	private static CustomField? ToCustomField(JToken field, JsonSerializerSettings serializerSettings)
+	{
+		var fieldId = field.Value<string>("fieldId") ?? string.Empty;
+		if (!fieldId.StartsWith("customfield_", StringComparison.OrdinalIgnoreCase))
+		{
+			return null;
+		}
+
+		var remoteField = JsonConvert.DeserializeObject<RemoteField>(field.ToString(), serializerSettings);
+		if (remoteField is null)
+		{
+			return null;
+		}
+
+		if (string.IsNullOrEmpty(remoteField.id))
+		{
+			remoteField.id = fieldId;
+		}
+
+		return new CustomField(remoteField);
 	}
 
 	private async Task<IEnumerable<CustomField>> GetProjectCustomFieldsViaLegacyCreateMetaAsync(CustomFieldFetchOptions options, CancellationToken cancellationToken)

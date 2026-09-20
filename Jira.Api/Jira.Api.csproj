@@ -7,7 +7,7 @@
 		<Version>$(Version)</Version>
 		<Product>Jira.Api</Product>
 		<PackageTags>Atlassian JIRA LINQ</PackageTags>
-		<PackageReleaseNotes>See https://github.com/panoramicdata/Jira.Api</PackageReleaseNotes>
+		<PackageReleaseNotes>9.3: Added Dashboards service: list dashboards, get dashboard by id, and get dashboard detail including gadgets and their user preferences (filter id, column names, page size). See https://github.com/panoramicdata/Jira.Api</PackageReleaseNotes>
 		<Description>Utilities to interact with Atlassian Jira. Contains LinqToJira provider for querying JIRA Issue tracker (http://www.atlassian.com/software/jira).</Description>
 		<PackageProjectUrl>https://github.com/panoramicdata/Jira.Api</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

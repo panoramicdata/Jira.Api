@@ -27,8 +27,8 @@ public class ServiceLocator
 	{
 		Type serviceType = typeof(TService);
 
-		_factories.AddOrUpdate(serviceType, factory, (s, f) => factory);
-		_services.TryRemove(serviceType, out object factoryObj);
+		_factories.AddOrUpdate(serviceType, factory, (_, _) => factory);
+		_services.TryRemove(serviceType, out _);
 	}
 
 	/// <summary>

@@ -14,7 +14,7 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 {
 	internal const string DEFAULT_DATE_FORMAT = "yyyy/MM/dd";
 	internal const string DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " HH:mm";
-	internal static CultureInfo DefaultCultureInfo = CultureInfo.GetCultureInfo("en-us");
+	internal static readonly CultureInfo DefaultCultureInfo = CultureInfo.GetCultureInfo("en-us");
 
 	/// <summary>
 	/// Creates a JIRA rest client.
@@ -142,6 +142,11 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 	/// Gets an object to interact with the issue filters of jira.
 	/// </summary>
 	public IIssueFilterService Filters => Services.Get<IIssueFilterService>();
+
+	/// <summary>
+	/// Gets an object to interact with the dashboards of jira.
+	/// </summary>
+	public IDashboardService Dashboards => Services.Get<IDashboardService>();
 
 	/// <summary>
 	/// Gets an object to interact with the issue priorities of jira.
@@ -276,6 +281,7 @@ public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 		services.Register<IIssueRemoteLinkService>(() => new IssueRemoteLinkService(jira));
 		services.Register<IIssueTypeService>(() => new IssueTypeService(jira));
 		services.Register<IIssueFilterService>(() => new IssueFilterService(jira));
+		services.Register<IDashboardService>(() => new DashboardService(jira));
 		services.Register<IIssueFieldService>(() => new IssueFieldService(jira));
 		services.Register<IIssueService>(() => new IssueService(jira, restClient.Settings));
 		services.Register<IJiraUserService>(() => new JiraUserService(jira));

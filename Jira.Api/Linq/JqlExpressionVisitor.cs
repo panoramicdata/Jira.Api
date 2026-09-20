@@ -20,7 +20,7 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 	{
 		get
 		{
-			return _jqlWhere.ToString() + _jqlOrderBy.ToString();
+			return $"{_jqlWhere}{_jqlOrderBy}";
 		}
 	}
 

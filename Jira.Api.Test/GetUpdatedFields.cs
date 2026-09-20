@@ -8,12 +8,12 @@ public partial class IssueTest
 		public async Task ReturnsCustomFieldsAdded()
 		{
 			var jira = TestableJira.Create();
-			var customField = new CustomField(new RemoteField() { id = "CustomField1", name = "My Custom Field" });
-			var remoteIssue = new RemoteIssue()
+			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
+			var remoteIssue = new RemoteIssue
 			{
 				key = "TST-1",
 				project = "TST",
-				type = new RemoteIssueType() { id = "1" }
+				type = new RemoteIssueType { id = "1" }
 			};
 
 			jira.IssueService.SetupIssues(jira, remoteIssue);
@@ -32,17 +32,17 @@ public partial class IssueTest
 		public async Task ExcludesCustomFieldsNotModified()
 		{
 			var jira = TestableJira.Create();
-			var customField = new CustomField(new RemoteField() { id = "CustomField1", name = "My Custom Field" });
-			var remoteCustomFieldValue = new RemoteCustomFieldValue()
+			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
+			var remoteCustomFieldValue = new RemoteCustomFieldValue
 			{
 				customfieldId = "CustomField1",
 				values = ["My Value"]
 			};
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
 				key = "TST-1",
 				project = "TST",
-				type = new RemoteIssueType() { id = "1" },
+				type = new RemoteIssueType { id = "1" },
 				customFieldValues = [remoteCustomFieldValue]
 			};
 
@@ -63,17 +63,17 @@ public partial class IssueTest
 		public async Task ReturnsCustomFieldThatWasModified()
 		{
 			var jira = TestableJira.Create();
-			var customField = new CustomField(new RemoteField() { id = "CustomField1", name = "My Custom Field" });
-			var remoteCustomFieldValue = new RemoteCustomFieldValue()
+			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
+			var remoteCustomFieldValue = new RemoteCustomFieldValue
 			{
 				customfieldId = "CustomField1",
 				values = ["My Value"]
 			};
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
 				key = "TST-1",
 				project = "TST",
-				type = new RemoteIssueType() { id = "1" },
+				type = new RemoteIssueType { id = "1" },
 				customFieldValues = [remoteCustomFieldValue]
 			};
 
@@ -112,7 +112,7 @@ public partial class IssueTest
 		public async Task IfIssueTypeWithName_ReturnsFieldWithIdInferred()
 		{
 			var jira = TestableJira.Create();
-			var issueType = new IssueType(new RemoteIssueType() { id = "2", name = "Task" });
+			var issueType = new IssueType(new RemoteIssueType { id = "2", name = "Task" });
 			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(It.IsAny<CancellationToken>()))
 				.Returns(Task.FromResult(Enumerable.Repeat(issueType, 1)));
 			var issue = jira.CreateIssue("FOO");
@@ -127,12 +127,12 @@ public partial class IssueTest
 		public async Task IfIssueTypeWithNameNotChanged_ReturnsNoFieldsChanged()
 		{
 			var jira = TestableJira.Create();
-			var issueType = new IssueType(new RemoteIssueType() { id = "5", name = "Task" });
+			var issueType = new IssueType(new RemoteIssueType { id = "5", name = "Task" });
 			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(It.IsAny<CancellationToken>()))
 				.Returns(Task.FromResult(Enumerable.Repeat(issueType, 1)));
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
-				type = new RemoteIssueType() { id = "5" },
+				type = new RemoteIssueType { id = "5" },
 			};
 
 			var issue = remoteIssue.ToLocal(jira);
@@ -186,7 +186,7 @@ public partial class IssueTest
 		[Fact]
 		public async Task IfStringEqual_ReturnNoFieldsThatChanged()
 		{
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
 				summary = "Summary"
 			};
@@ -202,9 +202,9 @@ public partial class IssueTest
 		public async Task IfComparableEqual_ReturnNoFieldsThatChanged()
 		{
 			var jira = TestableJira.Create();
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
-				priority = new RemotePriority() { id = "5" },
+				priority = new RemotePriority { id = "5" },
 			};
 
 			var issue = remoteIssue.ToLocal(jira);
@@ -242,7 +242,7 @@ public partial class IssueTest
 		[Fact]
 		public async Task IfDateTimeUnChangd_ShouldNotIncludeItInFieldsThatChanged()
 		{
-			var remoteIssue = new RemoteIssue()
+			var remoteIssue = new RemoteIssue
 			{
 				duedate = new DateTime(2011, 1, 1)
 			};
@@ -254,8 +254,8 @@ public partial class IssueTest
 		[Fact]
 		public async Task IfComponentsAdded_ReturnsFields()
 		{
-			var issue = new RemoteIssue() { key = "foo" }.ToLocal(TestableJira.Create());
-			var component = new RemoteComponent() { id = "1", name = "1.0" };
+			var issue = new RemoteIssue { key = "foo" }.ToLocal(TestableJira.Create());
+			var component = new RemoteComponent { id = "1", name = "1.0" };
 			issue.Components.Add(component.ToLocal());
 
 			var fields = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
@@ -267,8 +267,8 @@ public partial class IssueTest
 		[Fact]
 		public async Task IfAddFixVersion_ReturnAllFieldsThatChanged()
 		{
-			var issue = new RemoteIssue() { key = "foo" }.ToLocal(TestableJira.Create());
-			var version = new RemoteVersion() { id = "1", name = "1.0" };
+			var issue = new RemoteIssue { key = "foo" }.ToLocal(TestableJira.Create());
+			var version = new RemoteVersion { id = "1", name = "1.0" };
 			issue.FixVersions.Add(version.ToLocal(TestableJira.Create()));
 
 			var fields = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
@@ -280,8 +280,8 @@ public partial class IssueTest
 		[Fact]
 		public async Task IfAddAffectsVersion_ReturnAllFieldsThatChanged()
 		{
-			var issue = new RemoteIssue() { key = "foo" }.ToLocal(TestableJira.Create());
-			var version = new RemoteVersion() { id = "1", name = "1.0" };
+			var issue = new RemoteIssue { key = "foo" }.ToLocal(TestableJira.Create());
+			var version = new RemoteVersion { id = "1", name = "1.0" };
 			issue.AffectsVersions.Add(version.ToLocal(TestableJira.Create()));
 
 			var fields = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);

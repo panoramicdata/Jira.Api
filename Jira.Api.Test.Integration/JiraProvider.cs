@@ -6,14 +6,11 @@ namespace Jira.Api.Test.Integration;
 
 internal class JiraProvider : IEnumerable<object[]>
 {
-	// CancellationToken (legacy hard-coded) values kept for fallback.
-	private const string CancellationTokenHost = "http://localhost:8080";
-	private const string CancellationTokenUsername = "admin";
-	private const string CancellationTokenPassword = "admin";
-	private const string CancellationTokenOAuthConsumerKey = "JiraSdkConsumerKey";
-	private const string CancellationTokenOAuthConsumerSecret = "<RSAKeyValue><Modulus>odq47HoOGrM8b4FsbcaD+RpBCP1tNsKOcnH5wVd0XmgkEsiOaGiSUx1r9EEk9bBw2/Hq3DAXqbswOQOVt9WOPM27bjKDFJ2fkhFok//I3Wnsv/ZBpCHfyCT4dr9n8vd2HNVbDS4VqDNmoBbVs1Efkgw8ybcgsmGqqT7WZYmmSa8=</Modulus><Exponent>AQAB</Exponent><P>1HIXunp5C8dntdrNhOItLYYexBHDPSPCemdTLcoGIPrdGs+YgNHwpzjKAa89EToguijzxUigiZXbXLsimy+Whw==</P><Q>wwlrDSX0kV8b4jA5qDsoWN33h8BWotHq2YtajY2AyB7/MwmoBtWasQB1SxJcrILetbOqiTzJaZNdmQqg9RHVmQ==</Q><DP>abZYLlexEfZomepFqCDvwB5kAsaf8zVvGX9+uWM0x4ZtLWEtjrRo3pz4j/wGFCNrk5a7LmkkUTI7lJod70Cv0w==</DP><DQ>lxx/9eL3d36iIwDMW1ziaOApveM2/NX5yO2gjlYZdnQVtByCNDFhtkwtlKm4ZezL0ypOMiCHySXlegLzLI3R2Q==</DQ><InverseQ>mxXqH+teLS/8SgdBDi6cs5huMwXe7zAz33noZeiyi7Xm2ciyjvheCGFF201wBXehUemxMqmLGTCLWMBp0qsmnA==</InverseQ><D>VYeHgS9elK1ymloCOmBVDSXaiC2jsPRO4htop8rXK6xMo8BnwLTB3joF+iUSquJ6QUAto/2mA4NvkDFcxLCNYKziSj1JWIbfcc6gqPIKwtxyM3ZlSuJaG6GpNPh41SEhjtgMt2Cbf5Qy/prK1FkWFfOcvlOg+z2qGPQDXhS0QIE=</D></RSAKeyValue>";
-	private const string CancellationTokenOAuthAccessToken = "ZGUlzyOnuzS929YgIXv6Yt0TiZ8KbUAG";
-	private const string CancellationTokenOAuthTokenSecret = "EDeTxUt7QqDkoawenPY3QCaGeVGXa1BJ";
+	// Fallback values for a local, throwaway Jira instance. Real credentials come from
+	// configuration (environment variables or user secrets); see BuildConfiguration below.
+	private const string DefaultHost = "http://localhost:8080";
+	private const string DefaultUsername = "admin";
+	private const string DefaultPassword = "admin";
 
 	// Public values consumed by tests (kept same names for backwards compatibility)
 	public static readonly string HOST;
@@ -25,8 +22,8 @@ internal class JiraProvider : IEnumerable<object[]>
 	public static readonly string OAUTHTOKENSECRET;
 	public static readonly bool HasOAuthConfiguration;
 
-	private static JiraClient _jiraWithCredentials = null!;
-   private static JiraClient? _jiraWithOAuth;
+	private static readonly JiraClient _jiraWithCredentials;
+	private static readonly JiraClient? _jiraWithOAuth;
 
 	private readonly List<object[]> _data;
 
@@ -35,18 +32,14 @@ internal class JiraProvider : IEnumerable<object[]>
 		var configuration = BuildConfiguration();
 
 		// Map configuration keys (environment or user secrets override json)
-		HOST = GetConfig(configuration, "Jira:Host", CancellationTokenHost);
-		USERNAME = GetConfig(configuration, "Jira:Username", CancellationTokenUsername);
-		PASSWORD = GetConfig(configuration, "Jira:Password", CancellationTokenPassword);
-       OAUTHCONSUMERKEY = GetOptionalConfig(configuration, "Jira:OAuth:ConsumerKey") ?? string.Empty;
+		HOST = GetConfig(configuration, "Jira:Host", DefaultHost);
+		USERNAME = GetConfig(configuration, "Jira:Username", DefaultUsername);
+		PASSWORD = GetConfig(configuration, "Jira:Password", DefaultPassword);
+		OAUTHCONSUMERKEY = GetOptionalConfig(configuration, "Jira:OAuth:ConsumerKey") ?? string.Empty;
 		OAUTHCONSUMERSECRET = GetOptionalConfig(configuration, "Jira:OAuth:ConsumerSecret") ?? string.Empty;
 		OAUTHACCESSTOKEN = GetOptionalConfig(configuration, "Jira:OAuth:AccessToken") ?? string.Empty;
 		OAUTHTOKENSECRET = GetOptionalConfig(configuration, "Jira:OAuth:TokenSecret") ?? string.Empty;
-		HasOAuthConfiguration =
-			!string.IsNullOrWhiteSpace(OAUTHCONSUMERKEY)
-			&& !string.IsNullOrWhiteSpace(OAUTHCONSUMERSECRET)
-			&& !string.IsNullOrWhiteSpace(OAUTHACCESSTOKEN)
-			&& !string.IsNullOrWhiteSpace(OAUTHTOKENSECRET);
+		HasOAuthConfiguration = AllPresent(OAUTHCONSUMERKEY, OAUTHCONSUMERSECRET, OAUTHACCESSTOKEN, OAUTHTOKENSECRET);
 
 		_jiraWithCredentials = JiraClient.CreateRestClient(HOST, USERNAME, PASSWORD);
 
@@ -61,9 +54,11 @@ internal class JiraProvider : IEnumerable<object[]>
 		}
 	}
 
+	private static bool AllPresent(params string[] values) => Array.TrueForAll(values, v => !string.IsNullOrWhiteSpace(v));
+
 	public JiraProvider()
 	{
-     _data = [[_jiraWithCredentials]];
+		_data = [[_jiraWithCredentials]];
 
 		if (_jiraWithOAuth != null)
 		{

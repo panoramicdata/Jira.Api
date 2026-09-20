@@ -52,7 +52,7 @@ public class Issue : IRemoteIssueFieldProvider
 
 		InitializeScalarFields(remoteIssue);
 		InitializeNamedEntities(remoteIssue);
-		InitializeCollections(remoteIssue);
+		InitializeCollections();
 
 		// additional fields
 		AdditionalFields = new IssueFields(OriginalRemoteIssue, Jira);
@@ -105,7 +105,7 @@ public class Issue : IRemoteIssueFieldProvider
 		Type = CreateIssueType(remoteIssue.type);
 	}
 
-	private void InitializeCollections(RemoteIssue remoteIssue)
+	private void InitializeCollections()
 	{
 		CustomFields = OriginalRemoteIssue.customFieldValues == null ? new CustomFieldValueCollection(this)
 			: new CustomFieldValueCollection(this, [.. OriginalRemoteIssue.customFieldValues.Select(f => new CustomFieldValue(f.customfieldId, this) { Values = f.values, RawValue = f.rawValue })]);
@@ -293,29 +293,29 @@ public class Issue : IRemoteIssueFieldProvider
 	/// The components associated with this issue
 	/// </summary>
 	[JqlFieldName("component")]
-	public ProjectComponentCollection Components { get; private set; } = null;
+	public ProjectComponentCollection Components { get; private set; }
 
 	/// <summary>
 	/// The versions that are affected by this issue
 	/// </summary>
 	[JqlFieldName("AffectedVersion")]
-	public ProjectVersionCollection AffectsVersions { get; private set; } = null;
+	public ProjectVersionCollection AffectsVersions { get; private set; }
 
 	/// <summary>
 	/// The versions in which this issue is fixed
 	/// </summary>
 	[JqlFieldName("FixVersion")]
-	public ProjectVersionCollection FixVersions { get; private set; } = null;
+	public ProjectVersionCollection FixVersions { get; private set; }
 
 	/// <summary>
 	/// The labels assigned to this issue.
 	/// </summary>
-	public IssueLabelCollection Labels { get; private set; } = null;
+	public IssueLabelCollection Labels { get; private set; }
 
 	/// <summary>
 	/// The custom fields associated with this issue
 	/// </summary>
-	public CustomFieldValueCollection CustomFields { get; private set; } = null;
+	public CustomFieldValueCollection CustomFields { get; private set; }
 
 	/// <summary>
 	/// Gets or sets the value of a custom field

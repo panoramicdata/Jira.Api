@@ -195,7 +195,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		CancellationToken cancellationToken)
 	{
 		string actionId;
-		if (int.TryParse(actionNameOrId, out int actionIdInt))
+		if (int.TryParse(actionNameOrId, out _))
 		{
 			actionId = actionNameOrId;
 		}
@@ -409,7 +409,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		return result;
 	}
 
-	public Task DeleteWatcherAsync(string issueKey, string username, CancellationToken cancellationToken)
+	public Task DeleteWatcherAsync(string issueKey, string usernameOrAccountId, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(issueKey))
 		{
@@ -417,26 +417,26 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		}
 
 		var queryString = _jira.RestClient.Settings.EnableUserPrivacyMode ? "accountId" : "username";
-		var resourceUrl = string.Format($"rest/api/2/issue/{issueKey}/watchers?{queryString}={Uri.EscapeDataString(username)}");
+		var resourceUrl = string.Format($"rest/api/2/issue/{issueKey}/watchers?{queryString}={Uri.EscapeDataString(usernameOrAccountId)}");
 		return _jira.RestClient.ExecuteRequestAsync(Method.Delete, resourceUrl, null, cancellationToken);
 	}
 
-	public Task AddWatcherAsync(string issueKey, string username, CancellationToken cancellationToken)
+	public Task AddWatcherAsync(string issueKey, string usernameOrAccountId, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(issueKey))
 		{
 			throw new InvalidOperationException("Unable to interact with the watchers resource, make sure the issue has been created.");
 		}
 
-		var requestBody = $"\"{username}\"";
+		var requestBody = $"\"{usernameOrAccountId}\"";
 		var resourceUrl = $"rest/api/2/issue/{issueKey}/watchers";
 		return _jira.RestClient.ExecuteRequestAsync(Method.Post, resourceUrl, requestBody, cancellationToken);
 	}
 
-	public Task<IPagedQueryResult<Issue>> GetSubTasksAsync(string issueKey, int skip, int? maxIssues, CancellationToken cancellationToken)
+	public Task<IPagedQueryResult<Issue>> GetSubTasksAsync(string issueKey, int skip, int? take, CancellationToken cancellationToken)
 	{
 		var jql = $"parent = {issueKey}";
-		return GetIssuesFromJqlAsync(jql, skip, maxIssues, cancellationToken);
+		return GetIssuesFromJqlAsync(jql, skip, take, cancellationToken);
 	}
 
 	public Task AddAttachmentsAsync(string issueKey, UploadAttachmentInfo[] attachments, CancellationToken cancellationToken)

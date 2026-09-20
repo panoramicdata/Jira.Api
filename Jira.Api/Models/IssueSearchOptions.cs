@@ -23,7 +23,7 @@ public class IssueSearchOptions(string jql)
 	/// <summary>
 	/// Index of the first issue to return (0-based).
 	/// </summary>
-	public int StartAt { get; set; } = 0;
+	public int StartAt { get; set; }
 
 	/// <summary>
 	/// Whether to validate a JQL query.
