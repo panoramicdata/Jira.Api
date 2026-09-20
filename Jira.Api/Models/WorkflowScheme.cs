@@ -15,6 +15,10 @@ public class WorkflowScheme
 		Description = remoteWorkflowScheme.Description;
 		DefaultWorkflow = remoteWorkflowScheme.DefaultWorkflow;
 		IssueTypeMappings = remoteWorkflowScheme.IssueTypeMappings ?? new Dictionary<string, string>();
+		OriginalDefaultWorkflow = remoteWorkflowScheme.OriginalDefaultWorkflow;
+		OriginalIssueTypeMappings = remoteWorkflowScheme.OriginalIssueTypeMappings ?? new Dictionary<string, string>();
+		LastModifiedUser = remoteWorkflowScheme.LastModifiedUser == null ? null : new JiraUser(remoteWorkflowScheme.LastModifiedUser);
+		LastModified = remoteWorkflowScheme.LastModified;
 		IsDraft = remoteWorkflowScheme.IsDraft;
 		Self = remoteWorkflowScheme.Self;
 	}
@@ -44,6 +48,18 @@ public class WorkflowScheme
 	/// Key: Issue type ID, Value: Workflow name.
 	/// </summary>
 	public IDictionary<string, string> IssueTypeMappings { get; }
+
+	/// <summary>The default workflow of the scheme from which this draft was created.</summary>
+	public string? OriginalDefaultWorkflow { get; }
+
+	/// <summary>The issue type mappings of the scheme from which this draft was created.</summary>
+	public IDictionary<string, string> OriginalIssueTypeMappings { get; }
+
+	/// <summary>The user who last modified this draft.</summary>
+	public JiraUser? LastModifiedUser { get; }
+
+	/// <summary>The time this draft was last modified, as returned by Jira.</summary>
+	public string? LastModified { get; }
 
 	/// <summary>
 	/// Whether the workflow scheme is a draft.

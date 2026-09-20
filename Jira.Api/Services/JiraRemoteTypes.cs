@@ -2281,11 +2281,50 @@ namespace Jira.Api.Remote
 		[JsonProperty("issueTypeMappings")]
 		public IDictionary<string, string>? IssueTypeMappings { get; set; }
 
+		[JsonProperty("originalDefaultWorkflow")]
+		public string? OriginalDefaultWorkflow { get; set; }
+
+		[JsonProperty("originalIssueTypeMappings")]
+		public IDictionary<string, string>? OriginalIssueTypeMappings { get; set; }
+
+		[JsonProperty("lastModifiedUser")]
+		public RemoteJiraUser? LastModifiedUser { get; set; }
+
+		[JsonProperty("lastModified")]
+		public string? LastModified { get; set; }
+
 		[JsonProperty("draft")]
 		public bool IsDraft { get; set; }
 
 		[JsonProperty("self")]
 		public string? Self { get; set; }
+	}
+
+	/// <summary>
+	/// Remote representation of an issue type to workflow mapping.
+	/// </summary>
+	public class RemoteWorkflowSchemeIssueTypeMapping
+	{
+		[JsonProperty("issueType")]
+		public string? IssueType { get; set; }
+
+		[JsonProperty("workflow")]
+		public string? Workflow { get; set; }
+	}
+
+	/// <summary>
+	/// Remote representation of the issue types assigned to a workflow.
+	/// </summary>
+	public class RemoteWorkflowSchemeWorkflowMapping
+	{
+		[JsonProperty("workflow")]
+		public string? Workflow { get; set; }
+
+		[JsonProperty("issueTypes")]
+		public string[]? IssueTypes { get; set; }
+
+		[JsonProperty("defaultMapping")]
+		public bool DefaultMapping { get; set; }
 	}
 
 	/// <summary>

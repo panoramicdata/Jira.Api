@@ -159,6 +159,14 @@ public class JiraRestClient : IJiraRestClient
 		return response;
 	}
 
+	/// <inheritdoc/>
+	public async Task<RestResponse> ExecuteRawRequestAsync(RestRequest request, CancellationToken cancellationToken)
+	{
+		ArgumentNullException.ThrowIfNull(request);
+		LogRequest(request);
+		return await ExecuteRawResquestAsync(request, cancellationToken).ConfigureAwait(false);
+	}
+
 	/// <summary>
 	/// Executes the specified REST request asynchronously and returns the raw response.
 	/// </summary>
@@ -230,7 +238,7 @@ public class JiraRestClient : IJiraRestClient
 			Trace.WriteLine($"[{request.Method}] Response for Url: {request.Resource}\n{content}");
 		}
 
-		ValidateResponse(response, content);
+		ValidateResponse(request, response, content);
 
 		if (string.IsNullOrWhiteSpace(content))
 		{
@@ -245,7 +253,7 @@ public class JiraRestClient : IJiraRestClient
 		return ParseJsonContent(content);
 	}
 
-	private static void ValidateResponse(RestResponse response, string content)
+	private static void ValidateResponse(RestRequest request, RestResponse response, string content)
 	{
 		if (!string.IsNullOrEmpty(response.ErrorMessage))
 		{
@@ -254,6 +262,11 @@ public class JiraRestClient : IJiraRestClient
 
 		if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Unauthorized)
 		{
+			if (response.StatusCode == HttpStatusCode.Unauthorized && request.Resource.StartsWith("rest/api/2/workflowscheme", StringComparison.OrdinalIgnoreCase))
+			{
+				throw new WebSudoRequiredException($"A WebSudo session is required for '{request.Resource}'. Response Content: {content}");
+			}
+
 			throw new System.Security.Authentication.AuthenticationException($"Response Content: {content}");
 		}
 

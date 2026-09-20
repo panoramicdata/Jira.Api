@@ -102,7 +102,13 @@ var updatedScheme = await jiraClient.WorkflowSchemes.UpdateWorkflowSchemeAsync(
 
 // Delete a workflow scheme
 await jiraClient.WorkflowSchemes.DeleteWorkflowSchemeAsync("10001");
+
+// Active schemes are changed through a draft by default.
+await jiraClient.WorkflowSchemes.SetIssueTypeMappingAsync("10001", "10003", "Bug workflow");
+var draft = await jiraClient.WorkflowSchemes.GetDraftAsync("10001");
 ```
+
+Jira Server/Data Center does not provide supported REST endpoints to create or copy workflows, edit transitions or post-functions, or publish workflow-scheme drafts. Those operations remain UI-only; this library deliberately does not use Jira's undocumented administration endpoints for them.
 
 ### Project Status Queries
 

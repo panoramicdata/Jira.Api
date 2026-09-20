@@ -30,6 +30,13 @@ public interface IJiraRestClient
 	Task<RestResponse> ExecuteRequestAsync(RestRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
+	/// Executes a request and returns its raw response without requiring a JSON response body.
+	/// </summary>
+	/// <param name="request">Request object, including any caller-supplied headers.</param>
+	/// <param name="cancellationToken">Cancellation token for the operation.</param>
+	Task<RestResponse> ExecuteRawRequestAsync(RestRequest request, CancellationToken cancellationToken);
+
+	/// <summary>
 	/// Executes an async request and returns the response as JSON.
 	/// </summary>
 	/// <param name="method">Request method.</param>
