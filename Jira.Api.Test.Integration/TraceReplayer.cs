@@ -41,6 +41,14 @@ class TraceReplayer : IJiraRestClient
 		throw new NotImplementedException();
 	}
 
+	// Not replayable, for the same reason as the RestRequest overload above: the trace files hold
+	// only response bodies, so there is nothing to reconstruct a RestResponse from. The replayable
+	// overloads are the Method/resource ones, which dequeue a recorded body.
+	public Task<RestResponse> ExecuteRawRequestAsync(RestRequest request, CancellationToken cancellationToken)
+	{
+		throw new NotImplementedException();
+	}
+
 	public Task<JToken> ExecuteRequestAsync(Method method, string resource, object? requestBody, CancellationToken cancellationToken)
 	{
 		Console.WriteLine($"Method: {method}. Url: {resource}");

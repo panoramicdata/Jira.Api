@@ -26,8 +26,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
+      # Scoped to the unit-test project rather than filtering across the solution.
+      # global.json selects Microsoft.Testing.Platform, under which an assembly where every test is
+      # filtered out is an error ("Zero tests ran", exit 8), not a no-op. The old
+      # --filter "FullyQualifiedName!~Integration" excluded every test in Jira.Api.Test.Integration,
+      # so the whole step failed however green the real tests were, and publish (needs: build) never
+      # ran. ci.yml has no test step, which is why the tag path kept working and this one did not.
       - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal --filter "FullyQualifiedName!~Integration"
+        run: dotnet test Jira.Api.Test/Jira.Api.Test.csproj --no-build --configuration Release --verbosity normal
 
   publish:
     needs: build
