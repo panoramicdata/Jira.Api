@@ -27,6 +27,17 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
+    # Carried over from ci-cd.yml when that workflow was removed, so deleting the duplicate did not
+    # silently leave the repository with no tests in CI.
+    #
+    # Scoped to the unit-test project rather than filtering across the solution: global.json selects
+    # Microsoft.Testing.Platform, under which an assembly whose tests are all filtered out is an
+    # error ("Zero tests ran", exit 8), not a no-op. The old
+    # --filter "FullyQualifiedName!~Integration" excluded every test in Jira.Api.Test.Integration and
+    # so failed the step however green the real tests were.
+    - name: Test
+      run: dotnet test Jira.Api.Test/Jira.Api.Test.csproj --no-build --configuration Release --verbosity normal
+
     - name: Pack
       run: dotnet pack --configuration Release --no-build --output ./artifacts
 
