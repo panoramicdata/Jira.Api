@@ -3,6 +3,11 @@
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<OutputType>Exe</OutputType>
+		<!-- Run on Microsoft.Testing.Platform so Microsoft.Testing.Extensions.CodeCoverage can collect
+		     coverage with the test executable's own switch (dash-dash coverage), as CI does. -->
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Properties**" />
