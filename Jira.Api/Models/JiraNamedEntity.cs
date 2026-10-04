@@ -80,9 +80,9 @@ public class JiraNamedEntity : IJiraEntity
 
 internal class JiraEntityNameEqualityComparer : IEqualityComparer<JiraNamedEntity>
 {
-	public bool Equals(JiraNamedEntity x, JiraNamedEntity y)
+	public bool Equals(JiraNamedEntity? x, JiraNamedEntity? y)
 	{
-		return string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+		return string.Equals(x?.Name, y?.Name, StringComparison.OrdinalIgnoreCase);
 	}
 
 	public int GetHashCode(JiraNamedEntity obj)

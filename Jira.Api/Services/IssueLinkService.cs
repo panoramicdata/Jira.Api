@@ -11,7 +11,7 @@ internal class IssueLinkService(JiraClient jira) : IIssueLinkService
 		string outwardIssueKey,
 		string inwardIssueKey,
 		string linkName,
-		string comment,
+		string? comment,
 		CancellationToken cancellationToken)
 	{
 		var bodyObject = new JObject

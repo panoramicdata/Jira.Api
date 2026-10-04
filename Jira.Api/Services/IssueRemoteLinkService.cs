@@ -6,7 +6,7 @@ internal class IssueRemoteLinkService(JiraClient jira) : IIssueRemoteLinkService
 {
 	private readonly JiraClient _jira = jira;
 
-	public Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string summary, CancellationToken cancellationToken)
+	public Task CreateRemoteLinkAsync(string issueKey, string remoteUrl, string title, string? summary, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(title))
 		{

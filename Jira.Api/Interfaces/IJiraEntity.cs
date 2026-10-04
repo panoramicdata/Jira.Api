@@ -8,5 +8,5 @@ public interface IJiraEntity
 	/// <summary>
 	/// Unique identifier for this entity.
 	/// </summary>
-	string Id { get; }
+	string? Id { get; }
 }

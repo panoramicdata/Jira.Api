@@ -21,7 +21,7 @@ public class NestedValueJsonConverter(string innerProperty) : JsonConverter
 	/// <summary>
 	/// Writes the JSON representation of the object
 	/// </summary>
-	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
 	{
 		var outerObject = new JObject(new JProperty(_innerProperty, value));
 		outerObject.WriteTo(writer);
@@ -30,7 +30,7 @@ public class NestedValueJsonConverter(string innerProperty) : JsonConverter
 	/// <summary>
 	/// Reads the JSON representation of the object
 	/// </summary>
-	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+	public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
 	{
 		var outerObject = JObject.Load(reader);
 		return outerObject[_innerProperty]?.ToObject(objectType);

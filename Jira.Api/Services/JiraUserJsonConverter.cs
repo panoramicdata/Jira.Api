@@ -25,7 +25,7 @@ public class JiraUserJsonConverter : JsonConverter
 	/// <summary>
 	/// Reads the JSON representation of the object
 	/// </summary>
-	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+	public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
 	{
 		var remoteUser = serializer.Deserialize<RemoteJiraUser>(reader);
 		return new JiraUser(remoteUser, UserPrivacyEnabled);
@@ -34,7 +34,7 @@ public class JiraUserJsonConverter : JsonConverter
 	/// <summary>
 	/// Writes the JSON representation of the object
 	/// </summary>
-	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
 	{
 		if (value is JiraUser user)
 		{

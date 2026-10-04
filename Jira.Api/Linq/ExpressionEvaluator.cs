@@ -54,7 +54,7 @@ internal static class ExpressionEvaluator
 			return Visit(exp);
 		}
 
-		public override Expression Visit(Expression node)
+		public override Expression? Visit(Expression? node)
 		{
 			if (node == null)
 			{
@@ -104,7 +104,7 @@ internal static class ExpressionEvaluator
 			return candidates;
 		}
 
-		public override Expression Visit(Expression node)
+		public override Expression? Visit(Expression? node)
 		{
 			if (node != null)
 			{

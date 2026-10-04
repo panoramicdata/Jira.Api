@@ -40,7 +40,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 	/// <summary>
 	/// Reads the JSON representation of the object
 	/// </summary>
-	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+	public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
 	{
 		var issueObj = JObject.Load(reader);
 		var fields = issueObj["fields"] as JObject;
@@ -70,7 +70,7 @@ public class RemoteIssueJsonConverter(IEnumerable<RemoteField> remoteFields, IDi
 	/// <summary>
 	/// Writes the JSON representation of the object
 	/// </summary>
-	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
 	{
 		var issueWrapper = value as RemoteIssueWrapper ?? throw new InvalidOperationException($"value must be of type {typeof(RemoteIssueWrapper)}.");
 		var issue = issueWrapper.RemoteIssue;
