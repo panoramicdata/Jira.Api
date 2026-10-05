@@ -88,6 +88,8 @@ jobs:
       DOTNET_NOLOGO: 1
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      # Empty when the secret is not set (e.g. fork PRs); the Codacy upload step is then skipped.
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
     steps:
     - uses: actions/checkout@v7
@@ -126,7 +128,8 @@ jobs:
     # an expired project token fails silently, so check the log for "Coverage received successfully".
     - name: Upload coverage to Codacy
       continue-on-error: true
-      uses: codacy/codacy-coverage-reporter-action@v1
+      if: ${{ env.CODACY_PROJECT_TOKEN != '' }}
+      uses: codacy/codacy-coverage-reporter-action@v1.3.0
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
         coverage-reports: Jira.Api.Test/bin/Debug/net10.0/TestResults/coverage.cobertura.xml

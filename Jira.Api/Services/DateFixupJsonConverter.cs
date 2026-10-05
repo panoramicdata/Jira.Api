@@ -19,7 +19,7 @@ public class DateFixupJsonConverter : JsonConverter
 	/// <summary>
 	/// Reads the JSON representation of the object
 	/// </summary>
-	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+	public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
 	{
 		return JToken.ReadFrom(reader)?.ToObject(objectType);
 	}
@@ -27,7 +27,7 @@ public class DateFixupJsonConverter : JsonConverter
 	/// <summary>
 	/// Writes the JSON representation of the object
 	/// </summary>
-	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
 	{
 		// For some reason, the dates default serialization format of JSON.NET is not understood by some
 		//  JIRA rest end points, this converter fixes the date strings.

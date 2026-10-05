@@ -36,7 +36,7 @@ public class ComparableString(string value)
 	{
 		if (field is null)
 		{
-			return value == null;
+			return false;
 		}
 		else
 		{
@@ -51,7 +51,7 @@ public class ComparableString(string value)
 	{
 		if (field is null)
 		{
-			return value != null;
+			return true;
 		}
 		else
 		{
@@ -98,7 +98,7 @@ public class ComparableString(string value)
 	{
 		if (field is null)
 		{
-			return value == null;
+			return false;
 		}
 		else
 		{
@@ -113,7 +113,7 @@ public class ComparableString(string value)
 	{
 		if (field is null)
 		{
-			return value != null;
+			return true;
 		}
 		else
 		{
@@ -164,7 +164,7 @@ public class ComparableString(string value)
 	/// <summary>
 	/// Determines whether the specified object is equal to this instance
 	/// </summary>
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 	{
 		if (obj is ComparableString comparableString)
 		{

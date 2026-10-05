@@ -191,7 +191,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 	public async Task ExecuteWorkflowActionAsync(
 		Issue issue,
 		string actionNameOrId,
-		WorkflowTransitionUpdates updates,
+		WorkflowTransitionUpdates? updates,
 		CancellationToken cancellationToken)
 	{
 		string actionId;
@@ -643,7 +643,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 			var urlEncodedKey = WebUtility.UrlEncode(propertyKey);
 			var resource = $"rest/api/2/issue/{issueKey}/properties/{urlEncodedKey}";
 
-			return _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ContinueWith<JToken>(t =>
+			return _jira.RestClient.ExecuteRequestAsync(Method.Get, resource, null, cancellationToken).ContinueWith<JToken?>(t =>
 			 {
 				 if (!t.IsFaulted)
 				 {
@@ -656,7 +656,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 				 }
 				 else
 				 {
-					 throw t.Exception;
+					 throw t.Exception!;
 				 }
 			 });
 		});
