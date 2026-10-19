@@ -4,6 +4,8 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>JiraSetup</AssemblyName>
+		<!-- Integration-test setup tool, not a library: never publish it to NuGet. -->
+		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<OutputPath>bin\</OutputPath>
