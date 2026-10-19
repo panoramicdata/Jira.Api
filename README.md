@@ -1,7 +1,7 @@
 # Jira.Api nuget package for .NET developers
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f51368d841ca4d4b9fb142bb72d55b98)](https://app.codacy.com/gh/panoramicdata/Jira.Api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![NuGet](https://img.shields.io/nuget/v/Jira.Api.svg)](https://www.nuget.org/packages/Jira.Api/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT AND BSD-2-Clause](https://img.shields.io/badge/License-MIT_AND_BSD--2--Clause-blue.svg)](LICENSE)
 
 Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.com/software/jira) in .NET (C# etc.).
 
@@ -155,7 +155,7 @@ foreach (var issueTypeStatuses in projectStatuses)
 
 ## License
 
-This project is licensed under [BSD](/LICENSE.md).
+Jira.Api is a fork of the [Atlassian.NET SDK](https://bitbucket.org/farmas/atlassian.net-sdk/) by Federico Silva Armas. Code inherited from it remains under the [BSD 2-Clause License](https://opensource.org/licenses/BSD-2-Clause) (Copyright © 2013 Federico Silva Armas); modifications and new code by Panoramic Data Limited are under the [MIT License](https://opensource.org/licenses/MIT). SPDX: `MIT AND BSD-2-Clause`. Both notices are in [LICENSE](LICENSE) and must be retained.
 
 ## Dependencies & Requirements
 

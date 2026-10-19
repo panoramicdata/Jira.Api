@@ -29,4 +29,4 @@ Thank you for your interest in contributing to this project!
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the MIT License. Code inherited from the Atlassian.NET SDK stays under its BSD 2-Clause License; keep its notice in [LICENSE](LICENSE).

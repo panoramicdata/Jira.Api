@@ -10,7 +10,9 @@
 		<PackageReleaseNotes>9.3: Added Dashboards service: list dashboards, get dashboard by id, and get dashboard detail including gadgets and their user preferences (filter id, column names, page size). See https://github.com/panoramicdata/Jira.Api</PackageReleaseNotes>
 		<Description>Utilities to interact with Atlassian Jira. Contains LinqToJira provider for querying JIRA Issue tracker (http://www.atlassian.com/software/jira).</Description>
 		<PackageProjectUrl>https://github.com/panoramicdata/Jira.Api</PackageProjectUrl>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageLicenseExpression>MIT AND BSD-2-Clause</PackageLicenseExpression>
+		<Authors>Federico Silva Armas, Panoramic Data Limited</Authors>
+		<Copyright>Copyright © 2013 Federico Silva Armas; Copyright © 2025-$([System.DateTime]::Now.Year) Panoramic Data Limited</Copyright>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/panoramicdata/Jira.Api</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -31,6 +33,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\README.md" Pack="true" PackagePath="" />
+		<None Include="..\LICENSE" Pack="true" PackagePath="" Visible="false" />
 		 <None Include="Icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 	<ItemGroup>
