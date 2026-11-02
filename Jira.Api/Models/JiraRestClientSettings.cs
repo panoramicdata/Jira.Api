@@ -34,6 +34,11 @@ public partial class JiraRestClientSettings
 	public bool EnableRequestTrace { get; set; }
 
 	/// <summary>
+	/// Whether the client refuses every request other than GET, HEAD, OPTIONS and the read-only JQL search POST.
+	/// </summary>
+	public bool IsReadOnly { get; set; }
+
+	/// <summary>
 	/// Dictionary of serializers for custom fields.
 	/// </summary>
 	public IDictionary<string, ICustomFieldValueSerializer> CustomFieldSerializers { get; set; } = new Dictionary<string, ICustomFieldValueSerializer>();
