@@ -15,6 +15,7 @@ public class ReadOnlyOptionTest
 
 		protected override Task<RestResponse> SendRequestAsync(RestRequest request, CancellationToken cancellationToken)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			Sent.Add(request);
 			return Task.FromResult(new RestResponse { StatusCode = HttpStatusCode.OK, Content = "{}" });
 		}
