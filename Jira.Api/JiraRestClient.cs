@@ -176,8 +176,34 @@ public class JiraRestClient : IJiraRestClient
 	/// <returns>A task representing the asynchronous operation. The task result contains the raw response from the REST client.</returns>
 	protected virtual Task<RestResponse> ExecuteRawResquestAsync(RestRequest request, CancellationToken cancellationToken)
 	{
+		EnsureRequestAllowed(request);
+		return SendRequestAsync(request, cancellationToken);
+	}
+
+	/// <summary>
+	/// Sends the request to the server. Only reached once <see cref="JiraRestClientSettings.IsReadOnly"/> has been checked.
+	/// </summary>
+	/// <param name="request">The REST request to send.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
+	protected virtual Task<RestResponse> SendRequestAsync(RestRequest request, CancellationToken cancellationToken)
+	{
 		return RestClient.ExecuteAsync(request, cancellationToken);
 	}
+
+	private void EnsureRequestAllowed(RestRequest request)
+	{
+		if (!Settings.IsReadOnly || request.Method is Method.Get or Method.Head or Method.Options || IsReadOnlySearch(request))
+		{
+			return;
+		}
+
+		throw new InvalidOperationException($"The client is read-only (IsReadOnly is true): {request.Method} {request.Resource} is not allowed.");
+	}
+
+	// POST rest/api/2/search is how JQL is sent; it only reads.
+	private static bool IsReadOnlySearch(RestRequest request)
+		=> request.Method == Method.Post
+			&& request.Resource.Split('?')[0].TrimEnd('/').Equals("rest/api/2/search", StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// Downloads data asynchronously from the specified URL.
