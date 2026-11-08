@@ -1,6 +1,5 @@
 namespace Jira.Api.Test.Integration;
-
-[Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
 	[Theory]
@@ -36,18 +35,12 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-   [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task GetIssueThatIncludesOnlyAllNonBasicFields(JiraClient jira)
 	{
 		// Arrange
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = "Test issue",
-			Assignee = "admin"
-		};
+		var issue = await SaveNewAdminIssueAsync(jira, "Test issue");
 
-		await issue.SaveChangesAsync(CancellationToken);
 
 		await issue.AddCommentAsync("My comment", CancellationToken);
 		await issue.AddWorklogAsync("1d", WorklogStrategy.AutoAdjustRemainingEstimate, null, CancellationToken);
@@ -90,19 +83,15 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
- [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task GetIssuesWithPagingMetadata(JiraClient jira)
 	{
 		// Arrange: Create 3 issues to query.
 		var summaryValue = "Test-Summary-" + Guid.NewGuid().ToString();
 		for (int i = 0; i < 3; i++)
 		{
-			await new Issue(jira, "TST")
-			{
-				Type = "1",
-				Summary = summaryValue,
-				Assignee = "admin"
-			}.SaveChangesAsync(CancellationToken);
+			await SaveNewAdminIssueAsync(jira, summaryValue);
+
 		}
 
 		// Act: Query for paged issues.
@@ -122,11 +111,8 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 	{
 		var issues = await jira.Filters.GetIssuesFromFavoriteAsync("One Issue Filter", 0, null, CancellationToken);
 
-		issues.Should().ContainSingle();
-		var issue = issues.First();
-		issue.Key.Value.Should().Be("TST-1");
-		issue.Summary.Should().NotBeNull();
-		issue.AdditionalFields.ContainsKey("watches").Should().BeFalse("Watches should be excluded by CancellationToken.");
+		AssertOnlyTst1(issues, false);
+
 	}
 
 	[Theory]
@@ -135,11 +121,8 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 	{
 		var issues = await jira.Filters.GetIssuesFromFavoriteWithFieldsAsync("One Issue Filter", 0, null, ["watches"], CancellationToken);
 
-		issues.Should().ContainSingle();
-		var issue = issues.First();
-		issue.Key.Value.Should().Be("TST-1");
-		issue.Summary.Should().BeNull();
-		issue.AdditionalFields.ContainsKey("watches").Should().BeTrue("Watches should be included by query.");
+		AssertOnlyTst1(issues, true);
+
 	}
 
 	[Theory]
@@ -148,11 +131,8 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 	{
 		var issues = await jira.Filters.GetIssuesFromFilterAsync("10000", 0, null, CancellationToken);
 
-		issues.Should().ContainSingle();
-		var issue = issues.First();
-		issue.Key.Value.Should().Be("TST-1");
-		issue.Summary.Should().NotBeNull();
-		issue.AdditionalFields.ContainsKey("watches").Should().BeFalse("Watches should be excluded by CancellationToken.");
+		AssertOnlyTst1(issues, false);
+
 	}
 
 	[Theory]
@@ -161,11 +141,8 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 	{
 		var issues = await jira.Filters.GetIssuesFromFilterWithFieldsAsync("10000", 0, null, ["watches"], CancellationToken);
 
-		issues.Should().ContainSingle();
-		var issue = issues.First();
-		issue.Key.Value.Should().Be("TST-1");
-		issue.Summary.Should().BeNull();
-		issue.AdditionalFields.ContainsKey("watches").Should().BeTrue("Watches should be included by query.");
+		AssertOnlyTst1(issues, true);
+
 	}
 
 	[Theory]
@@ -181,15 +158,10 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
- [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task QueryIssueWithLabel(JiraClient jira)
 	{
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = "Test issue with labels",
-			Assignee = "admin"
-		};
+		var issue = NewAdminIssue(jira, "Test issue with labels");
 
 		issue.Labels.Add("test-label");
 		await issue.SaveChangesAsync(CancellationToken);
@@ -214,13 +186,11 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-   [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task QueryIssuesWithTakeExpression(JiraClient jira)
 	{
-		// create 2 issues with same summary
-		var randomNumber = RandomNumberGenerator.GetInt32(int.MaxValue);
-		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
-		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
+		var randomNumber = await SaveTwoIssuesWithSameSummaryAsync(jira);
+
 
 		// query with take method to only return 1
 		var issues = (from i in jira.Issues.Queryable
@@ -232,13 +202,11 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
- [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task MaximumNumberOfIssuesPerRequest(JiraClient jira)
 	{
-		// create 2 issues with same summary
-		var randomNumber = RandomNumberGenerator.GetInt32(int.MaxValue);
-		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
-		await (new Issue(jira, "TST") { Type = "1", Summary = "Test Summary " + randomNumber, Assignee = "admin" }).SaveChangesAsync(CancellationToken);
+		var randomNumber = await SaveTwoIssuesWithSameSummaryAsync(jira);
+
 
 		//set maximum issues and query
 		jira.Issues.MaxIssuesPerRequest = 1;
@@ -257,7 +225,29 @@ public class IssueQueryTest(ITestOutputHelper outputHelper) : TestBase(outputHel
 		var issues = await jira.Issues.GetIssuesFromJqlAsync("key = TST-1", 0, null, CancellationToken);
 		issues.Should().ContainSingle();
 	}
+
+	private static async Task<int> SaveTwoIssuesWithSameSummaryAsync(JiraClient jira)
+	{
+		var randomNumber = RandomNumberGenerator.GetInt32(int.MaxValue);
+		await SaveNewAdminIssueAsync(jira, "Test Summary " + randomNumber);
+		await SaveNewAdminIssueAsync(jira, "Test Summary " + randomNumber);
+		return randomNumber;
+	}
+
+	private static void AssertOnlyTst1(IEnumerable<Issue> issues, bool watchesRequested)
+	{
+		issues.Should().ContainSingle();
+		var issue = issues.First();
+		issue.Key.Value.Should().Be("TST-1");
+		if (watchesRequested)
+		{
+			issue.Summary.Should().BeNull();
+			issue.AdditionalFields.ContainsKey("watches").Should().BeTrue("Watches should be included by query.");
+		}
+		else
+		{
+			issue.Summary.Should().NotBeNull();
+			issue.AdditionalFields.ContainsKey("watches").Should().BeFalse("Watches should be excluded by CancellationToken.");
+		}
+	}
 }
-
-
-

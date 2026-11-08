@@ -3,81 +3,39 @@ namespace Jira.Api.Test.Integration;
 [Trait("Category", "WritesToApi")]
 public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateIssueAsync(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
-		await issue.SaveChangesAsync(CancellationToken);
+		var issue = await SaveNewAdminIssueAsync(jira, WithRandomSuffix("Test Summary "));
 
-		//retrieve the issue from server and update
 		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken.None);
 		issue.Type = "2";
 
-		var _ = await issue.SaveChangesAsync(CancellationToken);
+		await issue.SaveChangesAsync(CancellationToken);
 		issue.Type.Id.Should().Be("2");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateNamedEntities_ById(JiraClient jira)
-	{
-		var issue = jira.CreateIssue("TST");
-		issue.Summary = "AutoLoadNamedEntities_ById " + RandomNumberGenerator.GetInt32(int.MaxValue);
-		issue.Type = "1";
-		issue.Priority = "5";
-		await issue.SaveChangesAsync(CancellationToken);
-
-		issue.Type.Id.Should().Be("1");
-		issue.Type.Name.Should().Be("Bug");
-
-		issue.Priority.Id.Should().Be("5");
-		issue.Priority.Name.Should().Be("Trivial");
-	}
+	public Task UpdateNamedEntities_ById(JiraClient jira)
+		=> SaveWithTypeAndPriorityAndVerifyAsync(jira, "AutoLoadNamedEntities_ById ", "1", "5");
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-	public async Task UpdateNamedEntities_ByName(JiraClient jira)
-	{
-		var issue = jira.CreateIssue("TST");
-		issue.Summary = "AutoLoadNamedEntities_Name " + RandomNumberGenerator.GetInt32(int.MaxValue);
-		issue.Type = "Bug";
-		issue.Priority = "Trivial";
-		await issue.SaveChangesAsync(CancellationToken);
-
-		issue.Type.Id.Should().Be("1");
-		issue.Type.Name.Should().Be("Bug");
-
-		issue.Priority.Id.Should().Be("5");
-		issue.Priority.Name.Should().Be("Trivial");
-	}
+	public Task UpdateNamedEntities_ByName(JiraClient jira)
+		=> SaveWithTypeAndPriorityAndVerifyAsync(jira, "AutoLoadNamedEntities_Name ", "Bug", "Trivial");
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateIssueType(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
-		await issue.SaveChangesAsync(CancellationToken);
+		var issue = await SaveNewAdminIssueAsync(jira, WithRandomSuffix("Test Summary "));
 
-		//retrieve the issue from server and update
 		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		issue.Type = "2";
 		await issue.SaveChangesAsync(CancellationToken);
 
-		//retrieve again and verify
 		issue = await jira.Issues.GetIssueAsync(issue.Key.Value, CancellationToken);
 		issue.Type.Id.Should().Be("2");
 	}
@@ -86,8 +44,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateWithAllFieldsSet(JiraClient jira)
 	{
-		// arrange, create an issue to test.
-		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
+		var summaryValue = WithRandomSuffix("Test Summary ");
 		var issue = new Issue(jira, "TST")
 		{
 			Assignee = "admin",
@@ -100,7 +57,6 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		};
 		await issue.SaveChangesAsync(CancellationToken);
 
-		// act, get an issue and update it
 		var serverIssue = (from i in jira.Issues.Queryable
 						   where i.Key == issue.Key
 						   select i).ToArray().First();
@@ -112,7 +68,6 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		serverIssue.Labels.Add("testLabel");
 		await serverIssue.SaveChangesAsync(CancellationToken);
 
-		// assert, get the issue again and verify
 		var newServerIssue = (from i in jira.Issues.Queryable
 							  where i.Key == issue.Key
 							  select i).ToArray().First();
@@ -121,23 +76,14 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		newServerIssue.Description.Should().Be("Updated Description");
 		newServerIssue.Environment.Should().Be("Updated Environment");
 		newServerIssue.Labels.Should().Contain("testLabel");
-      newServerIssue.DueDate.Should().Be(serverIssue.DueDate);
+		newServerIssue.DueDate.Should().Be(serverIssue.DueDate);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateAssignee(JiraClient jira)
 	{
-		var summaryValue = "Test issue with assignee (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
-
-		await issue.SaveChangesAsync(CancellationToken);
+		var issue = await SaveNewAdminIssueAsync(jira, WithRandomSuffix("Test issue with assignee (Updated)"));
 
 		issue.Assignee = "test"; //username
 		await issue.SaveChangesAsync(CancellationToken);
@@ -152,38 +98,14 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateComment(JiraClient jira)
 	{
-		var summaryValue = "Test Summary with comments " + RandomNumberGenerator.GetInt32(int.MaxValue);
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var issue = await SaveNewAdminIssueAsync(jira, WithRandomSuffix("Test Summary with comments "));
 
-		// create an issue, verify no comments
-		await issue.SaveChangesAsync(CancellationToken);
-		var comments = await issue.GetPagedCommentsAsync(0, null, CancellationToken);
-		comments.Should().BeEmpty();
+		var commentFromGet = await AddCommentAndVerifyAsync(issue);
 
-		// Add a comment
-		var commentFromAdd = await issue.AddCommentAsync("new comment", CancellationToken);
-		commentFromAdd.Body.Should().Be("new comment");
-
-		// Verify comment retrieval
-		comments = await issue.GetPagedCommentsAsync(0, null, CancellationToken);
-
-		comments.Should().ContainSingle();
-		var commentFromGet = comments.First();
-		commentFromGet.Id.Should().Be(commentFromAdd.Id);
-		commentFromGet.Body.Should().Be("new comment");
-		commentFromGet.Properties.Should().BeEmpty();
-
-		//Update Comment
 		commentFromGet.Body = "new body";
 		var commentFromUpdate = await issue.UpdateCommentAsync(commentFromGet, CancellationToken);
 
-		//Verify comment updated
-		comments = await issue.GetPagedCommentsAsync(0, null, CancellationToken);
+		var comments = await issue.GetPagedCommentsAsync(0, null, CancellationToken);
 		commentFromGet = comments.First();
 
 		commentFromUpdate.Id.Should().Be(commentFromGet.Id);
@@ -194,34 +116,21 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveVersions(JiraClient jira)
 	{
-		var summaryValue = "Test issue with versions (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
-
-		await issue.SaveChangesAsync(CancellationToken);
+		var issue = await SaveNewAdminIssueAsync(jira, WithRandomSuffix("Test issue with versions (Updated)"));
 
 		await issue.AffectsVersions.AddAsync("1.0", CancellationToken);
 		await issue.FixVersions.AddAsync("2.0", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-		issue.AffectsVersions.Should().ContainSingle();
-		issue.FixVersions.Should().ContainSingle();
-		issue.AffectsVersions.First().Name.Should().Be("1.0");
-		issue.FixVersions.First().Name.Should().Be("2.0");
+		AssertNames(issue.AffectsVersions, "1.0");
+		AssertNames(issue.FixVersions, "2.0");
 
 		issue.AffectsVersions.Remove("1.0");
 		await issue.AffectsVersions.AddAsync("2.0", CancellationToken);
 		issue.FixVersions.Remove("2.0");
 		await issue.FixVersions.AddAsync("3.0", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-		issue.AffectsVersions.Should().ContainSingle();
-		issue.FixVersions.Should().ContainSingle();
-		issue.AffectsVersions.First().Name.Should().Be("2.0");
-		issue.FixVersions.First().Name.Should().Be("3.0");
+		AssertNames(issue.AffectsVersions, "2.0");
+		AssertNames(issue.FixVersions, "3.0");
 
 		issue.AffectsVersions.Remove("2.0");
 		issue.FixVersions.Remove("3.0");
@@ -234,41 +143,24 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		await issue.FixVersions.AddAsync("2.0", CancellationToken);
 		await issue.FixVersions.AddAsync("3.0", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-
-       issue.FixVersions.Should().HaveCount(2);
-		issue.FixVersions.Should().Contain(v => v.Name == "2.0");
-		issue.FixVersions.Should().Contain(v => v.Name == "3.0");
-
-       issue.AffectsVersions.Should().HaveCount(2);
-		issue.AffectsVersions.Should().Contain(v => v.Name == "1.0");
-		issue.AffectsVersions.Should().Contain(v => v.Name == "2.0");
+		AssertNames(issue.FixVersions, "2.0", "3.0");
+		AssertNames(issue.AffectsVersions, "1.0", "2.0");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveComponents(JiraClient jira)
 	{
-		var summaryValue = "Test issue with components (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
-
-		await issue.SaveChangesAsync(CancellationToken);
+		var issue = await SaveNewAdminIssueAsync(jira, WithRandomSuffix("Test issue with components (Updated)"));
 
 		await issue.Components.AddAsync("Client", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-		issue.Components.Should().ContainSingle();
-		issue.Components.First().Name.Should().Be("Client");
+		AssertNames(issue.Components, "Client");
 
 		issue.Components.Remove("Client");
 		await issue.Components.AddAsync("Server", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-		issue.Components.Should().ContainSingle();
-		issue.Components.First().Name.Should().Be("Server");
+		AssertNames(issue.Components, "Server");
 
 		issue.Components.Remove("Server");
 		await issue.SaveChangesAsync(CancellationToken);
@@ -277,23 +169,14 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		await issue.Components.AddAsync("Client", CancellationToken);
 		await issue.Components.AddAsync("Server", CancellationToken);
 		await issue.SaveChangesAsync(CancellationToken);
-        issue.Components.Should().HaveCount(2);
-		issue.Components.Should().Contain(c => c.Name == "Server");
-		issue.Components.Should().Contain(c => c.Name == "Client");
+		AssertNames(issue.Components, "Server", "Client");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task AddAndRemoveLabelsFromIssue(JiraClient jira)
 	{
-		var summaryValue = "Test issue with labels (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var issue = NewAdminIssue(jira, WithRandomSuffix("Test issue with labels (Updated)"));
 
 		issue.Labels.Add("label1", "label2");
 		await issue.SaveChangesAsync(CancellationToken);
@@ -315,14 +198,7 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task UpdateIssueWithCustomField(JiraClient jira)
 	{
-		var summaryValue = "Test issue with custom field (Updated)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var issue = NewAdminIssue(jira, WithRandomSuffix("Test issue with custom field (Updated)"));
 		issue["Custom Text Field"] = "My new value";
 
 		await issue.SaveChangesAsync(CancellationToken);
@@ -330,19 +206,14 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		issue["Custom Text Field"] = "My updated value";
 		await issue.SaveChangesAsync(CancellationToken);
 
-       issue["Custom Text Field"].Should().Be("My updated value");
+		issue["Custom Text Field"].Should().Be("My updated value");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CanAccessSecurityLevel(JiraClient jira)
 	{
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "Bug",
-			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
-			Assignee = "admin"
-		};
+		var issue = NewAdminIssue(jira, "TST", "Bug", WithRandomSuffix("Test Summary "));
 		await issue.SaveChangesAsync(CancellationToken);
 		issue.SecurityLevel.Should().BeNull();
 
@@ -362,7 +233,19 @@ public class IssueUpdateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		await issue.SaveChangesAsync(CancellationToken);
 		issue.SecurityLevel.Name.Should().Be("Test Issue Security Level");
 	}
+
+	private static async Task SaveWithTypeAndPriorityAndVerifyAsync(JiraClient jira, string summaryPrefix, string type, string priority)
+	{
+		var issue = jira.CreateIssue("TST");
+		issue.Summary = WithRandomSuffix(summaryPrefix);
+		issue.Type = type;
+		issue.Priority = priority;
+		await issue.SaveChangesAsync(CancellationToken);
+
+		issue.Type.Id.Should().Be("1");
+		issue.Type.Name.Should().Be("Bug");
+
+		issue.Priority.Id.Should().Be("5");
+		issue.Priority.Name.Should().Be("Trivial");
+	}
 }
-
-
-

@@ -3,7 +3,7 @@ namespace Jira.Api.Test.Integration;
 [Trait("Category", "WritesToApi")]
 public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-	private JiraUserCreationInfo BuildUserInfo()
+	private static JiraUserCreationInfo BuildUserInfo()
 	{
 		var rand = RandomNumberGenerator.GetInt32(int.MaxValue);
 		return new JiraUserCreationInfo
@@ -17,66 +17,30 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
- [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task CreateGetAndDeleteUsers(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 
-		// verify create a user.
-		var user = await jira.Users.CreateUserAsync(userInfo, CancellationToken);
-		userInfo.Email.Should().Be(user.Email);
-		userInfo.DisplayName.Should().Be(user.DisplayName);
-		userInfo.Username.Should().Be(user.Username);
-		user.Key.Should().NotBeNull();
-		user.Active.Should().BeTrue();
-		user.Locale.Should().NotBeNullOrEmpty();
+		await CreateGetAndSearchUserAsync(jira, userInfo);
 
-		// verify retrieve a user.
-		user = await jira.Users.GetUserAsync(userInfo.Username, CancellationToken);
-		userInfo.DisplayName.Should().Be(user.DisplayName);
-
-		// verify search for a user
-		var users = await jira.Users.SearchUsersAsync("test", JiraUserStatus.Active, 50, 0, CancellationToken);
-		users.Should().Contain(u => u.Username == userInfo.Username);
-
-		// verify delete a user
-		await jira.Users.DeleteUserAsync(userInfo.Username, CancellationToken);
-		users = await jira.Users.SearchUsersAsync(userInfo.Username, JiraUserStatus.Active, 50, 0, CancellationToken);
-		users.Should().BeEmpty();
+		await DeleteUserAndVerifyAsync(jira, userInfo.Username);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-    [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task CreateGetAndDeleteUsersWithEmailAsUsername(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 		userInfo.Username = userInfo.Email;
 
-		// verify create a user.
-		var user = await jira.Users.CreateUserAsync(userInfo, CancellationToken);
-		userInfo.Email.Should().Be(user.Email);
-		userInfo.DisplayName.Should().Be(user.DisplayName);
-		userInfo.Username.Should().Be(user.Username);
-		user.Key.Should().NotBeNull();
-		user.Active.Should().BeTrue();
-		user.Locale.Should().NotBeNullOrEmpty();
-
-		// verify retrieve a user.
-		user = await jira.Users.GetUserAsync(userInfo.Username, CancellationToken);
-		userInfo.DisplayName.Should().Be(user.DisplayName);
-
-		// verify search for a user
-		var users = await jira.Users.SearchUsersAsync("test", JiraUserStatus.Active, 50, 0, CancellationToken);
-		users.Should().Contain(u => u.Username == userInfo.Username);
+		var users = await CreateGetAndSearchUserAsync(jira, userInfo);
 
 		// verify equality override (see https://bitbucket.org/farmas/atlassian.net-sdk/issues/570)
 		users.First().Equals(users.First()).Should().BeTrue();
 
-		// verify delete a user
-		await jira.Users.DeleteUserAsync(userInfo.Username, CancellationToken);
-		users = await jira.Users.SearchUsersAsync(userInfo.Username, JiraUserStatus.Active, 50, 0, CancellationToken);
-		users.Should().BeEmpty();
+		await DeleteUserAndVerifyAsync(jira, userInfo.Username);
 	}
 
 	[Theory]
@@ -93,86 +57,98 @@ public class JiraUserTest(ITestOutputHelper outputHelper) : TestBase(outputHelpe
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-   [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task SearchAssignableUsersForIssue(JiraClient jira)
 	{
-		var userInfo = BuildUserInfo();
-		userInfo.Username = userInfo.Email;
-
-		// verify create a user.
-		var user = await jira.Users.CreateUserAsync(userInfo, CancellationToken);
-		user.Should().NotBeNull();
+		var (userInfo, user) = await CreateUserWithEmailAsUsernameAsync(jira);
 
 		// any user can be assigned to SCRUM issues.
-		var users = await jira.Users.SearchAssignableUsersForIssueAsync("test", "SCRUM-1", 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().NotBeNull();
+		AssertAssignable(await jira.Users.SearchAssignableUsersForIssueAsync("test", "SCRUM-1", 0, 50, CancellationToken), user, true);
 
 		// only developers can be assigned to TST issues.
-		users = await jira.Users.SearchAssignableUsersForIssueAsync("test", "TST-1", 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().BeNull();
+		AssertAssignable(await jira.Users.SearchAssignableUsersForIssueAsync("test", "TST-1", 0, 50, CancellationToken), user, false);
 
-		// verify delete a user
-		await jira.Users.DeleteUserAsync(userInfo.Username, CancellationToken);
-		users = await jira.Users.SearchUsersAsync(userInfo.Username, JiraUserStatus.Active, 50, 0, CancellationToken);
-		users.Should().BeEmpty();
+		await DeleteUserAndVerifyAsync(jira, userInfo.Username);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
- [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task SearchAssignableUsersForProject(JiraClient jira)
 	{
-		var userInfo = BuildUserInfo();
-		userInfo.Username = userInfo.Email;
-
-		// verify create a user.
-		var user = await jira.Users.CreateUserAsync(userInfo, CancellationToken);
-		user.Should().NotBeNull();
+		var (userInfo, user) = await CreateUserWithEmailAsUsernameAsync(jira);
 
 		// any user can be assigned to SCRUM issues.
-		var users = await jira.Users.SearchAssignableUsersForProjectAsync("test", "SCRUM", 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().NotBeNull();
+		AssertAssignable(await jira.Users.SearchAssignableUsersForProjectAsync("test", "SCRUM", 0, 50, CancellationToken), user, true);
 
 		// only developers can be assigned to TST issues.
-		users = await jira.Users.SearchAssignableUsersForProjectAsync("test", "TST", 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().BeNull();
+		AssertAssignable(await jira.Users.SearchAssignableUsersForProjectAsync("test", "TST", 0, 50, CancellationToken), user, false);
 
-		// verify delete a user
-		await jira.Users.DeleteUserAsync(userInfo.Username, CancellationToken);
-		users = await jira.Users.SearchUsersAsync(userInfo.Username, JiraUserStatus.Active, 50, 0, CancellationToken);
-		users.Should().BeEmpty();
+		await DeleteUserAndVerifyAsync(jira, userInfo.Username);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
-  [Trait("Category", "WritesToApi")]
+	[Trait("Category", "WritesToApi")]
 	public async Task SearchAssignableUsersForProjects(JiraClient jira)
+	{
+		var (userInfo, user) = await CreateUserWithEmailAsUsernameAsync(jira);
+
+		// any user can be assigned to SCRUM issues.
+		AssertAssignable(await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["SCRUM"], 0, 50, CancellationToken), user, true);
+
+		// only developers can be assigned to TST issues, alone or alongside SCRUM.
+		AssertAssignable(await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["TST"], 0, 50, CancellationToken), user, false);
+		AssertAssignable(await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["SCRUM", "TST"], 0, 50, CancellationToken), user, false);
+
+		await DeleteUserAndVerifyAsync(jira, userInfo.Username);
+	}
+
+	private static async Task<IEnumerable<JiraUser>> CreateGetAndSearchUserAsync(JiraClient jira, JiraUserCreationInfo userInfo)
+	{
+		var user = await jira.Users.CreateUserAsync(userInfo, CancellationToken);
+		userInfo.Email.Should().Be(user.Email);
+		userInfo.DisplayName.Should().Be(user.DisplayName);
+		userInfo.Username.Should().Be(user.Username);
+		user.Key.Should().NotBeNull();
+		user.Active.Should().BeTrue();
+		user.Locale.Should().NotBeNullOrEmpty();
+
+		user = await jira.Users.GetUserAsync(userInfo.Username, CancellationToken);
+		userInfo.DisplayName.Should().Be(user.DisplayName);
+
+		var users = await jira.Users.SearchUsersAsync("test", JiraUserStatus.Active, 50, 0, CancellationToken);
+		users.Should().Contain(u => u.Username == userInfo.Username);
+		return users;
+	}
+
+	private static async Task<(JiraUserCreationInfo UserInfo, JiraUser User)> CreateUserWithEmailAsUsernameAsync(JiraClient jira)
 	{
 		var userInfo = BuildUserInfo();
 		userInfo.Username = userInfo.Email;
 
-		// verify create a user.
 		var user = await jira.Users.CreateUserAsync(userInfo, CancellationToken);
 		user.Should().NotBeNull();
+		return (userInfo, user);
+	}
 
-		// test user is assignable because any user can be assigned to SCRUM issues.
-		var users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["SCRUM"], 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().NotBeNull();
+	private static void AssertAssignable(IEnumerable<JiraUser> users, JiraUser user, bool expected)
+	{
+		var match = users.FirstOrDefault(u => u.Username == user.Username);
+		if (expected)
+		{
+			match.Should().NotBeNull();
+		}
+		else
+		{
+			match.Should().BeNull();
+		}
+	}
 
-		// test user is not assignable because only developers can be assigned to TST issues.
-		users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["TST"], 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().BeNull();
-
-		// test user is not assignable because only developers can be assigned to both SCRUM and TST issues.
-		users = await jira.Users.SearchAssignableUsersForProjectsAsync("test", ["SCRUM", "TST"], 0, 50, CancellationToken);
-		users.FirstOrDefault(u => u.Username == user.Username).Should().BeNull();
-
-		// verify delete a user
-		await jira.Users.DeleteUserAsync(userInfo.Username, CancellationToken);
-		users = await jira.Users.SearchUsersAsync(userInfo.Username, JiraUserStatus.Active, 50, 0, CancellationToken);
+	private static async Task DeleteUserAndVerifyAsync(JiraClient jira, string username)
+	{
+		await jira.Users.DeleteUserAsync(username, CancellationToken);
+		var users = await jira.Users.SearchUsersAsync(username, JiraUserStatus.Active, 50, 0, CancellationToken);
 		users.Should().BeEmpty();
 	}
 }
-
-
-

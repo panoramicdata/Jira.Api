@@ -207,7 +207,29 @@ internal class WorkflowSchemeService(JiraClient jira) : IWorkflowSchemeService
 	private static string Resource(string schemeId, bool draft, string suffix) => $"rest/api/2/workflowscheme/{Uri.EscapeDataString(schemeId)}/{(draft ? "draft/" : string.Empty)}{suffix}";
 	private static Dictionary<string, object?> NewSchemeBody(string? name, string? description, string? defaultWorkflow)
 	{
-		var body = new Dictionary<string, object?>(); if (name != null) body["name"] = name; if (description != null) body["description"] = description; if (defaultWorkflow != null) body["defaultWorkflow"] = defaultWorkflow; return body;
+		var body = new Dictionary<string, object?>();
+		if (name != null)
+		{
+			body["name"] = name;
+		}
+
+		if (description != null)
+		{
+			body["description"] = description;
+		}
+
+		if (defaultWorkflow != null)
+		{
+			body["defaultWorkflow"] = defaultWorkflow;
+		}
+
+		return body;
 	}
-	private static void Validate(params string[] values) { foreach (var value in values) ArgumentException.ThrowIfNullOrEmpty(value); }
+	private static void Validate(params string[] values)
+	{
+		foreach (var value in values)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(value);
+		}
+	}
 }

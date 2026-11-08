@@ -76,6 +76,8 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var fields = new List<RemoteFieldValue>();
 
 		if (_originalList.Count != Items.Count || _originalList.Except(Items).Any())

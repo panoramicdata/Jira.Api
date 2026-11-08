@@ -54,6 +54,8 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var fieldValues = new List<RemoteFieldValue>();
 
 		if (_originalLabels.Count != this.Count || this.Except(_originalLabels).Any())

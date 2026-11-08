@@ -133,7 +133,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 
 		var fieldProvider = issue as IRemoteIssueFieldProvider;
 		var remoteFields = await fieldProvider.GetRemoteFieldValuesAsync(cancellationToken).ConfigureAwait(false);
-		var remoteIssue = await issue.ToRemoteAsync(cancellationToken).ConfigureAwait(false);
+		var remoteIssue = await issue.ToRemoteIssueAsync(cancellationToken).ConfigureAwait(false);
 		var fields = await BuildFieldsObjectFromIssueAsync(remoteIssue, remoteFields, cancellationToken).ConfigureAwait(false);
 
 		await _jira.RestClient.ExecuteRequestAsync(Method.Put, resource, new { fields }, cancellationToken).ConfigureAwait(false);
@@ -147,7 +147,7 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 
 	public async Task<string> CreateIssueAsync(Issue issue, CancellationToken cancellationToken)
 	{
-		var remoteIssue = await issue.ToRemoteAsync(cancellationToken).ConfigureAwait(false);
+		var remoteIssue = await issue.ToRemoteIssueAsync(cancellationToken).ConfigureAwait(false);
 		var remoteIssueWrapper = new RemoteIssueWrapper(remoteIssue, issue.ParentIssueKey);
 		var serializerSettings = await GetIssueSerializerSettingsAsync(cancellationToken).ConfigureAwait(false);
 		var requestBody = JsonConvert.SerializeObject(remoteIssueWrapper, serializerSettings);
@@ -211,17 +211,13 @@ internal class IssueService(JiraClient jira, JiraRestClientSettings restSettings
 		var resource = $"rest/api/2/issue/{issue.Key.Value}/transitions";
 		var fieldProvider = issue as IRemoteIssueFieldProvider;
 		var remoteFields = await fieldProvider.GetRemoteFieldValuesAsync(cancellationToken).ConfigureAwait(false);
-		var remoteIssue = await issue.ToRemoteAsync(cancellationToken).ConfigureAwait(false);
+		var remoteIssue = await issue.ToRemoteIssueAsync(cancellationToken).ConfigureAwait(false);
 		var fields = await BuildFieldsObjectFromIssueAsync(remoteIssue, remoteFields, cancellationToken).ConfigureAwait(false);
 		var updatesObject = new JObject();
 
 		if (!string.IsNullOrEmpty(updates.Comment))
 		{
-			updatesObject.Add("comment", new JArray(new JObject[]
-			{
-					new(new JProperty("add",
-						new JObject(new JProperty("body", updates.Comment))))
-			}));
+			updatesObject.Add("comment", new JArray(new JObject(new JProperty("add", new JObject(new JProperty("body", updates.Comment))))));
 		}
 
 		var requestBody = new

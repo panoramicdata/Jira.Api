@@ -107,9 +107,9 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 			var newExpression = (NewExpression)expression.Right;
 			var args = new List<object>();
 
-			foreach (ConstantExpression e in newExpression.Arguments)
+			foreach (var e in newExpression.Arguments)
 			{
-				args.Add(e.Value);
+				args.Add(((ConstantExpression)e).Value);
 			}
 
 			return newExpression.Constructor.Invoke([.. args]);
@@ -330,26 +330,24 @@ public class JqlExpressionVisitor : ExpressionVisitor, IJqlExpressionVisitor
 		}
 	}
 
+	private static readonly Dictionary<ExpressionType, string> _comparisonOperators = new()
+	{
+		[ExpressionType.GreaterThan] = JiraOperators.GREATERTHAN,
+		[ExpressionType.GreaterThanOrEqual] = JiraOperators.GREATERTHANOREQUALS,
+		[ExpressionType.LessThan] = JiraOperators.LESSTHAN,
+		[ExpressionType.LessThanOrEqual] = JiraOperators.LESSTHANOREQUALS,
+	};
+
 	private void ProcessBinaryNode(BinaryExpression node)
 	{
+		if (_comparisonOperators.TryGetValue(node.NodeType, out var comparisonOperator))
+		{
+			ProcessGreaterAndLessThanOperator(node, comparisonOperator);
+			return;
+		}
+
 		switch (node.NodeType)
 		{
-			case ExpressionType.GreaterThan:
-				ProcessGreaterAndLessThanOperator(node, JiraOperators.GREATERTHAN);
-				break;
-
-			case ExpressionType.GreaterThanOrEqual:
-				ProcessGreaterAndLessThanOperator(node, JiraOperators.GREATERTHANOREQUALS);
-				break;
-
-			case ExpressionType.LessThan:
-				ProcessGreaterAndLessThanOperator(node, JiraOperators.LESSTHAN);
-				break;
-
-			case ExpressionType.LessThanOrEqual:
-				ProcessGreaterAndLessThanOperator(node, JiraOperators.LESSTHANOREQUALS);
-				break;
-
 			case ExpressionType.Equal:
 				ProcessEqualityOperator(node, true);
 				break;

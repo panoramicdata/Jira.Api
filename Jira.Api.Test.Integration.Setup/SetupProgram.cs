@@ -9,7 +9,7 @@ namespace Jira.Api.Test.Integration.Setup;
 
 public static class SetupProgram
 {
-	public const string URL = "http://localhost:8080";
+	private const string URL = "http://localhost:8080";
 
 	static void Main(string[] args)
 	{

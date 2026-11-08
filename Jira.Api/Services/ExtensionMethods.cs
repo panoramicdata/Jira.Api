@@ -19,7 +19,7 @@ public static class ExtensionMethods
 	/// </summary>
 	public static Task<RemoteIssue> ToRemoteAsync(this Issue issue, CancellationToken cancellationToken)
 	{
-		return issue.ToRemoteAsync(cancellationToken);
+		return issue.ToRemoteIssueAsync(cancellationToken);
 	}
 
 	/// <summary>

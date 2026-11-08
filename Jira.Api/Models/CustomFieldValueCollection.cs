@@ -192,6 +192,8 @@ public class CustomFieldValueCollection : ReadOnlyCollection<CustomFieldValue>, 
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var fieldValues = Items
 			.Where(IsCustomFieldNewOrUpdated)
 			.Select(field => new RemoteFieldValue
