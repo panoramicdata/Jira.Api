@@ -3,6 +3,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Represents the worklog of an issue
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class Worklog
 {
 	/// <summary>

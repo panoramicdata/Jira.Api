@@ -3,6 +3,7 @@
 /// <summary>
 /// Container for the supported JIRA operator strings.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2339:Public constant members should not be used", Justification = "Published public API: changing a public const to a static read-only member is a breaking change for existing consumers.")]
 public static class JiraOperators
 {
 	/// <summary>

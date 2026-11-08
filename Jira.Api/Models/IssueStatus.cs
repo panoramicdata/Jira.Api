@@ -3,6 +3,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// The status of the issue as defined in JIRA
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class IssueStatus : JiraNamedConstant
 {
 	/// <summary>

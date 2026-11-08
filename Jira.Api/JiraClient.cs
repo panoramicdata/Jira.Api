@@ -10,6 +10,7 @@ namespace Jira.Api;
 /// <remarks>
 /// Create a client that connects with a JIRA server with specified dependencies.
 /// </remarks>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class JiraClient(ServiceLocator services, JiraCache? cache = null)
 {
 	internal const string DEFAULT_DATE_FORMAT = "yyyy/MM/dd";

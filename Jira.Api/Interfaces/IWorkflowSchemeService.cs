@@ -3,6 +3,7 @@ namespace Jira.Api.Interfaces;
 /// <summary>
 /// Represents the operations on workflow schemes in Jira.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers and implementers.")]
 public interface IWorkflowSchemeService
 {
 	/// <summary>

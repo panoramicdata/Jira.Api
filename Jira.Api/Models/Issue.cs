@@ -9,6 +9,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// A JIRA issue
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class Issue : IRemoteIssueFieldProvider
 {
 
@@ -196,6 +197,7 @@ public class Issue : IRemoteIssueFieldProvider
 	/// <summary>
 	/// Gets the internal identifier assigned by JIRA.
 	/// </summary>
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2372:Exceptions should not be thrown from property getters", Justification = "Published public API: turning this property into a method is a breaking change for existing consumers.")]
 	public string JiraIdentifier
 	{
 		get
@@ -1010,7 +1012,7 @@ public class Issue : IRemoteIssueFieldProvider
 		return [.. fields];
 	}
 
-	internal async Task<RemoteIssue> ToRemoteAsync(CancellationToken cancellationToken)
+	internal async Task<RemoteIssue> ToRemoteIssueAsync(CancellationToken cancellationToken)
 	{
 		var remote = new RemoteIssue
 		{
@@ -1098,8 +1100,7 @@ public class Issue : IRemoteIssueFieldProvider
 
 		if (property.PropertyType == typeof(DateTime?))
 		{
-			var dateValue = (DateTime?)value;
-			return dateValue.HasValue ? dateValue.Value.ToString("d/MMM/yy") : null;
+			return FormatShortDate((DateTime?)value);
 		}
 
 		if (typeof(JiraNamedEntity).IsAssignableFrom(property.PropertyType))
@@ -1109,11 +1110,15 @@ public class Issue : IRemoteIssueFieldProvider
 
 		if (typeof(AbstractNamedRemoteEntity).IsAssignableFrom(property.PropertyType))
 		{
-			return (property.GetValue(container, null) as AbstractNamedRemoteEntity)?.id;
+			return GetRemoteEntityId(value);
 		}
 
 		return value?.ToString();
 	}
+
+	private static string FormatShortDate(DateTime? dateValue) => dateValue.HasValue ? dateValue.Value.ToString("d/MMM/yy") : null;
+
+	private static string GetRemoteEntityId(object value) => (value as AbstractNamedRemoteEntity)?.id;
 
 	private async Task<string> GetJiraNamedEntityIdAsync(object container, PropertyInfo property, CancellationToken cancellationToken)
 	{
