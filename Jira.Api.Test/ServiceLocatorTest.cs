@@ -6,14 +6,7 @@ public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outpu
 	public async Task UserCanProvideCustomProjectVersionService()
 	{
 		// Arrange
-		var projects = new Mock<IProjectService>();
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var remoteProject = new RemoteProject { id = "projId", key = "projKey", name = "my project" };
-		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
-			.Returns(Task.FromResult(Enumerable.Repeat(new Project(jira, remoteProject), 1)));
-		jira.Services.Register(() => projects.Object);
+		var jira = CreateJiraWithOneProject();
 
 		var versionResource = new Mock<IProjectVersionService>();
 		var remoteVersion = new RemoteVersion { id = "123", name = "my version" };
@@ -34,14 +27,7 @@ public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outpu
 	public async Task UserCanProvideCustomProjectComponentsService()
 	{
 		// Arrange
-		var projects = new Mock<IProjectService>();
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var remoteProject = new RemoteProject { id = "projId", key = "projKey", name = "my project" };
-		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
-			.Returns(Task.FromResult(Enumerable.Repeat(new Project(jira, remoteProject), 1)));
-		jira.Services.Register(() => projects.Object);
+		var jira = CreateJiraWithOneProject();
 
 		var componentResource = new Mock<IProjectComponentService>();
 		var remoteComponent = new RemoteComponent { id = "123", name = "my component" };
@@ -57,5 +43,17 @@ public class ServiceLocatorTest(ITestOutputHelper outputHelper) : TestBase(outpu
 		// Assert
 		components.First().Name.Should().Be("my component");
 	}
-}
 
+	private static JiraClient CreateJiraWithOneProject()
+	{
+		var projects = new Mock<IProjectService>();
+		var client = new Mock<IJiraRestClient>();
+		var jira = JiraClient.CreateRestClient(client.Object);
+
+		var remoteProject = new RemoteProject { id = "projId", key = "projKey", name = "my project" };
+		projects.Setup(s => s.GetProjectsAsync(It.IsAny<CancellationToken>()))
+			.Returns(Task.FromResult(Enumerable.Repeat(new Project(jira, remoteProject), 1)));
+		jira.Services.Register(() => projects.Object);
+		return jira;
+	}
+}

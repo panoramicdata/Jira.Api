@@ -8,17 +8,7 @@ public class CustomFieldCollectionTest
 		var jira = TestableJira.Create();
 		jira.SetupIssues(new RemoteIssue { key = "123" });
 
-		var issue = new RemoteIssue
-		{
-		project = "bar",
-		key = "foo",
-		customFieldValues = [
-			new(){
-			customfieldId = "123",
-			values = ["abc"]
-			}
-			]
-		}.ToLocal(jira);
+		var issue = CustomFieldTestData.CreateIssue(jira, "bar", "foo", [new() { customfieldId = "123", values = ["abc"] }]);
 
 		var act = () => issue["CustomField"];
 		act.Should().ThrowExactly<InvalidOperationException>();
@@ -27,25 +17,10 @@ public class CustomFieldCollectionTest
 	[Fact]
 	public void IndexByName_ShouldReturnRemoteValue()
 	{
-		//arrange
-		var jira = TestableJira.Create();
-		var customField = new CustomField(new RemoteField { id = "123", name = "CustomField" });
-		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
-			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
+		var jira = CustomFieldTestData.CreateJiraWithCustomField();
 
-		var issue = new RemoteIssue
-		{
-			project = "projectKey",
-			key = "issueKey",
-			customFieldValues = [
-								new(){
-									customfieldId = "123",
-									values = ["abc"]
-								}
-							]
-		}.ToLocal(jira);
+		var issue = CustomFieldTestData.CreateIssue(jira, "projectKey", "issueKey", [new() { customfieldId = "123", values = ["abc"] }]);
 
-		//assert
 		issue["CustomField"].Should().Be("abc");
 		var customFieldX = issue.CustomFields["CustomField"];
 		customFieldX.Should().NotBeNull();
@@ -58,22 +33,11 @@ public class CustomFieldCollectionTest
 	[Fact]
 	public void WillThrowErrorIfCustomFieldNotFound()
 	{
-		// Arrange
-		var jira = TestableJira.Create();
-		var customField = new CustomField(new RemoteField { id = "123", name = "CustomField" });
-		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
-			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
+		var jira = CustomFieldTestData.CreateJiraWithCustomField();
 
-		var issue = new RemoteIssue
-		{
-			project = "projectKey",
-			key = "issueKey",
-			customFieldValues = [],
-		}.ToLocal(jira);
+		var issue = CustomFieldTestData.CreateIssue(jira, "projectKey", "issueKey", []);
 
-		// Act / Assert
 		var act = () => issue.CustomFields["NonExistantField"]!.Values[0];
 		act.Should().ThrowExactly<InvalidOperationException>();
 	}
 }
-
