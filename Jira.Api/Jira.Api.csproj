@@ -1,44 +1,45 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<NeutralResourcesLanguage>en</NeutralResourcesLanguage>
-		<PackageId>Jira.Api</PackageId>
-		<Version>$(Version)</Version>
-		<Product>Jira.Api</Product>
-		<PackageTags>Atlassian JIRA LINQ</PackageTags>
-		<PackageReleaseNotes>9.3: Added Dashboards service: list dashboards, get dashboard by id, and get dashboard detail including gadgets and their user preferences (filter id, column names, page size). See https://github.com/panoramicdata/Jira.Api</PackageReleaseNotes>
-		<Description>Utilities to interact with Atlassian Jira. Contains LinqToJira provider for querying JIRA Issue tracker (http://www.atlassian.com/software/jira).</Description>
-		<PackageProjectUrl>https://github.com/panoramicdata/Jira.Api</PackageProjectUrl>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<RepositoryUrl>https://github.com/panoramicdata/Jira.Api</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-	</PropertyGroup>
-	<PropertyGroup>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	</PropertyGroup>
-	<PropertyGroup>
-		<PackageIcon>Icon.png</PackageIcon>
-	</PropertyGroup>
-	<ItemGroup>
-		<Compile Remove="Properties**" />
-		<EmbeddedResource Remove="Properties**" />
-		<None Remove="Properties**" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="..\README.md" Pack="true" PackagePath="" />
-		 <None Include="Icon.png" Pack="true" PackagePath="" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Nerdbank.GitVersioning">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="RestSharp" />
-		<PackageReference Include="RestSharp.Serializers.NewtonsoftJson" />
-	</ItemGroup>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+    <PackageId>Jira.Api</PackageId>
+    <Version>$(Version)</Version>
+    <Product>Jira.Api</Product>
+    <PackageTags>Atlassian JIRA LINQ</PackageTags>
+    <PackageReleaseNotes>9.3: Added Dashboards service: list dashboards, get dashboard by id, and get dashboard detail including gadgets and their user preferences (filter id, column names, page size). See https://github.com/panoramicdata/Jira.Api</PackageReleaseNotes>
+    <Description>Utilities to interact with Atlassian Jira. Contains LinqToJira provider for querying JIRA Issue tracker (http://www.atlassian.com/software/jira).</Description>
+    <PackageProjectUrl>https://github.com/panoramicdata/Jira.Api</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/panoramicdata/Jira.Api</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageIcon>Icon.png</PackageIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Properties**" />
+    <EmbeddedResource Remove="Properties**" />
+    <None Remove="Properties**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="" />
+    <None Include="Icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="RestSharp" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" />
+  </ItemGroup>
 </Project>
