@@ -18,6 +18,7 @@ public class JqlExpressionTranslatorTest
 			AddOrdering(data);
 			AddDates(data);
 			AddMembers(data);
+			AddCustomFields(data);
 			return data;
 		}
 	}
@@ -73,6 +74,10 @@ public class JqlExpressionTranslatorTest
 		data.Add(q => q.Where(i => i.Components == "foo"), "component = \"foo\"");
 		data.Add(q => q.Where(i => i.FixVersions != "1.0" && i.AffectsVersions != "2.0"), "(FixVersion != \"1.0\" and AffectedVersion != \"2.0\")");
 		data.Add(q => q.Where(i => i.Components != "foo"), "component != \"foo\"");
+	}
+
+	private static void AddCustomFields(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
 		data.Add(q => q.Where(i => i.Summary == new LiteralMatch("Literal Summary") && i.Description == new LiteralMatch("Literal Description")), "(Summary = \"Literal Summary\" and Description = \"Literal Description\")");
 		data.Add(q => q.Where(i => i["Foo"]! == "foo" && i["Bar"]! == new DateTime(2012, 1, 1) && i["Baz"]! == new LiteralMatch("baz")), "((\"Foo\" ~ \"foo\" and \"Bar\" = \"2012/01/01\") and \"Baz\" = \"baz\")");
 		data.Add(q => q.Where(i => i["Foo"]! != "foo" && i["Bar"]! != new DateTime(2012, 1, 1) && i["Baz"]! != new LiteralMatch("baz")), "((\"Foo\" !~ \"foo\" and \"Bar\" != \"2012/01/01\") and \"Baz\" != \"baz\")");
