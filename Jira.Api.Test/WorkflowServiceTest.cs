@@ -2,13 +2,13 @@ namespace Jira.Api.Test;
 
 public class WorkflowServiceTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
+	private const string WorkflowsResource = "rest/api/2/workflow";
+
 	[Fact]
 	public async Task GetWorkflowsAsync_ReturnsMappedWorkflows()
 	{
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var remoteWorkflows = new[]
+		var (client, jira) = MockRest.Create();
+		client.Returns(Method.Get, WorkflowsResource, new[]
 		{
 			new RemoteWorkflow
 			{
@@ -20,21 +20,8 @@ public class WorkflowServiceTest(ITestOutputHelper outputHelper) : TestBase(outp
 				LastModifiedUserAccountId = "account-1",
 				Steps = 3
 			},
-			new RemoteWorkflow
-			{
-				Name = "Bug Workflow",
-				Description = "Workflow for bugs",
-				IsDefault = false,
-				Steps = 5
-			}
-		};
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteWorkflow[]>(
-				Method.Get,
-				"rest/api/2/workflow",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteWorkflows);
+			new RemoteWorkflow { Name = "Bug Workflow", Description = "Workflow for bugs", IsDefault = false, Steps = 5 }
+		});
 
 		var workflows = (await jira.Workflows.GetWorkflowsAsync(CancellationToken)).ToArray();
 
@@ -51,19 +38,12 @@ public class WorkflowServiceTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[Fact]
 	public async Task GetWorkflowAsync_MatchesNameCaseInsensitively()
 	{
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteWorkflow[]>(
-				Method.Get,
-				"rest/api/2/workflow",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(
-			[
-				new RemoteWorkflow { Name = "Software Simplified Workflow", Steps = 3 },
-				new RemoteWorkflow { Name = "Bug Workflow", Steps = 5 }
-			]);
+		var (client, jira) = MockRest.Create();
+		client.Returns(Method.Get, WorkflowsResource, new[]
+		{
+			new RemoteWorkflow { Name = "Software Simplified Workflow", Steps = 3 },
+			new RemoteWorkflow { Name = "Bug Workflow", Steps = 5 }
+		});
 
 		var workflow = await jira.Workflows.GetWorkflowAsync("bug workflow", CancellationToken);
 
@@ -74,15 +54,8 @@ public class WorkflowServiceTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[Fact]
 	public async Task GetWorkflowAsync_WhenWorkflowDoesNotExist_ThrowsInvalidOperationException()
 	{
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteWorkflow[]>(
-				Method.Get,
-				"rest/api/2/workflow",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync([new RemoteWorkflow { Name = "Known Workflow", Steps = 1 }]);
+		var (client, jira) = MockRest.Create();
+		client.Returns(Method.Get, WorkflowsResource, new[] { new RemoteWorkflow { Name = "Known Workflow", Steps = 1 } });
 
 		var act = () => jira.Workflows.GetWorkflowAsync("missing workflow", CancellationToken);
 
@@ -95,8 +68,7 @@ public class WorkflowServiceTest(ITestOutputHelper outputHelper) : TestBase(outp
 	[InlineData(null)]
 	public async Task GetWorkflowAsync_WhenNameIsNullOrEmpty_ThrowsArgumentException(string? workflowName)
 	{
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
+		var (_, jira) = MockRest.Create();
 
 		var act = () => jira.Workflows.GetWorkflowAsync(workflowName!, CancellationToken);
 

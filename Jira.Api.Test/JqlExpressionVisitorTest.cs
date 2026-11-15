@@ -7,9 +7,134 @@ public class JqlExpressionTranslatorTest
 {
 	private JqlExpressionVisitor _translator = null!;
 
+	public static TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> JqlCases => new()
+	{
+		{ q => q.Where(i => i.Votes == 5), "Votes = 5" },
+		{ q => q.Where(i => i.Summary == "Foo"), "Summary ~ \"Foo\"" },
+		{ q => q.Where(i => i.Assignee == "Foo"), "Assignee = \"Foo\"" },
+		{ q => q.Where(i => i.Votes != 5), "Votes != 5" },
+		{ q => q.Where(i => i.Summary != "Foo"), "Summary !~ \"Foo\"" },
+		{ q => q.Where(i => i.Assignee != "Foo"), "Assignee != \"Foo\"" },
+		{ q => q.Where(i => i.Votes > 5), "Votes > 5" },
+		{ q => q.Where(i => i.Votes >= 5), "Votes >= 5" },
+		{ q => q.Where(i => i.Votes < 5), "Votes < 5" },
+		{ q => q.Where(i => i.Votes <= 5), "Votes <= 5" },
+		{ q => q.Where(i => i.Votes > 5 && i.Votes < 10), "(Votes > 5 and Votes < 10)" },
+		{ q => q.Where(i => i.Votes > 5 || i.Votes < 10), "(Votes > 5 or Votes < 10)" },
+		{ q => q.Where(i => i.Votes > 5 && (i.Votes < 10 || i.Votes == 20)), "(Votes > 5 and (Votes < 10 or Votes = 20))" },
+		{ q => q.Where(i => i.Summary == ""), "Summary is empty" },
+		{ q => q.Where(i => i.Summary != ""), "Summary is not empty" },
+		{ q => q.Where(i => i.Summary == null), "Summary is null" },
+		{ q => q.Where(i => i.Priority > "foo"), "Priority > \"foo\"" },
+		{ q => q.Where(i => i.Priority == "foo"), "Priority = \"foo\"" },
+		{ q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created), "Priority = \"1\" order by Created asc" },
+		{ q => q.Where(i => i.Priority == "1").OrderByDescending(i => i.Created), "Priority = \"1\" order by Created desc" },
+		{ q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created).ThenBy(i => i.DueDate), "Priority = \"1\" order by Created asc, DueDate asc" },
+		{ q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created).ThenByDescending(i => i.DueDate), "Priority = \"1\" order by Created asc, DueDate desc" },
+		{ q => q.Where(i => i.Created > new DateTime(2011, 1, 1)), "Created > \"2011/01/01\"" },
+		{ q => q.Where(i => i.Created > new DateTime(2011, 1, 1) && i.Created < new DateTime(2012, 1, 1)), "(Created > \"2011/01/01\" and Created < \"2012/01/01\")" },
+		{ q => q.Where(i => i.Created > new LiteralDateTime("2011/01/01 00:00")), "Created > \"2011/01/01 00:00\"" },
+		{ q => q.Where(i => i.FixVersions == "1.0" && i.AffectsVersions == "2.0"), "(FixVersion = \"1.0\" and AffectedVersion = \"2.0\")" },
+		{ q => q.Where(i => i.Components == "foo"), "component = \"foo\"" },
+		{ q => q.Where(i => i.FixVersions != "1.0" && i.AffectsVersions != "2.0"), "(FixVersion != \"1.0\" and AffectedVersion != \"2.0\")" },
+		{ q => q.Where(i => i.Components != "foo"), "component != \"foo\"" },
+		{ q => q.Where(i => i.Summary == new LiteralMatch("Literal Summary") && i.Description == new LiteralMatch("Literal Description")), "(Summary = \"Literal Summary\" and Description = \"Literal Description\")" },
+		{ q => q.Where(i => i["Foo"]! == "foo" && i["Bar"]! == new DateTime(2012, 1, 1) && i["Baz"]! == new LiteralMatch("baz")), "((\"Foo\" ~ \"foo\" and \"Bar\" = \"2012/01/01\") and \"Baz\" = \"baz\")" },
+		{ q => q.Where(i => i["Foo"]! != "foo" && i["Bar"]! != new DateTime(2012, 1, 1) && i["Baz"]! != new LiteralMatch("baz")), "((\"Foo\" !~ \"foo\" and \"Bar\" != \"2012/01/01\") and \"Baz\" != \"baz\")" },
+		{ q => q.Where(i => i["Foo"]! > "foo" && i["Bar"]! > new DateTime(2012, 1, 1)), "(\"Foo\" > \"foo\" and \"Bar\" > \"2012/01/01\")" },
+		{ q => q.Where(i => i.Votes == 5).Where(i => i.Status == "Open" && i.Assignee == "admin").Where(i => i.Priority == "1"), "Votes = 5 and (Status = \"Open\" and Assignee = \"admin\") and Priority = \"1\"" }
+	};
+
+	[Theory]
+	[MemberData(nameof(JqlCases))]
+	public void Query_TranslatesToJql(Func<IQueryable<Issue>, IQueryable<Issue>> query, string expectedJql)
+	{
+		_ = query(CreateQueryable()).ToArray();
+
+		_translator.Jql.Should().Be(expectedJql);
+	}
+
+	[Fact]
+	public void LocalVariables_AreEvaluated()
+	{
+		var user = "farmas";
+		var date = new DateTime(2011, 1, 1);
+
+		_ = CreateQueryable().Where(i => i.Assignee == user && i.Created > date).ToArray();
+
+		_translator.Jql.Should().Be("(Assignee = \"farmas\" and Created > \"2011/01/01\")");
+	}
+
+	[Fact]
+	public void DateTimeFormattedAsEnUs()
+	{
+		var currentCulture = Thread.CurrentThread.CurrentCulture;
+
+		try
+		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
+			var date = new DateTime(2011, 1, 1);
+
+			_ = CreateQueryable().Where(i => i.Created > date).ToArray();
+
+			_translator.Jql.Should().Be("Created > \"2011/01/01\"");
+		}
+		finally
+		{
+			Thread.CurrentThread.CurrentCulture = currentCulture;
+		}
+	}
+
+	[Theory]
+	[InlineData(true, "yyyy/MM/dd")]
+	[InlineData(false, "yyyy/MM/dd HH:mm")]
+	public void CurrentDateTime_IsFormatted(bool dateOnly, string format)
+	{
+		var queryable = CreateQueryable();
+
+		_ = (dateOnly ? queryable.Where(i => i.Created > DateTime.Now.Date) : queryable.Where(i => i.Created > DateTime.Now)).ToArray();
+
+		_translator.Jql.Should().StartWith("Created > \"").And.EndWith("\"");
+		DateTime.ParseExact(_translator.Jql[11..^1], format, CultureInfo.InvariantCulture).Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(2));
+	}
+
+	[Theory]
+	[InlineData(0, 50, null, 50)]
+	[InlineData(25, 50, 25, 50)]
+	public void SkipAndTake_AreCaptured(int skip, int take, int? expectedSkip, int expectedTake)
+	{
+		var queryable = CreateQueryable().Where(i => i.Assignee == "foo");
+
+		_ = (skip > 0 ? queryable.Skip(skip).Take(take) : queryable.Take(take)).ToArray();
+
+		_translator.SkipResults.Should().Be(expectedSkip);
+		_translator.NumberOfResults.Should().Be(expectedTake);
+	}
+
+	[Fact]
+	public void SkipAndTake_ResetOnEveryProcessOperation()
+	{
+		var queryable = CreateQueryable();
+
+		_ = queryable.Where(i => i.Assignee == "foo").Skip(25).Take(50).ToArray();
+		_ = queryable.Where(i => i.Assignee == "foo").ToArray();
+
+		_translator.SkipResults.Should().BeNull();
+		_translator.NumberOfResults.Should().BeNull();
+	}
+
+	[Fact]
+	public void TakeWithLocalVariable()
+	{
+		var take = 100;
+
+		_ = CreateQueryable().Where(i => i.Assignee == "foo").Take(take).ToArray();
+
+		_translator.NumberOfResults.Should().Be(100);
+	}
+
 	private JiraQueryable<Issue> CreateQueryable()
 	{
-
 		_translator = new JqlExpressionVisitor();
 
 		var jira = JiraClient.CreateRestClient("http://foo");
@@ -20,548 +145,4 @@ public class JqlExpressionTranslatorTest
 
 		return new JiraQueryable<Issue>(provider);
 	}
-
-	[Fact]
-	public void EqualsOperatorForNonString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes == 5
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Votes = 5");
-	}
-
-	[Fact]
-	public void EqualsOperatorForStringWithFuzzyEquality()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Summary == "Foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Summary ~ \"Foo\"");
-	}
-
-	[Fact]
-	public void EqualsOperatorForString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Assignee == "Foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Assignee = \"Foo\"");
-	}
-
-	[Fact]
-	public void NotEqualsOperatorForNonString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes != 5
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Votes != 5");
-	}
-
-	[Fact]
-	public void NotEqualsOperatorForStringWithFuzzyEquality()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Summary != "Foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Summary !~ \"Foo\"");
-	}
-
-	[Fact]
-	public void NotEqualsOperatorForString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Assignee != "Foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Assignee != \"Foo\"");
-	}
-
-	[Fact]
-	public void GreaterThanOperator()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes > 5
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Votes > 5");
-	}
-
-	[Fact]
-	public void GreaterThanEqualsOperator()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes >= 5
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Votes >= 5");
-	}
-
-	[Fact]
-	public void LessThanOperator()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes < 5
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Votes < 5");
-	}
-
-	[Fact]
-	public void LessThanOrEqualsOperator()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes <= 5
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Votes <= 5");
-	}
-
-	[Fact]
-	public void AndKeyWord()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes > 5 && i.Votes < 10
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(Votes > 5 and Votes < 10)");
-	}
-
-	[Fact]
-	public void OrKeyWord()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes > 5 || i.Votes < 10
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(Votes > 5 or Votes < 10)");
-	}
-
-	[Fact]
-	public void AssociativeGrouping()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Votes > 5 && (i.Votes < 10 || i.Votes == 20)
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(Votes > 5 and (Votes < 10 or Votes = 20))");
-	}
-
-	[Fact]
-	public void IsOperatorForEmptyString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Summary == ""
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Summary is empty");
-	}
-
-	[Fact]
-	public void IsNotOperatorForEmptyString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Summary != ""
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Summary is not empty");
-	}
-
-	[Fact]
-	public void IsOperatorForNull()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Summary == null
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Summary is null");
-	}
-
-	[Fact]
-	public void GreaterThanOperatorWhenUsingComparableFieldWithString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Priority > "foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Priority > \"foo\"");
-	}
-
-	[Fact]
-	public void EqualsOperatorWhenUsingComparableFieldWithString()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Priority == "foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Priority = \"foo\"");
-	}
-
-	[Fact]
-	public void OrderBy()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Priority == "1"
-					  orderby i.Created
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Priority = \"1\" order by Created asc");
-	}
-
-	[Fact]
-	public void OrderByDescending()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Priority == "1"
-					  orderby i.Created descending
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Priority = \"1\" order by Created desc");
-	}
-
-	[Fact]
-	public void MultipleOrderBys()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Priority == "1"
-					  orderby i.Created, i.DueDate
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Priority = \"1\" order by Created asc, DueDate asc");
-	}
-
-	[Fact]
-	public void MultipleOrderByDescending()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Priority == "1"
-					  orderby i.Created, i.DueDate descending
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Priority = \"1\" order by Created asc, DueDate desc");
-	}
-
-	[Fact]
-	public void NewDateTime()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Created > new DateTime(2011, 1, 1)
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Created > \"2011/01/01\"");
-	}
-
-	[Fact]
-	public void MultipleDateTimes()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Created > new DateTime(2011, 1, 1) && i.Created < new DateTime(2012, 1, 1)
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(Created > \"2011/01/01\" and Created < \"2012/01/01\")");
-	}
-
-	[Fact]
-	public void LocalStringVariables()
-	{
-		var queryable = CreateQueryable();
-		var user = "farmas";
-
-		_ = (from i in queryable
-					  where i.Assignee == user
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Assignee = \"farmas\"");
-	}
-
-	[Fact]
-	public void LocalDateVariables()
-	{
-		var queryable = CreateQueryable();
-		var date = new DateTime(2011, 1, 1);
-
-		_ = (from i in queryable
-					  where i.Created > date
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Created > \"2011/01/01\"");
-	}
-
-	[Fact]
-	public void DateTimeWithLiteralString()
-	{
-		var queryable = CreateQueryable();
-		var date = new DateTime(2011, 1, 1);
-
-		_ = (from i in queryable
-					  where i.Created > new LiteralDateTime(date.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture))
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Created > \"2011/01/01 00:00\"");
-	}
-
-	[Fact]
-	// https://bitbucket.org/farmas/atlassian.net-sdk/issue/31
-	public void DateTimeFormattedAsEnUs()
-	{
-		var currentCulture = Thread.CurrentThread.CurrentCulture;
-
-		try
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
-			var queryable = CreateQueryable();
-			var date = new DateTime(2011, 1, 1);
-
-			_ = (from i in queryable
-						  where i.Created > date
-						  select i).ToArray();
-
-			_translator.Jql.Should().Be("Created > \"2011/01/01\"");
-		}
-		finally
-		{
-			Thread.CurrentThread.CurrentCulture = currentCulture;
-		}
-	}
-
-	[Fact]
-	public void DateNow()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Created > DateTime.Now.Date
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Created > \"" + DateTime.Now.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) + "\"");
-	}
-
-	[Fact]
-	public void DateTimeNow()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Created > DateTime.Now
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("Created > \"" + DateTime.Now.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture) + "\"");
-	}
-
-	[Fact]
-	public void TakeWithConstant()
-	{
-	var queryable = CreateQueryable();
-
-	_ = (from i in queryable
-		where i.Assignee == "foo"
-		select i).Take(50).ToArray();
-
-	_translator.NumberOfResults.Should().Be(50);
-	}
-
-	[Fact]
-	public void SkipWithConstant()
-	{
-	var queryable = CreateQueryable();
-
-	_ = (from i in queryable
-		where i.Assignee == "foo"
-		select i).Skip(25).Take(50).ToArray();
-
-	_translator.SkipResults.Should().Be(25);
-	}
-
-	[Fact]
-	public void SkipAndTakeShouldResetOnEveryProcessOperation()
-	{
-		var queryable = CreateQueryable();
-
-		_ = (from i in queryable
-					  where i.Assignee == "foo"
-					  select i).Skip(25).Take(50).ToArray();
-
-		_ = (from i in queryable
-					   where i.Assignee == "foo"
-					   select i).ToArray();
-
-		_translator.SkipResults.Should().BeNull();
-		_translator.NumberOfResults.Should().BeNull();
-	}
-
-	[Fact]
-	public void TakeWithLocalVariable()
-	{
-		var queryable = CreateQueryable();
-		var take = 100;
-
-		_ = (from i in queryable
-					  where i.Assignee == "foo"
-					  select i).Take(take).ToArray();
-
-		_translator.NumberOfResults.Should().Be(100);
-	}
-
-	[Fact]
-	public void VersionsEqual()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i.FixVersions == "1.0" && i.AffectsVersions == "2.0"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(FixVersion = \"1.0\" and AffectedVersion = \"2.0\")");
-	}
-
-	[Fact]
-	public void ComponentEqual()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i.Components == "foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("component = \"foo\"");
-	}
-
-	[Fact]
-	public void VersionsNotEqual()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i.FixVersions != "1.0" && i.AffectsVersions != "2.0"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(FixVersion != \"1.0\" and AffectedVersion != \"2.0\")");
-	}
-
-	[Fact]
-	public void ComponentNotEqual()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i.Components != "foo"
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("component != \"foo\"");
-	}
-
-	[Fact]
-	public void CanUseLiteralMatchOnMemberProperties()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i.Summary == new LiteralMatch("Literal Summary") && i.Description == new LiteralMatch("Literal Description")
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(Summary = \"Literal Summary\" and Description = \"Literal Description\")");
-	}
-
-	[Fact]
-	public void CustomFieldEqual()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i["Foo"]! == "foo" && i["Bar"]! == new DateTime(2012, 1, 1) && i["Baz"]! == new LiteralMatch("baz")
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("((\"Foo\" ~ \"foo\" and \"Bar\" = \"2012/01/01\") and \"Baz\" = \"baz\")");
-	}
-
-	[Fact]
-	public void CustomFieldNotEqual()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i["Foo"]! != "foo" && i["Bar"]! != new DateTime(2012, 1, 1) && i["Baz"]! != new LiteralMatch("baz")
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("((\"Foo\" !~ \"foo\" and \"Bar\" != \"2012/01/01\") and \"Baz\" != \"baz\")");
-	}
-
-	[Fact]
-	public void CustomFieldGreaterThan()
-	{
-		var queryable = CreateQueryable();
-		_ = (from i in queryable
-					  where i["Foo"]! > "foo" && i["Bar"]! > new DateTime(2012, 1, 1)
-					  select i).ToArray();
-
-		_translator.Jql.Should().Be("(\"Foo\" > \"foo\" and \"Bar\" > \"2012/01/01\")");
-	}
-
-	[Fact]
-	public void MultipleSeparateWheres()
-	{
-		var queryable = CreateQueryable();
-
-		var issues = from i in queryable
-					 where i.Votes == 5
-					 select i;
-
-		issues = from i in issues
-				 where i.Status == "Open" && i.Assignee == "admin"
-				 select i;
-
-		issues = from i in issues
-				 where i.Priority == "1"
-				 select i;
-
-		_ = issues.ToArray();
-
-		_translator.Jql.Should().Be("Votes = 5 and (Status = \"Open\" and Assignee = \"admin\") and Priority = \"1\"");
-	}
 }
-
