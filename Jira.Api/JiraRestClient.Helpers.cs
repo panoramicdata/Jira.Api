@@ -56,23 +56,6 @@ public partial class JiraRestClient
 		File.WriteAllBytes(fullFileName, data);
 	}
 
-	private void LogRequest(RestRequest request, object? body = null)
-	{
-		if (Settings.EnableRequestTrace)
-		{
-			Trace.WriteLine($"[{request.Method}] Request Url: {request.Resource}");
-
-			if (body != null)
-			{
-				Trace.WriteLine($"[{request.Method}] Request Data: {JsonConvert.SerializeObject(body, new JsonSerializerSettings
-				{
-					Formatting = Formatting.Indented,
-					NullValueHandling = NullValueHandling.Ignore
-				})}");
-			}
-		}
-	}
-
 	private JToken? GetValidJsonFromResponse(RestRequest request, RestResponse response)
 	{
 		var content = response.Content != null ? response.Content.Trim() : string.Empty;

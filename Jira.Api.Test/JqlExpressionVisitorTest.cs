@@ -7,43 +7,78 @@ public class JqlExpressionTranslatorTest
 {
 	private JqlExpressionVisitor _translator = null!;
 
-	public static TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> JqlCases => new()
+	public static TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> JqlCases
 	{
-		{ q => q.Where(i => i.Votes == 5), "Votes = 5" },
-		{ q => q.Where(i => i.Summary == "Foo"), "Summary ~ \"Foo\"" },
-		{ q => q.Where(i => i.Assignee == "Foo"), "Assignee = \"Foo\"" },
-		{ q => q.Where(i => i.Votes != 5), "Votes != 5" },
-		{ q => q.Where(i => i.Summary != "Foo"), "Summary !~ \"Foo\"" },
-		{ q => q.Where(i => i.Assignee != "Foo"), "Assignee != \"Foo\"" },
-		{ q => q.Where(i => i.Votes > 5), "Votes > 5" },
-		{ q => q.Where(i => i.Votes >= 5), "Votes >= 5" },
-		{ q => q.Where(i => i.Votes < 5), "Votes < 5" },
-		{ q => q.Where(i => i.Votes <= 5), "Votes <= 5" },
-		{ q => q.Where(i => i.Votes > 5 && i.Votes < 10), "(Votes > 5 and Votes < 10)" },
-		{ q => q.Where(i => i.Votes > 5 || i.Votes < 10), "(Votes > 5 or Votes < 10)" },
-		{ q => q.Where(i => i.Votes > 5 && (i.Votes < 10 || i.Votes == 20)), "(Votes > 5 and (Votes < 10 or Votes = 20))" },
-		{ q => q.Where(i => i.Summary == ""), "Summary is empty" },
-		{ q => q.Where(i => i.Summary != ""), "Summary is not empty" },
-		{ q => q.Where(i => i.Summary == null), "Summary is null" },
-		{ q => q.Where(i => i.Priority > "foo"), "Priority > \"foo\"" },
-		{ q => q.Where(i => i.Priority == "foo"), "Priority = \"foo\"" },
-		{ q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created), "Priority = \"1\" order by Created asc" },
-		{ q => q.Where(i => i.Priority == "1").OrderByDescending(i => i.Created), "Priority = \"1\" order by Created desc" },
-		{ q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created).ThenBy(i => i.DueDate), "Priority = \"1\" order by Created asc, DueDate asc" },
-		{ q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created).ThenByDescending(i => i.DueDate), "Priority = \"1\" order by Created asc, DueDate desc" },
-		{ q => q.Where(i => i.Created > new DateTime(2011, 1, 1)), "Created > \"2011/01/01\"" },
-		{ q => q.Where(i => i.Created > new DateTime(2011, 1, 1) && i.Created < new DateTime(2012, 1, 1)), "(Created > \"2011/01/01\" and Created < \"2012/01/01\")" },
-		{ q => q.Where(i => i.Created > new LiteralDateTime("2011/01/01 00:00")), "Created > \"2011/01/01 00:00\"" },
-		{ q => q.Where(i => i.FixVersions == "1.0" && i.AffectsVersions == "2.0"), "(FixVersion = \"1.0\" and AffectedVersion = \"2.0\")" },
-		{ q => q.Where(i => i.Components == "foo"), "component = \"foo\"" },
-		{ q => q.Where(i => i.FixVersions != "1.0" && i.AffectsVersions != "2.0"), "(FixVersion != \"1.0\" and AffectedVersion != \"2.0\")" },
-		{ q => q.Where(i => i.Components != "foo"), "component != \"foo\"" },
-		{ q => q.Where(i => i.Summary == new LiteralMatch("Literal Summary") && i.Description == new LiteralMatch("Literal Description")), "(Summary = \"Literal Summary\" and Description = \"Literal Description\")" },
-		{ q => q.Where(i => i["Foo"]! == "foo" && i["Bar"]! == new DateTime(2012, 1, 1) && i["Baz"]! == new LiteralMatch("baz")), "((\"Foo\" ~ \"foo\" and \"Bar\" = \"2012/01/01\") and \"Baz\" = \"baz\")" },
-		{ q => q.Where(i => i["Foo"]! != "foo" && i["Bar"]! != new DateTime(2012, 1, 1) && i["Baz"]! != new LiteralMatch("baz")), "((\"Foo\" !~ \"foo\" and \"Bar\" != \"2012/01/01\") and \"Baz\" != \"baz\")" },
-		{ q => q.Where(i => i["Foo"]! > "foo" && i["Bar"]! > new DateTime(2012, 1, 1)), "(\"Foo\" > \"foo\" and \"Bar\" > \"2012/01/01\")" },
-		{ q => q.Where(i => i.Votes == 5).Where(i => i.Status == "Open" && i.Assignee == "admin").Where(i => i.Priority == "1"), "Votes = 5 and (Status = \"Open\" and Assignee = \"admin\") and Priority = \"1\"" }
-	};
+		get
+		{
+			var data = new TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string>();
+			AddComparisons(data);
+			AddLogical(data);
+			AddStrings(data);
+			AddOrdering(data);
+			AddDates(data);
+			AddMembers(data);
+			return data;
+		}
+	}
+
+	private static void AddComparisons(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
+		data.Add(q => q.Where(i => i.Votes == 5), "Votes = 5");
+		data.Add(q => q.Where(i => i.Summary == "Foo"), "Summary ~ \"Foo\"");
+		data.Add(q => q.Where(i => i.Assignee == "Foo"), "Assignee = \"Foo\"");
+		data.Add(q => q.Where(i => i.Votes != 5), "Votes != 5");
+		data.Add(q => q.Where(i => i.Summary != "Foo"), "Summary !~ \"Foo\"");
+		data.Add(q => q.Where(i => i.Assignee != "Foo"), "Assignee != \"Foo\"");
+		data.Add(q => q.Where(i => i.Votes > 5), "Votes > 5");
+		data.Add(q => q.Where(i => i.Votes >= 5), "Votes >= 5");
+		data.Add(q => q.Where(i => i.Votes < 5), "Votes < 5");
+		data.Add(q => q.Where(i => i.Votes <= 5), "Votes <= 5");
+	}
+
+	private static void AddLogical(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
+		data.Add(q => q.Where(i => i.Votes > 5 && i.Votes < 10), "(Votes > 5 and Votes < 10)");
+		data.Add(q => q.Where(i => i.Votes > 5 || i.Votes < 10), "(Votes > 5 or Votes < 10)");
+		data.Add(q => q.Where(i => i.Votes > 5 && (i.Votes < 10 || i.Votes == 20)), "(Votes > 5 and (Votes < 10 or Votes = 20))");
+	}
+
+	private static void AddStrings(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
+		data.Add(q => q.Where(i => i.Summary == ""), "Summary is empty");
+		data.Add(q => q.Where(i => i.Summary != ""), "Summary is not empty");
+		data.Add(q => q.Where(i => i.Summary == null), "Summary is null");
+		data.Add(q => q.Where(i => i.Priority > "foo"), "Priority > \"foo\"");
+		data.Add(q => q.Where(i => i.Priority == "foo"), "Priority = \"foo\"");
+	}
+
+	private static void AddOrdering(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
+		data.Add(q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created), "Priority = \"1\" order by Created asc");
+		data.Add(q => q.Where(i => i.Priority == "1").OrderByDescending(i => i.Created), "Priority = \"1\" order by Created desc");
+		data.Add(q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created).ThenBy(i => i.DueDate), "Priority = \"1\" order by Created asc, DueDate asc");
+		data.Add(q => q.Where(i => i.Priority == "1").OrderBy(i => i.Created).ThenByDescending(i => i.DueDate), "Priority = \"1\" order by Created asc, DueDate desc");
+	}
+
+	private static void AddDates(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
+		data.Add(q => q.Where(i => i.Created > new DateTime(2011, 1, 1)), "Created > \"2011/01/01\"");
+		data.Add(q => q.Where(i => i.Created > new DateTime(2011, 1, 1) && i.Created < new DateTime(2012, 1, 1)), "(Created > \"2011/01/01\" and Created < \"2012/01/01\")");
+		data.Add(q => q.Where(i => i.Created > new LiteralDateTime("2011/01/01 00:00")), "Created > \"2011/01/01 00:00\"");
+	}
+
+	private static void AddMembers(TheoryData<Func<IQueryable<Issue>, IQueryable<Issue>>, string> data)
+	{
+		data.Add(q => q.Where(i => i.FixVersions == "1.0" && i.AffectsVersions == "2.0"), "(FixVersion = \"1.0\" and AffectedVersion = \"2.0\")");
+		data.Add(q => q.Where(i => i.Components == "foo"), "component = \"foo\"");
+		data.Add(q => q.Where(i => i.FixVersions != "1.0" && i.AffectsVersions != "2.0"), "(FixVersion != \"1.0\" and AffectedVersion != \"2.0\")");
+		data.Add(q => q.Where(i => i.Components != "foo"), "component != \"foo\"");
+		data.Add(q => q.Where(i => i.Summary == new LiteralMatch("Literal Summary") && i.Description == new LiteralMatch("Literal Description")), "(Summary = \"Literal Summary\" and Description = \"Literal Description\")");
+		data.Add(q => q.Where(i => i["Foo"]! == "foo" && i["Bar"]! == new DateTime(2012, 1, 1) && i["Baz"]! == new LiteralMatch("baz")), "((\"Foo\" ~ \"foo\" and \"Bar\" = \"2012/01/01\") and \"Baz\" = \"baz\")");
+		data.Add(q => q.Where(i => i["Foo"]! != "foo" && i["Bar"]! != new DateTime(2012, 1, 1) && i["Baz"]! != new LiteralMatch("baz")), "((\"Foo\" !~ \"foo\" and \"Bar\" != \"2012/01/01\") and \"Baz\" != \"baz\")");
+		data.Add(q => q.Where(i => i["Foo"]! > "foo" && i["Bar"]! > new DateTime(2012, 1, 1)), "(\"Foo\" > \"foo\" and \"Bar\" > \"2012/01/01\")");
+		data.Add(q => q.Where(i => i.Votes == 5).Where(i => i.Status == "Open" && i.Assignee == "admin").Where(i => i.Priority == "1"), "Votes = 5 and (Status = \"Open\" and Assignee = \"admin\") and Priority = \"1\"");
+	}
 
 	[Theory]
 	[MemberData(nameof(JqlCases))]

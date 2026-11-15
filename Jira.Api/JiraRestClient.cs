@@ -88,4 +88,21 @@ public partial class JiraRestClient : IJiraRestClient
 	/// Gets the underlying RestSharp client.
 	/// </summary>
 	public RestClient RestClient { get; }
+
+	private void LogRequest(RestRequest request, object? body = null)
+	{
+		if (Settings.EnableRequestTrace)
+		{
+			Trace.WriteLine($"[{request.Method}] Request Url: {request.Resource}");
+
+			if (body != null)
+			{
+				Trace.WriteLine($"[{request.Method}] Request Data: {JsonConvert.SerializeObject(body, new JsonSerializerSettings
+				{
+					Formatting = Formatting.Indented,
+					NullValueHandling = NullValueHandling.Ignore
+				})}");
+			}
+		}
+	}
 }
