@@ -68,11 +68,7 @@ public partial class JiraRestClient : IJiraRestClient
 
 			if (body != null)
 			{
-				Trace.WriteLine($"[{request.Method}] Request Data: {JsonConvert.SerializeObject(body, new JsonSerializerSettings
-				{
-					Formatting = Formatting.Indented,
-					NullValueHandling = NullValueHandling.Ignore
-				})}");
+				Trace.WriteLine($"[{request.Method}] Request Data: {body.GetType().Name} (body omitted from the trace)");
 			}
 		}
 	}
