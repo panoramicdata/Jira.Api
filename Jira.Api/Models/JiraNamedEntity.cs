@@ -63,6 +63,12 @@ public class JiraNamedEntity : IJiraEntity
 		}
 	}
 
+	internal static bool NameMatches(JiraNamedEntity? entity, string? name)
+		=> entity is null ? name is null : name is not null && entity.Name == name;
+
+	internal static T FromNameOrId<T>(string? name, Func<string?, string?, T> create) where T : JiraNamedEntity
+		=> name is null ? null! : int.TryParse(name, out _) ? create(name, null) : create(null, name);
+
 	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(JiraClient jira, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name))
