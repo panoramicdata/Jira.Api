@@ -3,6 +3,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Represents a named entity within JIRA.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class JiraNamedEntity : IJiraEntity
 {
 	/// <summary>
@@ -61,6 +62,12 @@ public class JiraNamedEntity : IJiraEntity
 			return Id;
 		}
 	}
+
+	internal static bool NameMatches(JiraNamedEntity? entity, string? name)
+		=> entity is null ? name is null : name is not null && entity.Name == name;
+
+	internal static T FromNameOrId<T>(string? name, Func<string?, string?, T> create) where T : JiraNamedEntity
+		=> name is null ? null! : int.TryParse(name, out _) ? create(name, null) : create(null, name);
 
 	internal async Task<JiraNamedEntity> LoadIdAndNameAsync(JiraClient jira, CancellationToken cancellationToken)
 	{

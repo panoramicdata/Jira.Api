@@ -3,6 +3,7 @@
 /// <summary>
 /// Extension methods for converting between local and remote JIRA types
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public static class ExtensionMethods
 {
 	/// <summary>
@@ -18,7 +19,7 @@ public static class ExtensionMethods
 	/// </summary>
 	public static Task<RemoteIssue> ToRemoteAsync(this Issue issue, CancellationToken cancellationToken)
 	{
-		return issue.ToRemoteAsync(cancellationToken);
+		return issue.ToRemoteIssueAsync(cancellationToken);
 	}
 
 	/// <summary>

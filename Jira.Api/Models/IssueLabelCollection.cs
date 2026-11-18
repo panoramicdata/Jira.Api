@@ -7,6 +7,7 @@ namespace Jira.Api.Models;
 /// Creates a new instance of IssueLabelCollection.
 /// </remarks>
 /// <param name="labels">Labels to seed into this collection</param>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class IssueLabelCollection(IList<string> labels) : List<string>(labels), IRemoteIssueFieldProvider
 {
 	private readonly List<string> _originalLabels = [.. labels];
@@ -53,6 +54,8 @@ public class IssueLabelCollection(IList<string> labels) : List<string>(labels), 
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var fieldValues = new List<RemoteFieldValue>();
 
 		if (_originalLabels.Count != this.Count || this.Except(_originalLabels).Any())

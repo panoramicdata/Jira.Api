@@ -3,6 +3,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Force a CustomField comparison to use the exact match JQL operator.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class LiteralMatch(string value)
 {
 	private readonly string _value = value;

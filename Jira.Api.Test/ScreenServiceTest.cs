@@ -5,11 +5,8 @@ public class ScreenServiceTest(ITestOutputHelper outputHelper) : TestBase(output
 	[Fact]
 	public async Task GetScreensAsync_ReturnsScreens()
 	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var pagedResult = new RemotePagedResult<RemoteScreen>
+		var (client, jira) = MockRest.Create();
+		client.Returns(Method.Get, "rest/api/2/screens", new RemotePagedResult<RemoteScreen>
 		{
 			StartAt = 0,
 			MaxResults = 100,
@@ -19,213 +16,88 @@ public class ScreenServiceTest(ITestOutputHelper outputHelper) : TestBase(output
 				new RemoteScreen { Id = 1, Name = "Default Screen", Description = "The default screen" },
 				new RemoteScreen { Id = 2, Name = "Resolve Issue Screen", Description = "Screen for resolving issues" }
 			]
-		};
+		});
 
-		client.Setup(c => c.ExecuteRequestAsync<RemotePagedResult<RemoteScreen>>(
-				Method.Get,
-				"rest/api/2/screens",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(pagedResult);
+		var screens = (await jira.Screens.GetScreensAsync(CancellationToken)).ToArray();
 
-		// Act
-		var screens = await jira.Screens.GetScreensAsync(CancellationToken);
-
-		// Assert
 		screens.Should().HaveCount(2);
-		screens.First().Id.Should().Be(1);
-		screens.First().Name.Should().Be("Default Screen");
-		screens.First().Description.Should().Be("The default screen");
+		screens[0].Id.Should().Be(1);
+		screens[0].Name.Should().Be("Default Screen");
+		screens[0].Description.Should().Be("The default screen");
 	}
 
 	[Fact]
 	public async Task GetScreenAsync_ReturnsScreen()
 	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
+		var (client, jira) = MockRest.Create();
+		client.Returns(Method.Get, "rest/api/2/screens/1", new RemoteScreen { Id = 1, Name = "Default Screen", Description = "The default screen" });
 
-		var remoteScreen = new RemoteScreen
-		{
-			Id = 1,
-			Name = "Default Screen",
-			Description = "The default screen"
-		};
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteScreen>(
-				Method.Get,
-				"rest/api/2/screens/1",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteScreen);
-
-		// Act
 		var screen = await jira.Screens.GetScreenAsync(1, CancellationToken);
 
-		// Assert
 		screen.Id.Should().Be(1);
 		screen.Name.Should().Be("Default Screen");
 		screen.Description.Should().Be("The default screen");
 	}
 
-	[Fact]
-	public async Task GetScreenTabsAsync_ReturnsTabs()
+	[Theory]
+	[InlineData(null, "rest/api/2/screens/1/tabs")]
+	[InlineData("PRJ", "rest/api/2/screens/1/tabs?projectKey=PRJ")]
+	public async Task GetScreenTabsAsync_BuildsResource(string? projectKey, string resource)
 	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
+		var (client, jira) = MockRest.Create();
+		client.Returns<IEnumerable<RemoteScreenTab>>(Method.Get, resource, [new() { id = "1", name = "Field Tab" }, new() { id = "2", name = "Details Tab" }]);
 
-		var remoteTabs = new List<RemoteScreenTab>
-		{
-			new() { id = "1", name = "Field Tab" },
-			new() { id = "2", name = "Details Tab" }
-		};
+		var tabs = (await jira.Screens.GetScreenTabsAsync("1", projectKey, CancellationToken)).ToArray();
 
-		client.Setup(c => c.ExecuteRequestAsync<IEnumerable<RemoteScreenTab>>(
-				Method.Get,
-				"rest/api/2/screens/1/tabs",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteTabs);
-
-		// Act
-		var tabs = await jira.Screens.GetScreenTabsAsync("1", cancellationToken: CancellationToken);
-
-		// Assert
 		tabs.Should().HaveCount(2);
-		tabs.First().Id.Should().Be("1");
-		tabs.First().Name.Should().Be("Field Tab");
+		tabs[0].Id.Should().Be("1");
+		tabs[0].Name.Should().Be("Field Tab");
 	}
 
-	[Fact]
-	public async Task GetScreenTabsAsync_WithProjectKey_IncludesProjectKeyInUrl()
+	[Theory]
+	[InlineData(null, "rest/api/2/screens/1/tabs/10/fields")]
+	[InlineData("PRJ", "rest/api/2/screens/1/tabs/10/fields?projectKey=PRJ")]
+	public async Task GetScreenTabFieldsAsync_ReturnsFields(string? projectKey, string resource)
 	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var remoteTabs = new List<RemoteScreenTab>
-		{
-			new() { id = "1", name = "Field Tab" }
-		};
-
-		client.Setup(c => c.ExecuteRequestAsync<IEnumerable<RemoteScreenTab>>(
-				Method.Get,
-				"rest/api/2/screens/1/tabs?projectKey=PRJ",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteTabs);
-
-		// Act
-		var tabs = await jira.Screens.GetScreenTabsAsync("1", "PRJ", CancellationToken);
-
-		// Assert
-		tabs.Should().ContainSingle();
-	}
-
-	[Fact]
-	public async Task GetScreenTabFieldsAsync_ReturnsFields()
-	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var remoteFields = new List<RemoteScreenField>
-		{
+		var (client, jira) = MockRest.Create();
+		client.Returns<IEnumerable<RemoteScreenField>>(Method.Get, resource,
+		[
 			new() { id = "summary", name = "Summary", type = "string" },
-			new() { id = "description", name = "Description", type = "string" },
-			new() { id = "customfield_10001", name = "Custom Field", type = "com.atlassian.jira.plugin.system.customfieldtypes:textfield" }
-		};
+			new() { id = "customfield_10001", name = "Custom Field", type = "textfield" }
+		]);
 
-		client.Setup(c => c.ExecuteRequestAsync<IEnumerable<RemoteScreenField>>(
-				Method.Get,
-				"rest/api/2/screens/1/tabs/10/fields",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteFields);
+		var fields = (await jira.Screens.GetScreenTabFieldsAsync("1", "10", projectKey, CancellationToken)).ToArray();
 
-		// Act
-		var fields = await jira.Screens.GetScreenTabFieldsAsync("1", "10", cancellationToken: CancellationToken);
-
-		// Assert
-		fields.Should().HaveCount(3);
-		fields.First().Id.Should().Be("summary");
-		fields.First().Name.Should().Be("Summary");
-		fields.First().Type.Should().Be("string");
+		fields.Should().HaveCount(2);
+		fields[0].Id.Should().Be("summary");
+		fields[0].Name.Should().Be("Summary");
+		fields[0].Type.Should().Be("string");
 	}
 
 	[Fact]
 	public async Task GetScreenAvailableFieldsAsync_ReturnsAvailableFields()
 	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
+		var (client, jira) = MockRest.Create();
+		client.Returns<IEnumerable<RemoteScreenField>>(Method.Get, "rest/api/2/screens/1/availableFields",
+			[new() { id = "priority", name = "Priority", type = "priority" }, new() { id = "labels", name = "Labels", type = "array" }]);
 
-		var remoteFields = new List<RemoteScreenField>
-		{
-			new() { id = "priority", name = "Priority", type = "priority" },
-			new() { id = "labels", name = "Labels", type = "array" }
-		};
+		var fields = (await jira.Screens.GetScreenAvailableFieldsAsync("1", CancellationToken)).ToArray();
 
-		client.Setup(c => c.ExecuteRequestAsync<IEnumerable<RemoteScreenField>>(
-				Method.Get,
-				"rest/api/2/screens/1/availableFields",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteFields);
-
-		// Act
-		var fields = await jira.Screens.GetScreenAvailableFieldsAsync("1", CancellationToken);
-
-		// Assert
 		fields.Should().HaveCount(2);
-		fields.First().Id.Should().Be("priority");
-		fields.First().Name.Should().Be("Priority");
+		fields[0].Id.Should().Be("priority");
+		fields[0].Name.Should().Be("Priority");
 	}
 
-	[Fact]
-	public async Task Screen_ToString_ReturnsName()
+	[Theory]
+	[InlineData(1L, "Test Screen", "Test Screen")]
+	[InlineData(42L, null, "Screen 42")]
+	public async Task Screen_ToString_FallsBackToId(long id, string? name, string expected)
 	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
+		var (client, jira) = MockRest.Create();
+		client.Returns(Method.Get, $"rest/api/2/screens/{id}", new RemoteScreen { Id = id, Name = name, Description = null });
 
-		var remoteScreen = new RemoteScreen { Id = 1, Name = "Test Screen", Description = "Description" };
+		var screen = await jira.Screens.GetScreenAsync(id, CancellationToken);
 
-		client.Setup(c => c.ExecuteRequestAsync<RemoteScreen>(
-				Method.Get,
-				"rest/api/2/screens/1",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteScreen);
-
-		// Act
-		var screen = await jira.Screens.GetScreenAsync(1, CancellationToken);
-
-		// Assert
-		screen.ToString().Should().Be("Test Screen");
-	}
-
-	[Fact]
-	public async Task Screen_ToString_WithNullName_ReturnsIdFallback()
-	{
-		// Arrange
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-
-		var remoteScreen = new RemoteScreen { Id = 42, Name = null, Description = null };
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteScreen>(
-				Method.Get,
-				"rest/api/2/screens/42",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteScreen);
-
-		// Act
-		var screen = await jira.Screens.GetScreenAsync(42, CancellationToken);
-
-		// Assert
-		screen.ToString().Should().Be("Screen 42");
+		screen.ToString().Should().Be(expected);
 	}
 }

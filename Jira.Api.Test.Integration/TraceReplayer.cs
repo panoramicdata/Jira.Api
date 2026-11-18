@@ -10,6 +10,7 @@ class TraceReplayer : IJiraRestClient
 		_responses = new Queue<string>(lines);
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2372:Exceptions should not be thrown from property getters", Justification = "Test double: IJiraRestClient requires this property and the replayer deliberately does not support it.")]
 	public RestClient RestSharpClient
 	{
 		get

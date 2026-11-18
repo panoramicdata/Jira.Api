@@ -8,7 +8,7 @@ public partial class IssueTest
 		public async Task ReturnsCustomFieldsAdded()
 		{
 			var jira = TestableJira.Create();
-			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
+
 			var remoteIssue = new RemoteIssue
 			{
 				key = "TST-1",
@@ -17,43 +17,21 @@ public partial class IssueTest
 			};
 
 			jira.IssueService.SetupIssues(jira, remoteIssue);
-			jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
+			SetupCustomField(jira);
 
 			var issue = jira.CreateIssue("TST");
 			issue["My Custom Field"] = "test value";
 
 			var result = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
-			result.Should().ContainSingle();
-			result.First().id.Should().Be("CustomField1");
+			AssertSingleField(result, "CustomField1", null);
 		}
 
 		[Fact]
 		public async Task ExcludesCustomFieldsNotModified()
 		{
 			var jira = TestableJira.Create();
-			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
-			var remoteCustomFieldValue = new RemoteCustomFieldValue
-			{
-				customfieldId = "CustomField1",
-				values = ["My Value"]
-			};
-			var remoteIssue = new RemoteIssue
-			{
-				key = "TST-1",
-				project = "TST",
-				type = new RemoteIssueType { id = "1" },
-				customFieldValues = [remoteCustomFieldValue]
-			};
 
-			jira.IssueService.Setup(s => s.GetIssueAsync("TST-1", It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(new Issue(jira, remoteIssue)));
-			jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
-			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(new IssueType("1"), 1)));
-
-			var issue = await jira.Issues.GetIssueAsync("TST-1", CancellationToken);
+			var issue = await GetIssueWithCustomFieldValueAsync(jira);
 
 			var result = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
 			result.Should().BeEmpty();
@@ -63,34 +41,12 @@ public partial class IssueTest
 		public async Task ReturnsCustomFieldThatWasModified()
 		{
 			var jira = TestableJira.Create();
-			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
-			var remoteCustomFieldValue = new RemoteCustomFieldValue
-			{
-				customfieldId = "CustomField1",
-				values = ["My Value"]
-			};
-			var remoteIssue = new RemoteIssue
-			{
-				key = "TST-1",
-				project = "TST",
-				type = new RemoteIssueType { id = "1" },
-				customFieldValues = [remoteCustomFieldValue]
-			};
 
-			jira.IssueService.Setup(s => s.GetIssueAsync("TST-1", It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(new Issue(jira, remoteIssue)));
-			jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
-			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(new IssueType("1"), 1)));
-
-			var issue = await jira.Issues.GetIssueAsync("TST-1", CancellationToken);
+			var issue = await GetIssueWithCustomFieldValueAsync(jira);
 			issue["My Custom Field"] = "My New Value";
 
 			var result = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
-			result.Should().ContainSingle();
-			result.First().id.Should().Be("CustomField1");
-			result.First().values[0].Should().Be("My New Value");
+			AssertSingleField(result, "CustomField1", "My New Value");
 		}
 
 		[Fact]
@@ -100,8 +56,7 @@ public partial class IssueTest
 			var issue = jira.CreateIssue("TST");
 			issue.Priority = "5";
 
-			jira.IssuePriorityService.Setup(s => s.GetPrioritiesAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(new IssuePriority("5"), 1)));
+			SetupPriority(jira, "5");
 
 			var result = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
 			result.Should().ContainSingle();
@@ -210,8 +165,7 @@ public partial class IssueTest
 			var issue = remoteIssue.ToLocal(jira);
 			issue.Priority = "5";
 
-			jira.IssuePriorityService.Setup(s => s.GetPrioritiesAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(new IssuePriority("5"), 1)));
+			SetupPriority(jira, "5");
 			(await GetUpdatedFieldsForIssueAsync(issue, CancellationToken)).Should().BeEmpty();
 		}
 
@@ -222,8 +176,7 @@ public partial class IssueTest
 			var issue = jira.CreateIssue("TST");
 			issue.Priority = "5";
 
-			jira.IssuePriorityService.Setup(s => s.GetPrioritiesAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(Enumerable.Repeat(new IssuePriority("5"), 1)));
+			SetupPriority(jira, "5");
 
 			(await GetUpdatedFieldsForIssueAsync(issue, CancellationToken)).Should().ContainSingle();
 		}
@@ -258,10 +211,7 @@ public partial class IssueTest
 			var component = new RemoteComponent { id = "1", name = "1.0" };
 			issue.Components.Add(component.ToLocal());
 
-			var fields = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
-			fields.Should().ContainSingle();
-			fields[0].id.Should().Be("components");
-			fields[0].values[0].Should().Be("1");
+			AssertSingleField(await GetUpdatedFieldsForIssueAsync(issue, CancellationToken), "components", "1");
 		}
 
 		[Fact]
@@ -271,10 +221,7 @@ public partial class IssueTest
 			var version = new RemoteVersion { id = "1", name = "1.0" };
 			issue.FixVersions.Add(version.ToLocal(TestableJira.Create()));
 
-			var fields = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
-			fields.Should().ContainSingle();
-			fields[0].id.Should().Be("fixVersions");
-			fields[0].values[0].Should().Be("1");
+			AssertSingleField(await GetUpdatedFieldsForIssueAsync(issue, CancellationToken), "fixVersions", "1");
 		}
 
 		[Fact]
@@ -284,14 +231,47 @@ public partial class IssueTest
 			var version = new RemoteVersion { id = "1", name = "1.0" };
 			issue.AffectsVersions.Add(version.ToLocal(TestableJira.Create()));
 
-			var fields = await GetUpdatedFieldsForIssueAsync(issue, CancellationToken);
+			AssertSingleField(await GetUpdatedFieldsForIssueAsync(issue, CancellationToken), "versions", "1");
+		}
+
+		private static void SetupCustomField(TestableJira jira)
+		{
+			var customField = new CustomField(new RemoteField { id = "CustomField1", name = "My Custom Field" });
+			jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(It.IsAny<CancellationToken>()))
+				.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
+		}
+
+		private static void SetupPriority(TestableJira jira, string id)
+			=> jira.IssuePriorityService.Setup(s => s.GetPrioritiesAsync(It.IsAny<CancellationToken>()))
+				.Returns(Task.FromResult(Enumerable.Repeat(new IssuePriority(id), 1)));
+
+		private static async Task<Issue> GetIssueWithCustomFieldValueAsync(TestableJira jira)
+		{
+			var remoteIssue = new RemoteIssue
+			{
+				key = "TST-1",
+				project = "TST",
+				type = new RemoteIssueType { id = "1" },
+				customFieldValues = [new RemoteCustomFieldValue { customfieldId = "CustomField1", values = ["My Value"] }]
+			};
+
+			jira.IssueService.Setup(s => s.GetIssueAsync("TST-1", It.IsAny<CancellationToken>()))
+				.Returns(Task.FromResult(new Issue(jira, remoteIssue)));
+			SetupCustomField(jira);
+			jira.IssueTypeService.Setup(s => s.GetIssueTypesAsync(It.IsAny<CancellationToken>()))
+				.Returns(Task.FromResult(Enumerable.Repeat(new IssueType("1"), 1)));
+
+			return await jira.Issues.GetIssueAsync("TST-1", CancellationToken);
+		}
+
+		private static void AssertSingleField(RemoteFieldValue[] fields, string id, string? firstValue)
+		{
 			fields.Should().ContainSingle();
-			fields[0].id.Should().Be("versions");
-			fields[0].values[0].Should().Be("1");
+			fields[0].id.Should().Be(id);
+			if (firstValue != null)
+			{
+				fields[0].values[0].Should().Be(firstValue);
+			}
 		}
 	}
 }
-
-
-
-

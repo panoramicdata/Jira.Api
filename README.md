@@ -3,7 +3,11 @@
 [![NuGet](https://img.shields.io/nuget/v/Jira.Api.svg)](https://www.nuget.org/packages/Jira.Api/)
 [![License: MIT AND BSD-2-Clause](https://img.shields.io/badge/License-MIT_AND_BSD--2--Clause-blue.svg)](LICENSE)
 
+> **Need help with APIs or .NET?** Panoramic Data are experts in APIs and .NET, and we can help with your development. [Contact us](https://www.panoramicdata.com/contact-us) or see our [software services](https://www.panoramicdata.com/services/software).
+
 Contains utilities for interacting with  [Atlassian JIRA](http://www.atlassian.com/software/jira) in .NET (C# etc.).
+
+Supports .NET 11.0.
 
 ## Support Notice
 
@@ -30,7 +34,7 @@ If you are migrating from Atlassian.SDK, there are MANY breaking changes, we bel
 The main items:
 
 * The namespace has changed from `Atlassian.SDK` to `Jira.Api`.
-* .NET 10.0+ only.  What is this, 2024?
+* .NET 11.0+ only.  What is this, 2024?
 * A `UserAgent` string is now required when constructing `JiraRestClientSettings`. A build warning (CS0618) is emitted if you use the parameterless constructor. See [How to configure the User-Agent](/docs/how-to-configure-user-agent.md).
 * EVERYTHING is asynchronous now, no more sync methods hiding async under the covers.
 * Methods still have the same names, but they are now all suffixed with `Async` e.g. UpdateIssueAsync().

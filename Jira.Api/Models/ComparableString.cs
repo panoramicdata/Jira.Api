@@ -7,6 +7,7 @@ namespace Jira.Api.Models;
 /// <remarks>
 /// Allows comparisons in the form of issue.Key > "TST-1"
 /// </remarks>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class ComparableString(string value)
 {
 	/// <summary>

@@ -3,6 +3,8 @@
 /// <summary>
 /// Access token settings to help obtain the access token.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2339:Public constant members should not be used", Justification = "Published public API: changing a public const to a static read-only member is a breaking change for existing consumers.")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class OAuthAccessTokenSettings
 {
 	/// <summary>

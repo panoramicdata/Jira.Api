@@ -5,25 +5,9 @@ public class CustomFieldTest
 	[Fact]
 	public void Name_ShouldRetriveValueFromRemote()
 	{
-		//arrange
-		var jira = TestableJira.Create();
-		var customField = new CustomField(new RemoteField { id = "123", name = "CustomField" });
-		jira.IssueFieldService.Setup(c => c.GetCustomFieldsAsync(CancellationToken.None))
-			.Returns(Task.FromResult(Enumerable.Repeat(customField, 1)));
+		var jira = CustomFieldTestData.CreateJiraWithCustomField();
+		var issue = CustomFieldTestData.CreateIssue(jira, "projectKey", "issueKey", [new() { customfieldId = "123", values = ["abc"] }]);
 
-		var issue = new RemoteIssue
-		{
-			project = "projectKey",
-			key = "issueKey",
-			customFieldValues = [
-								new(){
-									customfieldId = "123",
-									values = ["abc"]
-								}
-							]
-		}.ToLocal(jira);
-
-		//assert
 		issue.CustomFields[0].Name.Should().Be("CustomField");
 	}
 
@@ -43,12 +27,7 @@ public class CustomFieldTest
 
 		// arrange serialization
 		var remoteIssue = issue.ToRemote();
-		var converter = new RemoteIssueJsonConverter([remoteField], new Dictionary<string, ICustomFieldValueSerializer>());
-		var serializerSettings = new JsonSerializerSettings
-		{
-			NullValueHandling = NullValueHandling.Ignore
-		};
-		serializerSettings.Converters.Add(converter);
+		var serializerSettings = CustomFieldTestData.CreateSerializerSettings(remoteField);
 		var issueWrapper = new RemoteIssueWrapper(remoteIssue);
 
 		// act
@@ -61,9 +40,7 @@ public class CustomFieldTest
 		var remoteFieldValue = fields["remotefield_id"];
 		remoteFieldValue.Should().NotBeNull();
 		var valueArray = remoteFieldValue.ToObject<string[]>();
-		valueArray.Should().HaveCount(2);
-		valueArray.Should().Contain("val1");
-		valueArray.Should().Contain("val2");
+		valueArray.Should().BeEquivalentTo(_val1val2);
 	}
 	private static readonly string[] _val1val2 = ["val1", "val2"];
 
@@ -83,12 +60,7 @@ public class CustomFieldTest
 		});
 
 		// arrange serialization
-		var converter = new RemoteIssueJsonConverter([remoteField], new Dictionary<string, ICustomFieldValueSerializer>());
-		var serializerSettings = new JsonSerializerSettings
-		{
-			NullValueHandling = NullValueHandling.Ignore
-		};
-		serializerSettings.Converters.Add(converter);
+		var serializerSettings = CustomFieldTestData.CreateSerializerSettings(remoteField);
 
 		// act
 		var remoteIssueWrapper = JsonConvert.DeserializeObject<RemoteIssueWrapper>(jObject.ToString(), serializerSettings);
@@ -97,9 +69,7 @@ public class CustomFieldTest
 
 		// assert
 		var customFieldValues = remoteIssue.customFieldValues.First().values;
-		customFieldValues.Should().HaveCount(2);
-		customFieldValues.Should().Contain("val1");
-		customFieldValues.Should().Contain("val2");
+		customFieldValues.Should().BeEquivalentTo(_val1val2);
 	}
 }
 

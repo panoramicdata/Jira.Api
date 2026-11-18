@@ -3,17 +3,11 @@ namespace Jira.Api.Test.Integration;
 [Trait("Category", "WritesToApi")]
 public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHelper)
 {
-
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateIssueWithIssueTypesPerProject(JiraClient jira)
 	{
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "Bug",
-			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
-			Assignee = "admin"
-		};
+		var issue = NewAdminIssue(jira, "TST", "Bug", WithRandomSuffix("Test Summary "));
 
 		issue.Type.SearchByProjectOnly = true;
 		var newIssue = await issue.SaveChangesAsync(CancellationToken);
@@ -33,7 +27,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 		var issue = new Issue(jira, fields)
 		{
 			Type = "1",
-			Summary = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue),
+			Summary = WithRandomSuffix("Test Summary "),
 			Assignee = "admin"
 		};
 
@@ -45,20 +39,10 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateIssueAsync(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var summaryValue = WithRandomSuffix("Test Summary ");
+		var newIssue = await NewAdminIssue(jira, summaryValue).SaveChangesAsync(CancellationToken);
+		AssertSummaryProjectAndType(newIssue, summaryValue);
 
-		var newIssue = await issue.SaveChangesAsync(CancellationToken);
-		newIssue.Summary.Should().Be(summaryValue);
-		newIssue.Project.Should().Be("TST");
-		newIssue.Type.Id.Should().Be("1");
-
-		// Create a subtask async.
 		var subTask = new Issue(jira, "TST", newIssue.Key.Value)
 		{
 			Type = "5",
@@ -75,39 +59,28 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithMinimumFieldsSet(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
-
-		await issue.SaveChangesAsync(CancellationToken);
+		var summaryValue = WithRandomSuffix("Test Summary ");
+		var issue = await SaveNewAdminIssueAsync(jira, summaryValue);
 
 		var issues = (from i in jira.Issues.Queryable
 					  where i.Key == issue.Key
 					  select i).ToArray();
 
 		issues.Should().ContainSingle();
-
-		issues[0].Summary.Should().Be(summaryValue);
-		issues[0].Project.Should().Be("TST");
-		issues[0].Type.Id.Should().Be("1");
+		AssertSummaryProjectAndType(issues[0], summaryValue);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithAllFieldsSet(JiraClient jira)
 	{
-		var summaryValue = "Test Summary " + RandomNumberGenerator.GetInt32(int.MaxValue);
+		var summaryValue = WithRandomSuffix("Test Summary ");
 		var expectedDueDate = new DateTime(2011, 12, 12);
 		var issue = jira.CreateIssue("TST");
 		await issue.AffectsVersions.AddAsync("1.0", CancellationToken);
 		issue.Assignee = "admin";
 		await issue.Components.AddAsync("Server", CancellationToken);
-		issue["Custom Text Field"] = "Test Value";  // custom field
+		issue["Custom Text Field"] = "Test Value";
 		issue.Description = "Test Description";
 		issue.DueDate = expectedDueDate;
 		issue.Environment = "Test Environment";
@@ -137,39 +110,25 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithSubTask(JiraClient jira)
 	{
-		var parentTask = jira.CreateIssue("TST");
-		parentTask.Type = "1";
-		parentTask.Summary = "Test issue with SubTask" + RandomNumberGenerator.GetInt32(int.MaxValue);
-		await parentTask.SaveChangesAsync(CancellationToken);
+		var parentTask = await SaveNewIssueAsync(jira, "1", WithRandomSuffix("Test issue with SubTask"));
 
 		var subTask = jira.CreateIssue("TST", parentTask.Key.Value);
 		subTask.Type = "5"; // SubTask issue type.
-		subTask.Summary = "Test SubTask" + RandomNumberGenerator.GetInt32(int.MaxValue);
+		subTask.Summary = WithRandomSuffix("Test SubTask");
 		await subTask.SaveChangesAsync(CancellationToken);
 
-		parentTask.Type.IsSubTask.Should().BeFalse();
-		subTask.Type.IsSubTask.Should().BeTrue();
-		subTask.ParentIssueKey.Should().Be(parentTask.Key.Value);
+		AssertParentAndSubTask(parentTask, subTask);
 
-		// query the subtask again to make sure it loads everything from server.
+		// reload the subtask to make sure everything comes from the server
 		subTask = await jira.Issues.GetIssueAsync(subTask.Key.Value, CancellationToken);
-		parentTask.Type.IsSubTask.Should().BeFalse();
-		subTask.Type.IsSubTask.Should().BeTrue();
-		subTask.ParentIssueKey.Should().Be(parentTask.Key.Value);
+		AssertParentAndSubTask(parentTask, subTask);
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithVersions(JiraClient jira)
 	{
-		var summaryValue = "Test issue with versions (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var issue = NewAdminIssue(jira, WithRandomSuffix("Test issue with versions (Created)"));
 
 		await issue.AffectsVersions.AddAsync("1.0", CancellationToken);
 		await issue.AffectsVersions.AddAsync("2.0", CancellationToken);
@@ -184,27 +143,16 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 								&& i.FixVersions == "2.0" && i.FixVersions == "3.0"
 						select i).First();
 
-		newIssue.AffectsVersions.Should().HaveCount(2);
-		newIssue.AffectsVersions.Should().Contain(v => v.Name == "1.0");
-		newIssue.AffectsVersions.Should().Contain(v => v.Name == "2.0");
-
-		newIssue.FixVersions.Should().HaveCount(2);
-		newIssue.FixVersions.Should().Contain(v => v.Name == "2.0");
-		newIssue.FixVersions.Should().Contain(v => v.Name == "3.0");
+		AssertNames(newIssue.AffectsVersions, "1.0", "2.0");
+		AssertNames(newIssue.FixVersions, "2.0", "3.0");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithComponents(JiraClient jira)
 	{
-		var summaryValue = "Test issue with components (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var summaryValue = WithRandomSuffix("Test issue with components (Created)");
+		var issue = NewAdminIssue(jira, summaryValue);
 
 		await issue.Components.AddAsync("Server", CancellationToken);
 		await issue.Components.AddAsync("Client", CancellationToken);
@@ -215,23 +163,15 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 						where i.Summary == summaryValue && i.Components == "Server" && i.Components == "Client"
 						select i).First();
 
-		newIssue.Components.Should().HaveCount(2);
-		newIssue.Components.Should().Contain(c => c.Name == "Server");
-		newIssue.Components.Should().Contain(c => c.Name == "Client");
+		AssertNames(newIssue.Components, "Server", "Client");
 	}
 
 	[Theory]
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateAndQueryIssueWithCustomField(JiraClient jira)
 	{
-		var summaryValue = "Test issue with custom field (Created)" + RandomNumberGenerator.GetInt32(int.MaxValue);
-
-		var issue = new Issue(jira, "TST")
-		{
-			Type = "1",
-			Summary = summaryValue,
-			Assignee = "admin"
-		};
+		var summaryValue = WithRandomSuffix("Test issue with custom field (Created)");
+		var issue = NewAdminIssue(jira, summaryValue);
 		issue["Custom Text Field"] = "My new value";
 		issue["Custom User Field"] = "admin";
 
@@ -249,7 +189,7 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 	[ClassData(typeof(JiraProvider))]
 	public async Task CreateIssueAsSubtask(JiraClient jira)
 	{
-		var summaryValue = "Test issue as subtask " + RandomNumberGenerator.GetInt32(int.MaxValue);
+		var summaryValue = WithRandomSuffix("Test issue as subtask ");
 
 		var issue = new Issue(jira, "TST", "TST-1")
 		{
@@ -263,7 +203,18 @@ public class IssueCreateTest(ITestOutputHelper outputHelper) : TestBase(outputHe
 
 		subtasks.Should().Contain(s => s.Summary.Equals(summaryValue), $"'{summaryValue}' was not found as a sub-task of TST-1");
 	}
+
+	private static void AssertSummaryProjectAndType(Issue issue, string summaryValue)
+	{
+		issue.Summary.Should().Be(summaryValue);
+		issue.Project.Should().Be("TST");
+		issue.Type.Id.Should().Be("1");
+	}
+
+	private static void AssertParentAndSubTask(Issue parentTask, Issue subTask)
+	{
+		parentTask.Type.IsSubTask.Should().BeFalse();
+		subTask.Type.IsSubTask.Should().BeTrue();
+		subTask.ParentIssueKey.Should().Be(parentTask.Key.Value);
+	}
 }
-
-
-

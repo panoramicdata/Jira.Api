@@ -3,6 +3,8 @@ namespace Jira.Api.Models;
 /// <summary>
 /// The resolution of the issue as defined in JIRA
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class IssueResolution : JiraNamedEntity
 {
 	/// <summary>
@@ -33,24 +35,7 @@ public class IssueResolution : JiraNamedEntity
 	/// <summary>
 	/// Allows assignation by name
 	/// </summary>
-	public static implicit operator IssueResolution(string name)
-	{
-		if (name != null)
-		{
-			if (int.TryParse(name, out _))
-			{
-				return new IssueResolution(name /*as id*/);
-			}
-			else
-			{
-				return new IssueResolution(null!, name);
-			}
-		}
-		else
-		{
-			return null!;
-		}
-	}
+	public static implicit operator IssueResolution(string name) => JiraNamedEntity.FromNameOrId(name, (id, n) => new IssueResolution(id, n));
 
 	/// <summary>
 	/// Operator overload to simplify LINQ queries
@@ -58,21 +43,7 @@ public class IssueResolution : JiraNamedEntity
 	/// <remarks>
 	/// Allows calls in the form of issue.Priority == "High"
 	/// </remarks>
-	public static bool operator ==(IssueResolution? entity, string? name)
-	{
-		if (entity is null)
-		{
-			return name == null;
-		}
-		else if (name == null)
-		{
-			return false;
-		}
-		else
-		{
-			return entity.Name == name;
-		}
-	}
+	public static bool operator ==(IssueResolution? entity, string? name) => JiraNamedEntity.NameMatches(entity, name);
 
 	/// <summary>
 	/// Operator overload to simplify LINQ queries
@@ -80,22 +51,7 @@ public class IssueResolution : JiraNamedEntity
 	/// <remarks>
 	/// Allows calls in the form of issue.Priority != "High"
 	/// </remarks>
-	public static bool operator !=(IssueResolution? entity, string? name)
-	{
-		if (entity is null)
-		{
-			return name != null;
-		}
-		else if (name == null)
-		{
-			return true;
-		}
-		else
-		{
-			return entity.Name != name;
-		}
-	}
-
+	public static bool operator !=(IssueResolution? entity, string? name) => !JiraNamedEntity.NameMatches(entity, name);
 	/// <inheritdoc/>
 	public override bool Equals(object? obj) => obj is IssueResolution other && Name == other.Name;
 

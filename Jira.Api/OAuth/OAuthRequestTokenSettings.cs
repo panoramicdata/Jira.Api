@@ -13,6 +13,7 @@
 /// <param name="signatureMethod">The signature method used to sign the request.</param>
 /// <param name="requestTokenUrl">The relative URL to request the token.</param>
 /// <param name="authorizeUrl">The relative URL to authorize the token.</param>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2339:Public constant members should not be used", Justification = "Published public API: changing a public const to a static read-only member is a breaking change for existing consumers.")]
 public class OAuthRequestTokenSettings(
 	string url,
 	string consumerKey,

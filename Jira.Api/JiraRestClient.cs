@@ -10,174 +10,23 @@ namespace Jira.Api;
 /// <summary>
 /// Client for interacting with JIRA via REST API.
 /// </summary>
-public class JiraRestClient : IJiraRestClient
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
+public partial class JiraRestClient : IJiraRestClient
 {
-	/// <summary>
-	/// Authenticates to the JIRA server using the provided URL, username, and password.
-	/// </summary>
-	/// <param name="url"></param>
-	/// <param name="username"></param>
-	/// <param name="password"></param>
-	/// <param name="settings"></param>
-	public JiraRestClient(
-		string url,
-		string? username = null,
-		string? password = null,
-		JiraRestClientSettings? settings = null)
-		: this(
-			url,
-			!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password)
-				? new HttpBasicAuthenticator(username, password)
-				: null,
-			settings)
+	private void EnsureRequestAllowed(RestRequest request)
 	{
-	}
-
-	/// <summary>
-	/// Authenticates to the JIRA server using the provided URL and Personal Access Token, which is used in the authentication header as "Bearer TOKEN".
-	/// </summary>
-	/// <param name="url"></param>
-	/// <param name="personalAccessToken"></param>
-	/// <param name="settings"></param>
-	public JiraRestClient(
-		string url,
-		string personalAccessToken,
-		JiraRestClientSettings? settings = null)
-		: this(
-			url,
-			new JwtAuthenticator(personalAccessToken),
-			settings)
-	{
-	}
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="JiraRestClient"/> class with the specified URL, authenticator, and optional settings.
-	/// </summary>
-	/// <param name="url">The base URL of the JIRA server.</param>
-	/// <param name="authenticator">The authenticator to use for requests, or <see langword="null"/> for anonymous access.</param>
-	/// <param name="settings">Optional settings for the REST client.</param>
-	protected JiraRestClient(
-		string url,
-		IAuthenticator? authenticator,
-		JiraRestClientSettings? settings = null)
-	{
-		url = url.EndsWith('/') ? url : url + "/";
-#pragma warning disable CS0618 // Intentional fallback to default settings within the library
-		Settings = settings ?? new JiraRestClientSettings();
-#pragma warning restore CS0618
-
-		RestClient = new RestClient(new RestClientOptions(url)
+		if (!Settings.IsReadOnly || request.Method is Method.Get or Method.Head or Method.Options || IsReadOnlySearch(request))
 		{
-			Proxy = Settings.Proxy,
-			Authenticator = authenticator,
-			UserAgent = Settings.UserAgent,
-		}, configureSerialization: s => s.UseNewtonsoftJson());
-	}
-
-	/// <inheritdoc/>
-	public RestClient RestSharpClient => RestClient;
-
-	/// <inheritdoc/>
-	public string Url => RestClient.Options.BaseUrl.ToString();
-
-	/// <inheritdoc/>
-	public JiraRestClientSettings Settings { get; }
-
-	/// <summary>
-	/// Gets the underlying RestSharp client.
-	/// </summary>
-	public RestClient RestClient { get; }
-
-	/// <inheritdoc/>
-	public async Task<T?> ExecuteRequestAsync<T>(
-		Method method,
-		string resource,
-		object? requestBody, CancellationToken cancellationToken)
-	{
-		var result = await ExecuteRequestAsync(method, resource, requestBody, cancellationToken).ConfigureAwait(false);
-		return JsonConvert.DeserializeObject<T>(result.ToString(), Settings.JsonSerializerSettings);
-	}
-
-	/// <summary>
-	/// Executes an HTTP request asynchronously using the specified method, resource, and optional request body.
-	/// </summary>
-	/// <remarks>This method performs logging of the request and handles serialization of the request body. It also
-	/// validates the response to ensure it contains valid JSON.</remarks>
-	/// <param name="method">The HTTP method to use for the request, such as <see cref="Method.Get"/> or <see cref="Method.Post"/>.</param>
-	/// <param name="resource">The resource endpoint to target, typically a relative URL.</param>
-	/// <param name="requestBody">An optional object representing the request body. If the body is a string, it is sent as raw JSON. If the body is a
-	/// non-string object, it is serialized as JSON. This parameter is ignored for GET requests.</param>
-	/// <param name="cancellationToken">A <see cref="CancellationToken"/> that can be used to cancel the operation.</param>
-	/// <returns>A <see cref="JToken"/> representing the parsed JSON response, or <see langword="null"/> if the response does not
-	/// contain valid JSON.</returns>
-	/// <exception cref="InvalidOperationException">Thrown if <paramref name="method"/> is <see cref="Method.Get"/> and <paramref name="requestBody"/> is not <see
-	/// langword="null"/>.</exception>
-	public async Task<JToken?> ExecuteRequestAsync(
-		Method method,
-		string resource,
-		object? requestBody,
-		CancellationToken cancellationToken)
-	{
-		if (method == Method.Get && requestBody != null)
-		{
-			throw new InvalidOperationException($"GET requests are not allowed to have a request body. Resource: {resource}. Body: {requestBody}");
+			return;
 		}
 
-		var request = new RestRequest(resource, method);
-
-		if (requestBody is string)
-		{
-			request.AddParameter("application/json", requestBody, ParameterType.RequestBody);
-		}
-		else if (requestBody != null)
-		{
-			request.AddJsonBody(requestBody);
-		}
-
-		LogRequest(request, requestBody);
-		var response = await ExecuteRawResquestAsync(request, cancellationToken).ConfigureAwait(false);
-
-		return GetValidJsonFromResponse(request, response);
+		throw new InvalidOperationException($"The client is read-only (IsReadOnly is true): {request.Method} {request.Resource} is not allowed.");
 	}
 
-	/// <summary>
-	/// Executes the specified REST request asynchronously and returns the response.
-	/// </summary>
-	/// <remarks>This method logs the request, executes it, and processes the response to ensure valid JSON. The
-	/// caller is responsible for handling any exceptions that may occur during execution.</remarks>
-	/// <param name="request">The REST request to execute. Must not be <see langword="null"/>.</param>
-	/// <param name="cancellationToken">An optional cancellation token that can be used to cancel the operation.</param>
-	/// <returns>A <see cref="RestResponse"/> object containing the result of the executed request.</returns>
-	public async Task<RestResponse> ExecuteRequestAsync(
-		RestRequest request,
-		CancellationToken cancellationToken)
-	{
-		LogRequest(request);
-		var response = await ExecuteRawResquestAsync(request, cancellationToken).ConfigureAwait(false);
-		GetValidJsonFromResponse(request, response);
-		return response;
-	}
-
-	/// <inheritdoc/>
-	public async Task<RestResponse> ExecuteRawRequestAsync(RestRequest request, CancellationToken cancellationToken)
-	{
-		ArgumentNullException.ThrowIfNull(request);
-		LogRequest(request);
-		return await ExecuteRawResquestAsync(request, cancellationToken).ConfigureAwait(false);
-	}
-
-	/// <summary>
-	/// Executes the specified REST request asynchronously and returns the raw response.
-	/// </summary>
-	/// <remarks>This method is designed to execute a REST request using the underlying REST client and return the
-	/// raw response. It does not perform any additional processing or validation on the response.</remarks>
-	/// <param name="request">The REST request to execute. Must not be <see langword="null"/>.</param>
-	/// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
-	/// <returns>A task representing the asynchronous operation. The task result contains the raw response from the REST client.</returns>
-	protected virtual Task<RestResponse> ExecuteRawResquestAsync(RestRequest request, CancellationToken cancellationToken)
-	{
-		return RestClient.ExecuteAsync(request, cancellationToken);
-	}
+	// POST rest/api/2/search is how JQL is sent; it only reads.
+	private static bool IsReadOnlySearch(RestRequest request)
+		=> request.Method == Method.Post
+			&& request.Resource.Split('?')[0].TrimEnd('/').Equals("rest/api/2/search", StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// Downloads data asynchronously from the specified URL.
@@ -219,11 +68,7 @@ public class JiraRestClient : IJiraRestClient
 
 			if (body != null)
 			{
-				Trace.WriteLine($"[{request.Method}] Request Data: {JsonConvert.SerializeObject(body, new JsonSerializerSettings
-				{
-					Formatting = Formatting.Indented,
-					NullValueHandling = NullValueHandling.Ignore
-				})}");
+				Trace.WriteLine($"[{request.Method}] Request Data: {body.GetType().Name} (body omitted from the trace)");
 			}
 		}
 	}

@@ -5,6 +5,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Class used to deserialize a generic JIRA resource as returned by the REST API.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class JiraNamedResource : IJiraEntity
 {
 	/// <summary>

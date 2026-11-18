@@ -3,6 +3,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Represents a remote constant within JIRA. Abstracts the IssueType, Priority and Status used on issues.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2360:Optional parameters should not be used", Justification = "Published public API: replacing optional parameters with overloads is a breaking change for existing consumers.")]
 public class JiraNamedConstant : JiraNamedEntity
 {
 	private readonly AbstractRemoteConstant _remoteConstant;

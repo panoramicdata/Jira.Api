@@ -3,6 +3,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Force a DateTime field to use a string provided as the JQL query value.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class LiteralDateTime(string dateTimeString)
 {
 	private readonly string _dateTimeString = dateTimeString;

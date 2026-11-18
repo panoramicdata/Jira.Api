@@ -34,12 +34,12 @@ public class JiraQueryable<T> : IOrderedQueryable<T>, IQueryable<T>
 	/// </summary>
 	public IEnumerator<T> GetEnumerator()
 	{
-		return ((IEnumerable<T>)_provider.Execute(Expression)).GetEnumerator();
+		return _provider.Execute<IEnumerable<T>>(Expression).GetEnumerator();
 	}
 
 	IEnumerator IEnumerable.GetEnumerator()
 	{
-		return ((IEnumerable)_provider.Execute(Expression)).GetEnumerator();
+		return GetEnumerator();
 	}
 
 	/// <summary>

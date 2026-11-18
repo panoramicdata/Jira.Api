@@ -7,6 +7,7 @@ namespace Jira.Api.Models;
 /// <summary>
 /// Settings to configure the JIRA REST client.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2339:Public constant members should not be used", Justification = "Published public API: changing a public const to a static read-only member is a breaking change for existing consumers.")]
 public partial class JiraRestClientSettings
 {
 	/// <summary>
@@ -32,6 +33,11 @@ public partial class JiraRestClientSettings
 	/// Whether to trace each request.
 	/// </summary>
 	public bool EnableRequestTrace { get; set; }
+
+	/// <summary>
+	/// Whether the client refuses every request other than GET, HEAD, OPTIONS and the read-only JQL search POST.
+	/// </summary>
+	public bool IsReadOnly { get; set; }
 
 	/// <summary>
 	/// Dictionary of serializers for custom fields.

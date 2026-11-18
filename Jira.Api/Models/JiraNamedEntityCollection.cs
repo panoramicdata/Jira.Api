@@ -6,6 +6,7 @@ namespace Jira.Api.Models;
 /// A collection of JIRA named entities
 /// </summary>
 /// <typeparam name="T">The type of named entity</typeparam>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3875:operator== should not be overloaded on reference types", Justification = "Published public API: these operators are how consumers write LINQ to JQL comparisons, so removing them is a breaking change.")]
 public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProvider where T : JiraNamedEntity
 {
 	/// <summary>
@@ -75,6 +76,8 @@ public class JiraNamedEntityCollection<T> : Collection<T>, IRemoteIssueFieldProv
 
 	Task<RemoteFieldValue[]> IRemoteIssueFieldProvider.GetRemoteFieldValuesAsync(CancellationToken cancellationToken)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var fields = new List<RemoteFieldValue>();
 
 		if (_originalList.Count != Items.Count || _originalList.Except(Items).Any())

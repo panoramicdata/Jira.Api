@@ -5,29 +5,11 @@ public class ServerInfoServiceTest(ITestOutputHelper outputHelper) : TestBase(ou
 	[Fact]
 	public async Task GetServerInfoAsync_WithoutHealthCheck_UsesBaseResourceAndMapsResponse()
 	{
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-		var remoteServerInfo = new RemoteServerInfo
-		{
-			baseUrl = "https://jira.example.com",
-			version = "10.0.0",
-			versionNumbers = [10, 0, 0],
-			deploymentType = "Server",
-			buildNumber = 10001,
-			buildDate = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
-			serverTime = new DateTimeOffset(2025, 1, 2, 0, 0, 0, TimeSpan.Zero),
-			scmInfo = "git",
-			buildPartnerName = "Panoramic Data Limited",
-			serverTitle = "Jira Test",
-			healthChecks = null!
-		};
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteServerInfo>(
-				Method.Get,
-				"rest/api/2/serverInfo",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteServerInfo);
+		var remoteServerInfo = CreateRemoteServerInfo();
+		remoteServerInfo.buildDate = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
+		remoteServerInfo.serverTime = new DateTimeOffset(2025, 1, 2, 0, 0, 0, TimeSpan.Zero);
+		remoteServerInfo.healthChecks = null!;
+		var jira = CreateJiraReturning("rest/api/2/serverInfo", remoteServerInfo);
 
 		var serverInfo = await jira.ServerInfo.GetServerInfoAsync(false, CancellationToken);
 
@@ -47,31 +29,13 @@ public class ServerInfoServiceTest(ITestOutputHelper outputHelper) : TestBase(ou
 	[Fact]
 	public async Task GetServerInfoAsync_WithHealthCheck_AppendsQueryStringAndMapsChecks()
 	{
-		var client = new Mock<IJiraRestClient>();
-		var jira = JiraClient.CreateRestClient(client.Object);
-		var remoteServerInfo = new RemoteServerInfo
-		{
-			baseUrl = "https://jira.example.com",
-			version = "10.0.0",
-			versionNumbers = [10, 0, 0],
-			deploymentType = "Server",
-			buildNumber = 10001,
-			scmInfo = "git",
-			buildPartnerName = "Panoramic Data Limited",
-			serverTitle = "Jira Test",
-			healthChecks =
-			[
-				new RemoteHealthCheck { name = "Database", description = "Database connectivity", passed = true },
-				new RemoteHealthCheck { name = "Indexing", description = "Indexing backlog", passed = false }
-			]
-		};
-
-		client.Setup(c => c.ExecuteRequestAsync<RemoteServerInfo>(
-				Method.Get,
-				"rest/api/2/serverInfo?doHealthCheck=true",
-				null,
-				It.IsAny<CancellationToken>()))
-			.ReturnsAsync(remoteServerInfo);
+		var remoteServerInfo = CreateRemoteServerInfo();
+		remoteServerInfo.healthChecks =
+		[
+			new RemoteHealthCheck { name = "Database", description = "Database connectivity", passed = true },
+			new RemoteHealthCheck { name = "Indexing", description = "Indexing backlog", passed = false }
+		];
+		var jira = CreateJiraReturning("rest/api/2/serverInfo?doHealthCheck=true", remoteServerInfo);
 
 		var serverInfo = await jira.ServerInfo.GetServerInfoAsync(true, CancellationToken);
 		var healthChecks = serverInfo.HealthChecks!.ToArray();
@@ -82,5 +46,29 @@ public class ServerInfoServiceTest(ITestOutputHelper outputHelper) : TestBase(ou
 		healthChecks[0].Passed.Should().BeTrue();
 		healthChecks[1].Name.Should().Be("Indexing");
 		healthChecks[1].Passed.Should().BeFalse();
+	}
+
+	private static RemoteServerInfo CreateRemoteServerInfo() => new()
+	{
+		baseUrl = "https://jira.example.com",
+		version = "10.0.0",
+		versionNumbers = [10, 0, 0],
+		deploymentType = "Server",
+		buildNumber = 10001,
+		scmInfo = "git",
+		buildPartnerName = "Panoramic Data Limited",
+		serverTitle = "Jira Test"
+	};
+
+	private static JiraClient CreateJiraReturning(string resource, RemoteServerInfo remoteServerInfo)
+	{
+		var client = new Mock<IJiraRestClient>();
+		client.Setup(c => c.ExecuteRequestAsync<RemoteServerInfo>(
+				Method.Get,
+				resource,
+				null,
+				It.IsAny<CancellationToken>()))
+			.ReturnsAsync(remoteServerInfo);
+		return JiraClient.CreateRestClient(client.Object);
 	}
 }

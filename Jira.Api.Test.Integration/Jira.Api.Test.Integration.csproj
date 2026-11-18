@@ -1,46 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-<PropertyGroup>
-<TargetFramework>net10.0</TargetFramework>
-<ImplicitUsings>enable</ImplicitUsings>
-<UserSecretsId>JiraApiIntegrationTests</UserSecretsId>
-</PropertyGroup>
-<ItemGroup>
-<Compile Remove="Properties**" />
-<EmbeddedResource Remove="Properties**" />
-<None Remove="Properties**" />
-</ItemGroup>
-<ItemGroup>
-<PackageReference Include="AwesomeAssertions" />
-<PackageReference Include="AwesomeAssertions.Analyzers">
-<PrivateAssets>all</PrivateAssets>
-<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-</PackageReference>
-<PackageReference Include="LTAF.Navigator" />
-<PackageReference Include="Microsoft.Extensions.Configuration" />
-<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
-<PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
-<PackageReference Include="Microsoft.NET.Test.Sdk" />
-<PackageReference Include="Newtonsoft.Json" />
-<PackageReference Include="RestSharp" />
-<PackageReference Include="xunit.v3" />
-<PackageReference Include="Xunit.Microsoft.DependencyInjection" />
-<PackageReference Include="xunit.runner.visualstudio">
-<PrivateAssets>all</PrivateAssets>
-<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-</PackageReference>
-</ItemGroup>
-<ItemGroup>
-<ProjectReference Include="..\Jira.Api\Jira.Api.csproj" />
-</ItemGroup>
-<ItemGroup>
-<None Update="Trace_CustomFieldArrayOfObjects.txt">
-<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-</None>
-<None Update="Trace_CustomFieldEmptyArray.txt">
-<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-</None>
-<None Include="appsettings.json" CopyToOutputDirectory="Always" Condition="Exists('appsettings.json')" />
-</ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>JiraApiIntegrationTests</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Properties**" />
+    <EmbeddedResource Remove="Properties**" />
+    <None Remove="Properties**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="AwesomeAssertions.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="LTAF.Navigator" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="RestSharp" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Xunit.Microsoft.DependencyInjection" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jira.Api\Jira.Api.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Trace_CustomFieldArrayOfObjects.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Trace_CustomFieldEmptyArray.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.json" CopyToOutputDirectory="Always" Condition="Exists('appsettings.json')" />
+  </ItemGroup>
 </Project>
